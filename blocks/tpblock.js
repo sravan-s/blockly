@@ -1,22 +1,36 @@
+Blockly.Blocks['extractor'] = {
+  init: function() {
+    this.appendValueInput("line")
+        .setCheck("line_extractor")
+        .appendField("Extract from line");
+    this.appendValueInput("file")
+        .setCheck("file_name_extractor")
+        .appendField("Extract from file name");
+    this.setInputsInline(false);
+    this.setNextStatement(true, null);
+    this.setColour(20);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.example.com/');
+  }
+};
+
 Blockly.Blocks['line_extractor'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("From line extract")
-        .appendField(new Blockly.FieldTextInput("1"), "get")
-        .appendField("nd, element delimited by")
-        .appendField(new Blockly.FieldTextInput("|"), "delim");
-    this.appendDummyInput()
-        .appendField("and is of type")
-        .appendField(new Blockly.FieldDropdown([
-            ["String", "string"],
-            ["Date", "date"],
-            ["Number", "number"],
-            ["Double", "double"]]), "data_type");
-    this.appendStatementInput("NAME")
+        .appendField("extract from line")
+        .appendField(new Blockly.FieldNumber(0), "get")
+        .appendField("nd  token delimited by")
+        .appendField(new Blockly.FieldTextInput("|"), "delim")
+        .appendField("is of type")
+        .appendField(new Blockly.FieldDropdown([["String", "string"], ["Date", "date"], ["Number", "number"]]), "operation")
+        .appendField(" & is named as")
+        .appendField(new Blockly.FieldVariable("item"), "marker");
+    this.appendValueInput("next_marker")
         .setCheck("Marker");
-    this.setInputsInline(true);
-    this.setOutput(true, "Marker");
-    this.setColour(120);
+    this.setInputsInline(false);
+    this.setPreviousStatement(true, "Marker");
+    this.setNextStatement(true, "Marker");
+    this.setColour(20);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');
   }
@@ -25,47 +39,99 @@ Blockly.Blocks['line_extractor'] = {
 Blockly.Blocks['file_name_extractor'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("From file name extract")
-        .appendField(new Blockly.FieldTextInput("1"), "get")
-        .appendField("nd, element delimited by")
-        .appendField(new Blockly.FieldTextInput("|"), "delim");
-    this.appendDummyInput()
-        .appendField("and is of type")
-        .appendField(new Blockly.FieldDropdown([
-            ["String", "string"],
-            ["Date", "date"],
-            ["Number", "number"],
-            ["Double", "double"]]), "data_type");
-    this.appendStatementInput("NAME")
+        .appendField("extract from line")
+        .appendField(new Blockly.FieldNumber(0), "get")
+        .appendField("nd  token delimited by")
+        .appendField(new Blockly.FieldTextInput("|"), "delim")
+        .appendField("is of type")
+        .appendField(new Blockly.FieldDropdown([["String", "string"], ["Date", "date"], ["Number", "number"]]), "operation")
+        .appendField(" & is named as")
+        .appendField(new Blockly.FieldVariable("item"), "marker");
+    this.appendValueInput("next_marker")
         .setCheck("Marker");
-    this.setInputsInline(true);
-    this.setOutput(true, "Marker");
-    this.setColour(180);
+    this.setInputsInline(false);
+    this.setPreviousStatement(true, "Marker");
+    this.setNextStatement(true, "Marker");
+    this.setColour(20);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');
   }
 };
 
+
 Blockly.Blocks['field_extractor'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("from token above extract")
-        .appendField(new Blockly.FieldTextInput("1"), "get")
-        .appendField("nd, element delimited by")
-        .appendField(new Blockly.FieldTextInput("|"), "delim");
-    this.appendDummyInput()
-        .appendField("and is of type")
-        .appendField(new Blockly.FieldDropdown([
-            ["String", "string"],
-            ["Date", "date"],
-            ["Number", "number"],
-            ["Double", "double"]]), "data_type");
+        .appendField("extract ")
+        .appendField(new Blockly.FieldNumber(0), "get")
+        .appendField("nd  token delimited by")
+        .appendField(new Blockly.FieldTextInput("|"), "delim")
+        .appendField("is of type")
+        .appendField(new Blockly.FieldDropdown([["String", "string"], ["Date", "date"], ["Number", "number"]]), "operation")
+        .appendField(" & is named as")
+        .appendField(new Blockly.FieldVariable("item"), "marker");
+    this.appendValueInput("next_marker")
+        .setCheck("Marker");
+    this.setInputsInline(false);
+    this.setOutput(true, "Marker");
+    this.setColour(20);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.example.com/');
+  }
+};
+
+Blockly.Blocks['transform'] = {
+  init: function() {
     this.appendStatementInput("NAME")
-        .setCheck("Marker")
-        .setAlign(Blockly.ALIGN_RIGHT);
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, "Marker");
-    this.setColour(135);
+        .setCheck(null);
+    this.setInputsInline(false);
+    this.setNextStatement(true, "store");
+    this.setColour(20);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.example.com/');
+  }
+};
+
+Blockly.Blocks['store'] = {
+  init: function() {
+    this.appendStatementInput("NAME")
+        .setCheck(null);
+    this.setInputsInline(false);
+    this.setNextStatement(false);
+    this.setColour(20);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.example.com/');
+  }
+};
+
+Blockly.Blocks['binary_string_operator'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldVariable("item"), "m1")
+        .appendField(new Blockly.FieldDropdown([["option", "OPTIONNAME"], ["option", "OPTIONNAME"], ["option", "OPTIONNAME"]]), "operator")
+        .appendField(new Blockly.FieldVariable("item"), "m2")
+        .appendField(" named as ")
+        .appendField(new Blockly.FieldVariable("item"), "result");
+    this.setInputsInline(false);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(20);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.example.com/');
+  }
+};
+
+Blockly.Blocks['unary_string_operator'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldDropdown([["option", "OPTIONNAME"], ["option", "OPTIONNAME"], ["option", "OPTIONNAME"]]), "operator")
+        .appendField(new Blockly.FieldVariable("item"), "m1")
+        .appendField(" named as ")
+        .appendField(new Blockly.FieldVariable("item"), "result");
+    this.setInputsInline(false);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(20);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');
   }
