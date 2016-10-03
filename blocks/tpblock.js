@@ -254,7 +254,17 @@ Blockly.Blocks["binary"] = {
 
     
     onchange: function(changeEvent) {
-        if(changeEvent.type === "ui")
+        if(changeEvent.type === "ui") {
+        var m1 = this.getFieldValue("m1");
+        var dataType = Blockly.variableMap[m1];
+        var op = this.getFieldValue("operation");
+        var options = this.getDropDown(m1); // The new options you want to have
+        var drop = this.getField("operation");
+        drop.setText(" "); // set the actual text
+        drop.setValue(" "); // set the actual value
+        drop.menuGenerator_ = options;
+    }
+       /* if(changeEvent.type === "ui")
         if (!this.workspace) {
             return;
         }
@@ -278,16 +288,7 @@ Blockly.Blocks["binary"] = {
       }
     } else if (inputExists) {
       this.removeInput('binaryOp');
-    }
+    }*/
   },
-        /*var m1 = this.getFieldValue("m1");
-        var dataType = Blockly.variableMap[m1];
-        var op = this.getFieldValue("operation");
-        var options = this.getDropDown(); // The new options you want to have
-        var drop = this.getField("operation");
-        drop.setText(" "); // set the actual text
-        drop.setValue(" "); // set the actual value
-        drop.menuGenerator_ = options;*/
-
 
 };
