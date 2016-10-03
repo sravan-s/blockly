@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="blockly_compressed.js"></script>
+<script src="blocks_compressed.js"></script>
+<script src="javascript_compressed.js"></script>
+<script src="msg/js/en.js"></script>
+<script src="blocks/tpblock.js"></script>
+<script src="generators/javascript/tpblock.js"></script>
+<script src="closure-library/closure/goog/base.js"></script>
+
+ <meta charset="utf-8">
+<title>Blockly Testing</title>
+<style type="text/css">
+#blocklyDiv {
+  height: 960px;
+}
+</style>
+</head>
+<body>
+ <div id="blocklyDiv" ></div>
+ <xml id="toolbox" style="display: none"> 
+ <category name="InputBlocks"> 
+  <block type="field_extractor"></block> 
+  <block type="extractor"></block> 
+  <block type="transform"></block> 
+  <block type="store"></block> 
+  <block type="unary"></block> 
+  <block type="binary"></block> 
+ </category> 
+</xml>
+
+  <script>
+    var blocklyDiv = document.getElementById('blocklyDiv');
+    var workspace = Blockly.inject(blocklyDiv,
+        {toolbox: document.getElementById('toolbox')});
+    window.addEventListener('resize', onresize, true);
+    Blockly.svgResize(workspace); 
+  </script>
+ <script type='text/javascript'>  </script>
+</body>
+</html>
