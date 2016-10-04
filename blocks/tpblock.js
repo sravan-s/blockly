@@ -1,5 +1,5 @@
 Blockly.Msg.dataType = '[["String", "string"], ["Date", "date"], ["Number", "number"]]';
-
+Blockly.variableDateTypeMap = {};
 Blockly.variableMap = {};
 Blockly.Blocks["extractor"] = {
     init: function() {
@@ -23,7 +23,8 @@ Blockly.Blocks["field_extractor"] = {
         this.appendDummyInput()
             .appendField("extract ")
             // .appendField(new Blockly.FieldNumber(''), "get")
-            .appendField(new Blockly.FieldVariable(''), "get")
+            // .appendField(new Blockly.FieldVariable(''), "get")
+            .appendField(new Blockly.FieldTextInput('1'), "get")
             .appendField("nd  token delimited by")
             .appendField(new Blockly.FieldTextInput(""), "delim")
             .appendField("is of type")
@@ -43,6 +44,8 @@ Blockly.Blocks["field_extractor"] = {
             return;
         }
         Blockly.variableMap[this.getFieldValue("marker")] = this.getFieldValue("operation");
+        this.getFieldValue('marker');
+        this.getFieldValue('operation');
     }
 
 };
