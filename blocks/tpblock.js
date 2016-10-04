@@ -13,6 +13,19 @@ Blockly.Tp.replaceVaribleInMap = function() {
 
 }
 
+var blockObj = function(obj) {
+    obj.renameVar = function(oldName, newName) {
+        if (Blockly.Names.equals(oldName, this.getFieldValue('VAR'))) {
+            this.setFieldValue(newName, 'VAR');
+        }
+    }
+    obj.getVars = function() {
+        return [this.getFieldValue('VAR')];
+    }
+
+};
+
+
 Blockly.Blocks["extractor"] = {
     init: function() {
         this.appendValueInput("line")
@@ -29,8 +42,8 @@ Blockly.Blocks["extractor"] = {
     }
 };
 
-
 Blockly.Blocks["field_extractor"] = {
+
     init: function() {
         this.appendDummyInput()
             .appendField("extract ")
@@ -42,7 +55,7 @@ Blockly.Blocks["field_extractor"] = {
             .appendField("is of type")
             .appendField(new Blockly.FieldDropdown(JSON.parse(Blockly.Tp.dataType)), "operation")
             .appendField(" & is named as")
-            .appendField(new Blockly.FieldVariable(""), "marker");
+            .appendField(new Blockly.FieldVariable(""), "VAR");
         this.appendValueInput("next_marker")
             .setCheck("field_extractor");
         this.setInputsInline(false);
@@ -50,21 +63,44 @@ Blockly.Blocks["field_extractor"] = {
         this.setColour(20);
         this.setTooltip("");
         this.setHelpUrl("http://www.example.com/");
+        blockObj(this);
     },
     onchange: function(e) {
         if (!this.workspace) {
             return;
         }
-        Blockly.variableMap[this.getFieldValue("marker")] = this.getFieldValue("operation");
-        this.getFieldValue('marker');
+
+        if (e.type == 'change') {
+            var varType = this.getFieldValue('operation');
+            var variable = this.getFieldValue('VAR');
+            if (e.name == 'VAR') {
+                if (Blockly.Tp.variableDateTypeMap[variable]) {
+                    this.setWarningText('Use unique variable names');
+                    return false;
+                }
+                Blockly.Tp.variableDateTypeMap[e.newValue] = varType;
+                if (e.oldValue) {
+                    delete Blockly.Tp.variableDateTypeMap[e.oldValue];
+                }
+            } else if (e.name == 'operation') {
+                Blockly.Tp.variableDateTypeMap[variable] = e.newValue;
+            }
+        }
+
+        Blockly.variableMap[this.getFieldValue("VAR")] = this.getFieldValue("operation");
+        this.getFieldValue('VAR');
         this.getFieldValue('operation');
         this.validate();
+
+
+
     },
+
     validate: function() {
         var _isError = [];
         var number_get = this.getFieldValue('get');
         var text_delim = this.getFieldValue('delim');
-        var variable_marker = this.getFieldValue('marker');
+        var variable_marker = this.getFieldValue('VAR');
         if (number_get == '') {
             _isError.push('Give a token ordinal');
         } else {
@@ -129,7 +165,7 @@ Blockly.Blocks["store"] = {
 };
 
 Blockly.Blocks["unary"] = {
-    OPERATIONS : {
+    OPERATIONS: {
         tpDate: {
             unary: [
                 ["convertDate", "$1 = tpDate.convertDate(data1, $2, MarkerFactory, $3);"],
@@ -169,7 +205,9 @@ Blockly.Blocks["unary"] = {
     init: function() {
         this.appendDummyInput()
             .appendField(new Blockly.FieldVariable(""), "m1")
-            .appendField(new Blockly.FieldDropdown([[]]), "operation")
+            .appendField(new Blockly.FieldDropdown([
+                []
+            ]), "operation")
             .appendField(" & is named as")
             .appendField(new Blockly.FieldVariable(""), "result");
         this.setInputsInline(false);
@@ -179,7 +217,7 @@ Blockly.Blocks["unary"] = {
         this.setTooltip("");
         this.setHelpUrl("http://www.example.com/");
     },
-     getDropDown: function() {
+    getDropDown: function() {
         var superSet = JSON.parse(Blockly.Tp.dataType);
         var m1 = this.getFieldValue("m1");
         var dataType = Blockly.variableMap[m1];
@@ -202,66 +240,73 @@ Blockly.Blocks["unary"] = {
         if (!this.workspace) {
             return;
         }
-        if(changeEvent.type === "ui") {
-        var m1 = this.getFieldValue("m1");
-        var dataType = Blockly.variableMap[m1];
-        var op = this.getFieldValue("operation");
-        var options = this.getDropDown(); // The new options you want to have
-        var drop = this.getField("operation");
-        drop.setText(" "); // set the actual text
-        drop.setValue(" "); // set the actual value
-        drop.menuGenerator_ = options;
-    }
+        if (changeEvent.type === "ui") {
+            var m1 = this.getFieldValue("m1");
+            var dataType = Blockly.variableMap[m1];
+            var op = this.getFieldValue("operation");
+            var options = this.getDropDown(); // The new options you want to have
+            var drop = this.getField("operation");
+            drop.setText(" "); // set the actual text
+            drop.setValue(" "); // set the actual value
+            drop.menuGenerator_ = options;
+        }
     }
 
 };
 
 Blockly.Blocks['lookup'] = {
-  init: function() {
-    this.appendDummyInput()
-        .appendField("Lookup type")
-        .appendField(new Blockly.FieldDropdown([
-            ["longest prefix", "lp"],
-            ["key-value", "map"],
-            ["Number", "number"]]), "operation")
-        .appendField("specify data source")
-        .appendField(new Blockly.FieldTextInput("default"), "path");
-    this.appendDummyInput()
-        .appendField("Pick key")
-        .appendField(new Blockly.FieldVariable("item"), "var_key")
-        .appendField("   value called as")
-        .appendField(new Blockly.FieldVariable("item"), "var_value")
-        .appendField(" and is of type")
-        .appendField(new Blockly.FieldVariable(""), "result");
+    init: function() {
+        this.appendDummyInput()
+            .appendField("Lookup type")
+            .appendField(new Blockly.FieldDropdown([
+                ["longest prefix", "lp"],
+                ["key-value", "map"],
+                ["Number", "number"]
+            ]), "operation")
+            .appendField("specify data source")
+            .appendField(new Blockly.FieldTextInput("default"), "path");
+        this.appendDummyInput()
+            .appendField("Pick key")
+            .appendField(new Blockly.FieldVariable("item"), "var_key")
+            .appendField("   value called as")
+            .appendField(new Blockly.FieldVariable("item"), "var_value")
+            .appendField(" and is of type")
+            .appendField(new Blockly.FieldVariable(""), "VAR");
 
         //.appendField(new Blockly.FieldDropdown(Blockly.Blocks.dataType), "data_type");
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(345);
-    this.setTooltip('');
-    this.setHelpUrl('http://www.example.com/');
-  }
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour(345);
+        this.setTooltip('');
+        this.setHelpUrl('http://www.example.com/');
+        blockObj(this);
+    }
 };
 
-Blockly.Blocks['tp_constant'] = {       
-  init: function() {
-    this.appendDummyInput()
-        .appendField("Define ")
-        .appendField(new Blockly.FieldTextInput("default"), "constant")
-        .appendField("as")
-        .appendField(new Blockly.FieldDropdown([["String", "OPTIONNAME"], ["Number", "OPTIONNAME"], ["Date", "OPTIONNAME"]]), "NAME")
-        .appendField("save as")
-        .appendField(new Blockly.FieldTextInput("default"), "constant-name");
-    this.setPreviousStatement(true);
-    this.setNextStatement(true);
-    this.setColour(230);
-    this.setTooltip('');
-    this.setHelpUrl('http://www.example.com/');
-  }
+Blockly.Blocks['tp_constant'] = {
+    init: function() {
+        this.appendDummyInput()
+            .appendField("Define ")
+            .appendField(new Blockly.FieldTextInput("default"), "constant")
+            .appendField("as")
+            .appendField(new Blockly.FieldDropdown([
+                ["String", "OPTIONNAME"],
+                ["Number", "OPTIONNAME"],
+                ["Date", "OPTIONNAME"]
+            ]), "NAME")
+            .appendField("save as")
+            .appendField(new Blockly.FieldTextInput("default"), "VAR");
+        this.setPreviousStatement(true);
+        this.setNextStatement(true);
+        this.setColour(230);
+        this.setTooltip('');
+        this.setHelpUrl('http://www.example.com/');
+        blockObj(this);
+    }
 };
 
 Blockly.Blocks["binary"] = {
-    OPERATIONS : {
+    OPERATIONS: {
         tpDate: {
             binary: [
                 ["after", "$1 = tpDate.after(data1, $2, data2, $3);"],
@@ -308,21 +353,24 @@ Blockly.Blocks["binary"] = {
     init: function() {
         this.appendDummyInput('binaryOp')
             .appendField(new Blockly.FieldVariable(""), "m1")
-            .appendField(new Blockly.FieldDropdown([[]]), "operation")
+            .appendField(new Blockly.FieldDropdown([
+                []
+            ]), "operation")
             .appendField(new Blockly.FieldVariable(""), "m2")
             .appendField(" & is named as")
-            .appendField(new Blockly.FieldVariable(""), "result");
+            .appendField(new Blockly.FieldVariable(""), "VAR");
         this.setInputsInline(false);
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
         this.setColour("#006400");
         this.setTooltip("");
         this.setHelpUrl("http://www.example.com/");
+        blockObj(this);
     },
 
     getDropDown: function(m1) {
         var superSet = JSON.parse(Blockly.Tp.dataType);
-        var dataType = Blockly.variableMap[m1];
+        var dataType = Blockly.Tp.variableDateTypeMap[m1];
         switch (dataType) {
             case 'string':
                 return this.OPERATIONS.tpString.binary;
@@ -339,19 +387,19 @@ Blockly.Blocks["binary"] = {
         }
     },
 
-    
+
     onchange: function(changeEvent) {
-        if(changeEvent.type === "ui") {
-        var m1 = this.getFieldValue("m1");
-        var dataType = Blockly.variableMap[m1];
-        var op = this.getFieldValue("operation");
-        var options = this.getDropDown(m1); // The new options you want to have
-        var drop = this.getField("operation");
-        drop.setText(" "); // set the actual text
-        drop.setValue(" "); // set the actual value
-        drop.menuGenerator_ = options;
-    }
-       /* if(changeEvent.type === "ui")
+        if (changeEvent.type === "change" && changeEvent.name == 'm1') {
+            var m1 = this.getFieldValue("m1");
+            var dataType = Blockly.variableMap[m1];
+            var op = this.getFieldValue("operation");
+            var options = this.getDropDown(m1); // The new options you want to have
+            var drop = this.getField("operation");
+            drop.setText(" "); // set the actual text
+            drop.setValue(" "); // set the actual value
+            drop.menuGenerator_ = options;
+        }
+        /* if(changeEvent.type === "ui")
         if (!this.workspace) {
             return;
         }
@@ -376,6 +424,33 @@ Blockly.Blocks["binary"] = {
     } else if (inputExists) {
       this.removeInput('binaryOp');
     }*/
-  },
+    },
 
+};
+
+Blockly.FieldVariable.dropdownCreate = function() {
+    if (this.sourceBlock_ && this.sourceBlock_.workspace) {
+        var variableList =
+            Blockly.Variables.allVariables(this.sourceBlock_.workspace);
+    } else {
+        var variableList = [];
+    }
+    // Ensure that the currently selected variable is an option.
+    var name = this.getText();
+    if (name && variableList.indexOf(name) == -1) {
+        variableList.push(name);
+    }
+    variableList.sort(goog.string.caseInsensitiveCompare);
+    variableList.push(Blockly.Msg.RENAME_VARIABLE);
+    variableList.push(Blockly.Msg.NEW_VARIABLE);
+    if (this.name && this.name != 'VAR') {
+        variableList.splice(-2, 2);
+    }
+    // Variables are not language-specific, use the name as both the user-facing
+    // text and the internal representation.
+    var options = [];
+    for (var x = 0; x < variableList.length; x++) {
+        options[x] = [variableList[x], variableList[x]];
+    }
+    return options;
 };

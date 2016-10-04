@@ -26,7 +26,7 @@ Blockly.JavaScript['field_extractor'] = function(block) {
   var text_delim = block.getFieldValue('delim');
 
   var dropdown_operation = block.getFieldValue('operation');
-  var variable_marker = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('marker'), Blockly.Variables.NAME_TYPE);
+  var variable_marker = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('VAR'), Blockly.Variables.NAME_TYPE);
   //this shouldnot be 'f'
   // and should be unique
   var value_next_marker = Blockly.JavaScript.valueToCode(block, 'next_marker', Blockly.JavaScript.ORDER_ATOMIC);
@@ -38,7 +38,7 @@ Blockly.JavaScript['field_extractor'] = function(block) {
   if (block.parentBlock_.type == 'extractor') {
     code =  'm' + variable_marker + " = line.splitAndGetMarker(data, '" + ascii + "', '+number_get+', mf);\n " +value_next_marker;
   } else {
-    code = 'm' + variable_marker + " =" + 'm' + block.parentBlock_.getFieldValue('marker') + ".splitAndGetMarker(data, '"+ ascii + "', '+number_get+', mf);\n";
+    code = 'm' + variable_marker + " =" + 'm' + block.parentBlock_.getFieldValue('VAR') + ".splitAndGetMarker(data, '"+ ascii + "', '+number_get+', mf);\n";
   }
   Blockly.JavaScript.variables.push('protected Marker ' + variable_marker + ';\n');
   Blockly.JavaScript.variables.push('protected byte[] ' + text_delim + ';\n');
