@@ -3,13 +3,7 @@ Blockly.Tp.dataType = '[["String", "string"], ["Date", "date"], ["Number", "numb
 Blockly.Tp.variableDateTypeMap = {};
 Blockly.variableMap = {};
 
-Blockly.Tp.pushVariableToMap = function(variable) {
-
-};
-Blockly.Tp.getVariableFromMap = function(vaiableName) {
-
-};
-Blockly.Tp.replaceVaribleInMap = function() {
+Blockly.Tp.replaceVaribleInMap = function(oldVar, newVar) {
 
 }
 
@@ -55,9 +49,19 @@ Blockly.Blocks["field_extractor"] = {
         if (!this.workspace) {
             return;
         }
+        if (e.type == 'change') {
+            var varType = this.getFieldValue('operation');
+            var variable = this.getFieldValue('marker');
+            if (e.name == 'marker') {
+                Blockly.Tp.variableDateTypeMap[e.newValue] = varType;
+                if (e.oldValue) {
+                    delete Blockly.Tp.variableDateTypeMap[e.oldValue];
+                }
+            } else if (e.name == 'operation') {
+                Blockly.Tp.variableDateTypeMap[variable] = e.newValue;
+            }
+        }
         Blockly.variableMap[this.getFieldValue("marker")] = this.getFieldValue("operation");
-        this.getFieldValue('marker');
-        this.getFieldValue('operation');
         this.validate();
     },
     validate: function() {
