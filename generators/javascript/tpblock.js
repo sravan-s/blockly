@@ -18,18 +18,12 @@ Blockly.JavaScript['extractor'] = function(block) {
 };
 
 Blockly.JavaScript['field_extractor'] = function(block) {
-  var number_get = +block.getFieldValue('get');
-  var _isError = [];
-  //check is this is number
-  if (!Number.isInteger(number_get)) {
-    // this.setWarningText('Token ordinal should be a number');
-    _isError.push('Token ordinal should be a number');
+  if (!block.validate) {
+    return false;
   }
+  var number_get = block.getFieldValue('get');
   var text_delim = block.getFieldValue('delim');
-  //this should not be empty
-  if (text_delim == undefined || text_delim == null || text_delim == '') {
-    _isError.push('Fill in delimiter value');
-  }
+
   var dropdown_operation = block.getFieldValue('operation');
   var variable_marker = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('marker'), Blockly.Variables.NAME_TYPE);
   //this shouldnot be 'f'
@@ -41,14 +35,9 @@ Blockly.JavaScript['field_extractor'] = function(block) {
     ascii += c.charCodeAt(0);
   });
   if (block.parentBlock_.type == 'extractor') {
-    code =  'm'+variable_marker +" = line.splitAndGetMarker(data, '+ ascii+', '+number_get+', mf);\n " +value_next_marker;
+    code =  'm' + variable_marker + " = line.splitAndGetMarker(data, '" + ascii + "', '+number_get+', mf);\n " +value_next_marker;
   } else {
-    code = 'm'+variable_marker +" ="+'m'+block.parentBlock_.getFieldValue('marker') +".splitAndGetMarker(data, '+ ascii+', '+number_get+', mf);\n";
-  }
-  if (_isError.length) {
-    this.setWarningText(_isError.join('\n'));
-  } else {
-    this.setWarningText(null);
+    code = 'm' + variable_marker + " =" + 'm' + block.parentBlock_.getFieldValue('marker') + ".splitAndGetMarker(data, '"+ ascii + "', '+number_get+', mf);\n";
   }
   Blockly.JavaScript.variables.push('protected Marker '+variable_marker+ ';\n');
   Blockly.JavaScript.variables.push('protected byte[] '+text_delim+ ';\n');
