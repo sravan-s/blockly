@@ -22,7 +22,8 @@ Blockly.Blocks["field_extractor"] = {
     init: function() {
         this.appendDummyInput()
             .appendField("extract ")
-            .appendField(new Blockly.FieldNumber(''), "get")
+            // .appendField(new Blockly.FieldNumber(''), "get")
+            .appendField(new Blockly.FieldVariable(''), "get")
             .appendField("nd  token delimited by")
             .appendField(new Blockly.FieldTextInput(""), "delim")
             .appendField("is of type")

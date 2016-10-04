@@ -18,6 +18,7 @@
 </style>
 </head>
 <body>
+  <button id="gen">Generate</button>
  <div id="blocklyDiv" ></div>
  <xml id="toolbox" style="display: none"> 
  <category name="InputBlocks"> 
@@ -29,13 +30,16 @@
   <block type="binary"></block> 
  </category> 
 </xml>
-
   <script>
+    var gen = document.getElementById('gen');
     var blocklyDiv = document.getElementById('blocklyDiv');
     var workspace = Blockly.inject(blocklyDiv,
         {toolbox: document.getElementById('toolbox')});
     window.addEventListener('resize', onresize, true);
     Blockly.svgResize(workspace); 
+    gen.addEventListener('click', function() {
+      Blockly.JavaScript.workspaceToCode(Blockly.getMainWorkspace());
+    });
   </script>
  <script type='text/javascript'>  </script>
 </body>

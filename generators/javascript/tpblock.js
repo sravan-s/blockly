@@ -1,8 +1,16 @@
+Blockly.JavaScript.variables = [];
 Blockly.JavaScript['extractor'] = function(block) {
   var value_line = Blockly.JavaScript.valueToCode(block, 'line', Blockly.JavaScript.ORDER_ATOMIC);
   var value_file = Blockly.JavaScript.valueToCode(block, 'file', Blockly.JavaScript.ORDER_ATOMIC);
-  // TODO: Assemble JavaScript into code variable.
-  var code = '...;\n';
+  Blockly.JavaScript.variables.push('protected Marker line;\n');
+  Blockly.JavaScript.variables.push('protected Marker fileName;\n');
+  if(value_line!= undefined || value_line != '') {
+    value_line = 'line.' + value_line;
+  }
+  if(value_file!= undefined || value_file != '') {
+    value_file = 'fileName.' + value_file;
+  }
+  var code = value_line + value_file;
   return code;
 };
 
@@ -12,10 +20,21 @@ Blockly.JavaScript['field_extractor'] = function(block) {
   var dropdown_operation = block.getFieldValue('operation');
   var variable_marker = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('marker'), Blockly.Variables.NAME_TYPE);
   var value_next_marker = Blockly.JavaScript.valueToCode(block, 'next_marker', Blockly.JavaScript.ORDER_ATOMIC);
-  // TODO: Assemble JavaScript into code variable.
-  var code = '...';
-  // TODO: Change ORDER_NONE to the correct strength.
-  return [code, Blockly.JavaScript.ORDER_NONE];
+  var chars = text_delim.split('');
+  var ascii = 'token_';
+  chars.forEach(function(c) {
+    ascii += c.charCodeAt(0);
+  });
+  if (block.parentBlock_.type == 'extractor') {
+    code = value_next_marker +  'm'+variable_marker +" = .splitAndGetMarker(data, '+ ascii+', '+number_get+', mf);\n ';" ;
+    // code = 'm'+variable_marker +" = fileName.splitAndGetMarker(data, '+ ascii+', '+number_get+', mf);\n ';"
+  }else{
+    code = 'm'+block.parentBlock_.getFieldValue('marker') +" = line.splitAndGetMarker(data, '+ ascii+', '+number_get+', mf);\n ';"
+  }
+  Blockly.JavaScript.variables.push('protected Marker '+variable_marker+ ';\n');
+  Blockly.JavaScript.variables.push('protected byte[] '+text_delim+ ';\n');
+  // var code = '.splitAndGetMarker(data, '+ ascii+', '+number_get+', mf);\n ';
+  return [code, Blockly.JavaScript.ORDER_ATOMIC];
 };
 
 
