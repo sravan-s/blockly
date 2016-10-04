@@ -1,7 +1,7 @@
 Blockly.Tp = {};
 Blockly.Tp.dataType = '[["String", "string"], ["Date", "date"], ["Number", "number"]]';
 Blockly.Tp.variableDateTypeMap = {};
-Blockly.variableMap = {};
+Blockly.Tp.variableMap = {};
 
 Blockly.Tp.pushVariableToMap = function(variable) {
 
@@ -39,6 +39,19 @@ Blockly.Blocks["extractor"] = {
         this.setColour(20);
         this.setTooltip("");
         this.setHelpUrl("http://www.example.com/");
+    },
+    validate: function() {
+        var lines = this.getInputTargetBlock('line');
+        var files = this.getInputTargetBlock('file');
+        if (!lines && !files) {
+            this.setWarningText('Append atleast one extraction or transformation');
+            return false;
+        }
+        this.setWarningText(null);
+        return true;
+    },
+    onchange: function() {
+        this.validate();
     }
 };
 
@@ -46,13 +59,13 @@ Blockly.Blocks["field_extractor"] = {
 
     init: function() {
         this.appendDummyInput()
+            .appendField("token delimited by")
+            .appendField(new Blockly.FieldTextInput(""), "delim")
             .appendField("extract ")
             // .appendField(new Blockly.FieldNumber(''), "get")
             // .appendField(new Blockly.FieldVariable(''), "get")
             .appendField(new Blockly.FieldTextInput(''), "get")
-            .appendField("nd  token delimited by")
-            .appendField(new Blockly.FieldTextInput(""), "delim")
-            .appendField("is of type")
+            .appendField("nd column of type")
             .appendField(new Blockly.FieldDropdown(JSON.parse(Blockly.Tp.dataType)), "operation")
             .appendField(" & is named as")
             .appendField(new Blockly.FieldVariable(""), "VAR");
@@ -87,7 +100,7 @@ Blockly.Blocks["field_extractor"] = {
             }
         }
 
-        Blockly.variableMap[this.getFieldValue("VAR")] = this.getFieldValue("operation");
+        // Blockly.Tp.variableMap[this.getFieldValue("VAR")] = this.getFieldValue("operation");
         this.getFieldValue('VAR');
         this.getFieldValue('operation');
         this.validate();
@@ -161,6 +174,18 @@ Blockly.Blocks["store"] = {
         this.setColour(345);
         this.setTooltip("");
         this.setHelpUrl("http://www.example.com/");
+    },
+    validate: function() {
+        var location = this.getFieldValue('path');
+        if (location == '') {
+            this.setWarningText('Select a location');
+            return false;
+        }
+        this.setWarningText(null);
+        return true;
+    },
+    onchange: function() {
+        this.validate();
     }
 };
 
@@ -220,7 +245,7 @@ Blockly.Blocks["unary"] = {
     getDropDown: function() {
         var superSet = JSON.parse(Blockly.Tp.dataType);
         var m1 = this.getFieldValue("m1");
-        var dataType = Blockly.variableMap[m1];
+        var dataType = Blockly.Tp.variableMap[m1];
         switch (dataType) {
             case 'string':
                 return this.OPERATIONS.tpString.unary;
@@ -242,7 +267,7 @@ Blockly.Blocks["unary"] = {
         }
         if (changeEvent.type === "ui") {
             var m1 = this.getFieldValue("m1");
-            var dataType = Blockly.variableMap[m1];
+            var dataType = Blockly.Tp.variableMap[m1];
             var op = this.getFieldValue("operation");
             var options = this.getDropDown(); // The new options you want to have
             var drop = this.getField("operation");
@@ -250,6 +275,18 @@ Blockly.Blocks["unary"] = {
             drop.setValue(" "); // set the actual value
             drop.menuGenerator_ = options;
         }
+        this.validate();
+    },
+    validate: function() {
+        var m1 = this.getFieldValue('m1');
+        var operation = this.getFieldValue('operation');
+        var result = this.getFieldValue('result');
+        if (m1 == '' || operation == '' || result == '') {
+            this.setWarningText('Fill all fields');
+            return false;
+        }
+        this.setWarningText(null);
+        return true;
     }
 
 };
@@ -391,7 +428,7 @@ Blockly.Blocks["binary"] = {
     onchange: function(changeEvent) {
         if (changeEvent.type === "change" && changeEvent.name == 'm1') {
             var m1 = this.getFieldValue("m1");
-            var dataType = Blockly.variableMap[m1];
+            var dataType = Blockly.Tp.variableMap[m1];
             var op = this.getFieldValue("operation");
             var options = this.getDropDown(m1); // The new options you want to have
             var drop = this.getField("operation");
@@ -399,12 +436,13 @@ Blockly.Blocks["binary"] = {
             drop.setValue(" "); // set the actual value
             drop.menuGenerator_ = options;
         }
+        this.validate();
         /* if(changeEvent.type === "ui")
         if (!this.workspace) {
             return;
         }
         var m1Field = this.getFieldValue("m1");
-        var binaryOp = Blockly.variableMap[m1Field] === 'string';
+        var binaryOp = Blockly.Tp.variableMap[m1Field] === 'string';
         if (binaryOp) {
             this.updateShape_binary(binaryOp,m1Field);
         }
@@ -425,6 +463,18 @@ Blockly.Blocks["binary"] = {
       this.removeInput('binaryOp');
     }*/
     },
+    validate: function() {
+        var m1 = this.getFieldValue('m1');
+        var m2 = this.getFieldValue('m2');
+        var operation = this.getFieldValue('operation');
+        var result = this.getFieldValue('VAR');
+        if (m1 == '' || operation == '' || result == '' || m2 == '') {
+            this.setWarningText('Fill all fields');
+            return false;
+        }
+        this.setWarningText(null);
+        return true;
+    }
 
 };
 
