@@ -1,6 +1,18 @@
-Blockly.Msg.dataType = '[["String", "string"], ["Date", "date"], ["Number", "number"]]';
-
+Blockly.Tp = {};
+Blockly.Tp.dataType = '[["String", "string"], ["Date", "date"], ["Number", "number"]]';
+Blockly.Tp.variableDateTypeMap = {};
 Blockly.variableMap = {};
+
+Blockly.Tp.pushVariableToMap = function(variable) {
+
+};
+Blockly.Tp.getVariableFromMap = function(vaiableName) {
+
+};
+Blockly.Tp.replaceVaribleInMap = function() {
+
+}
+
 Blockly.Blocks["extractor"] = {
     init: function() {
         this.appendValueInput("line")
@@ -23,11 +35,12 @@ Blockly.Blocks["field_extractor"] = {
         this.appendDummyInput()
             .appendField("extract ")
             // .appendField(new Blockly.FieldNumber(''), "get")
+            // .appendField(new Blockly.FieldVariable(''), "get")
             .appendField(new Blockly.FieldTextInput(''), "get")
             .appendField("nd  token delimited by")
             .appendField(new Blockly.FieldTextInput(""), "delim")
             .appendField("is of type")
-            .appendField(new Blockly.FieldDropdown(JSON.parse(Blockly.Msg.dataType)), "operation")
+            .appendField(new Blockly.FieldDropdown(JSON.parse(Blockly.Tp.dataType)), "operation")
             .appendField(" & is named as")
             .appendField(new Blockly.FieldVariable(""), "marker");
         this.appendValueInput("next_marker")
@@ -38,11 +51,41 @@ Blockly.Blocks["field_extractor"] = {
         this.setTooltip("");
         this.setHelpUrl("http://www.example.com/");
     },
-    onchange: function() {
+    onchange: function(e) {
         if (!this.workspace) {
             return;
         }
         Blockly.variableMap[this.getFieldValue("marker")] = this.getFieldValue("operation");
+        this.getFieldValue('marker');
+        this.getFieldValue('operation');
+        this.validate();
+    },
+    validate: function() {
+        var _isError = [];
+        var number_get = this.getFieldValue('get');
+        var text_delim = this.getFieldValue('delim');
+        var variable_marker = this.getFieldValue('marker');
+        if (number_get == '') {
+            _isError.push('Give a token ordinal');
+        } else {
+            number_get = +number_get;
+            if (!Number.isInteger(number_get)) {
+                _isError.push('Token ordinal should be a number');
+            }
+        }
+        if (text_delim == '') {
+            _isError.push('Text delimiter missing');
+        }
+        if (variable_marker.charAt(0) == 'f') {
+            _isError.push('Variable names cannot be "f"');
+        }
+        if (_isError.length) {
+            this.setWarningText(_isError.join('\n'));
+            return false;
+        } else {
+            this.setWarningText(null);
+            return true;
+        }
     }
 
 };
@@ -137,7 +180,7 @@ Blockly.Blocks["unary"] = {
         this.setHelpUrl("http://www.example.com/");
     },
      getDropDown: function() {
-        var superSet = JSON.parse(Blockly.Msg.dataType);
+        var superSet = JSON.parse(Blockly.Tp.dataType);
         var m1 = this.getFieldValue("m1");
         var dataType = Blockly.variableMap[m1];
         switch (dataType) {
@@ -263,7 +306,6 @@ Blockly.Blocks["binary"] = {
         }
     },
     init: function() {
-        debugger;
         this.appendDummyInput('binaryOp')
             .appendField(new Blockly.FieldVariable(""), "m1")
             .appendField(new Blockly.FieldDropdown([[]]), "operation")
@@ -279,7 +321,7 @@ Blockly.Blocks["binary"] = {
     },
 
     getDropDown: function(m1) {
-        var superSet = JSON.parse(Blockly.Msg.dataType);
+        var superSet = JSON.parse(Blockly.Tp.dataType);
         var dataType = Blockly.variableMap[m1];
         switch (dataType) {
             case 'string':

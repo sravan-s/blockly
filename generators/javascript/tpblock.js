@@ -8,21 +8,27 @@ Blockly.JavaScript['extractor'] = function(block) {
   var value_file = Blockly.JavaScript.valueToCode(block, 'file', Blockly.JavaScript.ORDER_ATOMIC);
   Blockly.JavaScript.variables.push('protected Marker line;\n');
   Blockly.JavaScript.variables.push('protected Marker fileName;\n');
-  if (value_line != undefined || value_line != '') {
-    value_line = 'line.' + value_line;
+  if(value_line!= undefined || value_line != '') {
+    code += value_line;
   }
-  if (value_file != undefined || value_file != '') {
-    value_file = 'fileName.' + value_file;
+  if(value_file!= undefined || value_file != '') {
+    code += value_file;
   }
-  var code = value_line + value_file;
+  Blockly.JavaScript.extractPhase = code;
   return code;
 };
 
 Blockly.JavaScript['field_extractor'] = function(block) {
+  if (!block.validate) {
+    return false;
+  }
   var number_get = block.getFieldValue('get');
   var text_delim = block.getFieldValue('delim');
+
   var dropdown_operation = block.getFieldValue('operation');
   var variable_marker = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('marker'), Blockly.Variables.NAME_TYPE);
+  //this shouldnot be 'f'
+  // and should be unique
   var value_next_marker = Blockly.JavaScript.valueToCode(block, 'next_marker', Blockly.JavaScript.ORDER_ATOMIC);
   var chars = text_delim.split('');
   var ascii = 'token_';
@@ -30,10 +36,9 @@ Blockly.JavaScript['field_extractor'] = function(block) {
     ascii += c.charCodeAt(0);
   });
   if (block.parentBlock_.type == 'extractor') {
-    code = value_next_marker + 'm' + variable_marker + " = .splitAndGetMarker(data, '+ ascii+', '+number_get+', mf);\n ';";
-    // code = 'm'+variable_marker +" = fileName.splitAndGetMarker(data, '+ ascii+', '+number_get+', mf);\n ';"
+    code =  'm' + variable_marker + " = line.splitAndGetMarker(data, '" + ascii + "', '+number_get+', mf);\n " +value_next_marker;
   } else {
-    code = 'm' + block.parentBlock_.getFieldValue('marker') + " = line.splitAndGetMarker(data, '+ ascii+', '+number_get+', mf);\n ';"
+    code = 'm' + variable_marker + " =" + 'm' + block.parentBlock_.getFieldValue('marker') + ".splitAndGetMarker(data, '"+ ascii + "', '+number_get+', mf);\n";
   }
   Blockly.JavaScript.variables.push('protected Marker ' + variable_marker + ';\n');
   Blockly.JavaScript.variables.push('protected byte[] ' + text_delim + ';\n');
@@ -103,15 +108,3 @@ Blockly.JavaScript['tp_constant'] = function(block) {
   
   return code;
 };
-
-Blockly.JavaScript['binary_string_transform'] = Blockly.JavaScript.generateBinary;
-Blockly.JavaScript['unary_string_transform'] = Blockly.JavaScript.generateUnary;
-
-Blockly.JavaScript['binary_math_transform'] = Blockly.JavaScript.generateBinary;
-Blockly.JavaScript['unary_math_transform'] = Blockly.JavaScript.generateUnary;
-
-Blockly.JavaScript['binary_date_transform'] = Blockly.JavaScript.generateBinary;
-Blockly.JavaScript['unary_date_transform'] = Blockly.JavaScript.generateUnary;
-
-Blockly.JavaScript['binary_logic_transform'] = Blockly.JavaScript.generateBinary;
-Blockly.JavaScript['unary_logic_transform'] = Blockly.JavaScript.generateUnary;
