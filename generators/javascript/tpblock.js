@@ -1,13 +1,17 @@
 Blockly.JavaScript.variables = [];
+Blockly.JavaScript.extractPhase = '';
+Blockly.JavaScript.translatePhase = '';
+Blockly.JavaScript.storePhase = '';
+
 Blockly.JavaScript['extractor'] = function(block) {
   var value_line = Blockly.JavaScript.valueToCode(block, 'line', Blockly.JavaScript.ORDER_ATOMIC);
   var value_file = Blockly.JavaScript.valueToCode(block, 'file', Blockly.JavaScript.ORDER_ATOMIC);
   Blockly.JavaScript.variables.push('protected Marker line;\n');
   Blockly.JavaScript.variables.push('protected Marker fileName;\n');
-  if(value_line!= undefined || value_line != '') {
+  if (value_line != undefined || value_line != '') {
     value_line = 'line.' + value_line;
   }
-  if(value_file!= undefined || value_file != '') {
+  if (value_file != undefined || value_file != '') {
     value_file = 'fileName.' + value_file;
   }
   var code = value_line + value_file;
@@ -26,13 +30,13 @@ Blockly.JavaScript['field_extractor'] = function(block) {
     ascii += c.charCodeAt(0);
   });
   if (block.parentBlock_.type == 'extractor') {
-    code = value_next_marker +  'm'+variable_marker +" = .splitAndGetMarker(data, '+ ascii+', '+number_get+', mf);\n ';" ;
+    code = value_next_marker + 'm' + variable_marker + " = .splitAndGetMarker(data, '+ ascii+', '+number_get+', mf);\n ';";
     // code = 'm'+variable_marker +" = fileName.splitAndGetMarker(data, '+ ascii+', '+number_get+', mf);\n ';"
-  }else{
-    code = 'm'+block.parentBlock_.getFieldValue('marker') +" = line.splitAndGetMarker(data, '+ ascii+', '+number_get+', mf);\n ';"
+  } else {
+    code = 'm' + block.parentBlock_.getFieldValue('marker') + " = line.splitAndGetMarker(data, '+ ascii+', '+number_get+', mf);\n ';"
   }
-  Blockly.JavaScript.variables.push('protected Marker '+variable_marker+ ';\n');
-  Blockly.JavaScript.variables.push('protected byte[] '+text_delim+ ';\n');
+  Blockly.JavaScript.variables.push('protected Marker ' + variable_marker + ';\n');
+  Blockly.JavaScript.variables.push('protected byte[] ' + text_delim + ';\n');
   // var code = '.splitAndGetMarker(data, '+ ascii+', '+number_get+', mf);\n ';
   return [code, Blockly.JavaScript.ORDER_ATOMIC];
 };
@@ -54,24 +58,49 @@ Blockly.JavaScript['store'] = function(block) {
   var code = '...;\n';
   return code;
 };
-Blockly.JavaScript.generateBinary= function(block){
+Blockly.JavaScript.generateBinary = function(block) {
   var variable_m1 = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('m1'), Blockly.Variables.NAME_TYPE);
   var dropdown_operation = block.getFieldValue('operation');
   var variable_m2 = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('m2'), Blockly.Variables.NAME_TYPE);
   var variable_result = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('result'), Blockly.Variables.NAME_TYPE);
   var value_child = Blockly.JavaScript.valueToCode(block, 'child', Blockly.JavaScript.ORDER_ATOMIC);
-  // TODO: Assemble JavaScript into code variable.
-  var code = '...;\n';
+  code = dropdown_operation.replace('$1',variable_result)
+  .replace('$2',variable_m1)
+  .replace('$3',variable_m2)
+  +'\n';
+  // var code = '...;\n';
   return code;
 };
 
-Blockly.JavaScript.generateUnary= function(block){
-   var dropdown_operation = block.getFieldValue('operation');
+Blockly.JavaScript.generateUnary = function(block) {
+  var dropdown_operation = block.getFieldValue('operation');
   var variable_m1 = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('m1'), Blockly.Variables.NAME_TYPE);
   var variable_result = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('result'), Blockly.Variables.NAME_TYPE);
   var value_child = Blockly.JavaScript.valueToCode(block, 'child', Blockly.JavaScript.ORDER_ATOMIC);
-  // TODO: Assemble JavaScript into code variable.
-  var code = '...;\n';
+  code = dropdown_operation.replace('$1',variable_result)
+  .replace('$2',variable_m1)
+   +'\n';
+  return code;
+};
+
+
+Blockly.JavaScript['tp_constant'] = function(block) {
+  var text_constant = block.getFieldValue('constant');
+  var dropdown_name = block.getFieldValue('NAME');
+  switch (dropdown_name) {
+    case String:
+      code = "protected String c_" + text_constant + ' = "' + text_constant + '";\n';
+      break
+
+    case Long:
+      code = "protected long c_" + text_constant + ' = ' + text_constant + ';\n';
+      break;
+
+    case Double:
+      code = "protected double c_" + text_constant + ' = ' + text_constant + ';\n';
+      break;
+  }
+  
   return code;
 };
 
