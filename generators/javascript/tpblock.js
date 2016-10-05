@@ -18,6 +18,15 @@ Blockly.JavaScript['extractor'] = function(block) {
   return code;
 };
 
+Blockly.JavaScript['output_field'] = function(block) {
+  var variable_name = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('NAME'), Blockly.Variables.NAME_TYPE);
+  // TODO: Assemble JavaScript into code variable.
+  var code = '...';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.JavaScript.ORDER_NONE];
+};
+
+
 Blockly.JavaScript['field_extractor'] = function(block) {
   if (!block.validate) {
     return false;

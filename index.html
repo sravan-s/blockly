@@ -20,7 +20,7 @@
 <body>
   <button id="gen">Generate</button>
  <div id="blocklyDiv" ></div>
- <xml id="toolbox" style="display: none"> 
+<!--  <xml id="toolbox" style="display: none"> 
  <category name="InputBlocks"> 
   <block type="field_extractor"></block> 
   <block type="extractor"></block> 
@@ -31,15 +31,23 @@
   <block type="lookup"></block> 
   <block type="controls_if"></block> 
   <block type="tp_constant"></block> 
+  <block type="lists_create_with"></block>
  </category> 
-</xml>
+</xml> -->
   <script>
     var gen = document.getElementById('gen');
     var blocklyDiv = document.getElementById('blocklyDiv');
-    var workspace = Blockly.inject(blocklyDiv,
-        {toolbox: document.getElementById('toolbox')});
+    var workspace = Blockly.inject(blocklyDiv
+        // {toolbox: document.getElementById('toolbox')}
+        );
     window.addEventListener('resize', onresize, true);
     Blockly.svgResize(workspace); 
+
+    var xmlInit = '<xml><block type="extractor" deletable="false" id="D-i{Q5j{]PJ!5f.@f^S^" x="195" y="107"><value name="line"><block type="field_extractor" id="-UBE=0AF-5wVL6~}%=aX"><field name="delim"></field><field name="get"></field><field name="operation">string</field><field name="VAR">i</field></block></value><next><block type="transform" deletable="false" id="`#{siG=4Z=W{9fzG7~Xj"><next><block type="store"  deletable="false" id="x6tnR`YVMw61kvdnf}`B"><field name="operation">hdfs</field><field name="path"></field><field name="headers">TRUE</field></block></next></block></next></block></xml>';
+
+                 var xmlDom = Blockly.Xml.textToDom(xmlInit);
+                Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, xmlDom);
+
     gen.addEventListener('click', function() {
       Blockly.JavaScript.workspaceToCode(Blockly.getMainWorkspace());
     });

@@ -29,10 +29,10 @@ var blockObj = function(obj) {
 Blockly.Blocks["extractor"] = {
     init: function() {
         this.appendValueInput("line")
-            .setCheck("field_extractor")
+            .setCheck(["field_extractor","Array"])
             .appendField("Extract from line");
         this.appendValueInput("file")
-            .setCheck("field_extractor")
+            .setCheck(["field_extractor","Array"])
             .appendField("Extract from file name");
         this.setInputsInline(false);
         this.setNextStatement("transform");
@@ -308,7 +308,7 @@ Blockly.Blocks['lookup'] = {
             .appendField("   value called as")
             .appendField(new Blockly.FieldVariable("item"), "var_value")
             .appendField(" and is of type")
-            .appendField(new Blockly.FieldVariable(""), "VAR");
+            .appendField(new Blockly.FieldDropdown(JSON.parse(Blockly.Tp.dataType)), "type");
 
         //.appendField(new Blockly.FieldDropdown(Blockly.Blocks.dataType), "data_type");
         this.setPreviousStatement(true, null);
@@ -317,7 +317,29 @@ Blockly.Blocks['lookup'] = {
         this.setTooltip('');
         this.setHelpUrl('http://www.example.com/');
         blockObj(this);
+    },
+    onchange: function() {
+        this.validate();
+    },
+    validate: function() {
+        var m1 = this.getFieldValue('m1');
+        var operation = this.getFieldValue('operation');
+        var path = this.getFieldValue('path');
+        var var_key = this.getFieldValue('var_key');
+        var var_value = this.getFieldValue('var_value');
+        var type = this.getFieldValue('type');
     }
+};
+
+Blockly.Blocks['output_field'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldVariable(""), "NAME");
+    this.setOutput(true, null);
+    this.setColour(330);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.example.com/');
+  }
 };
 
 Blockly.Blocks['tp_constant'] = {
@@ -503,4 +525,190 @@ Blockly.FieldVariable.dropdownCreate = function() {
         options[x] = [variableList[x], variableList[x]];
     }
     return options;
+};
+
+
+Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {
+    if (this.options.readOnly || this.isFlyout) {
+        return;
+    }
+    var menuOptions = [];
+    var topBlocks = this.getTopBlocks(true);
+    // Option to clean up blocks.
+    var cleanOption = {};
+    cleanOption.text = Blockly.Msg.CLEAN_UP;
+    cleanOption.enabled = topBlocks.length > 1;
+    cleanOption.callback = this.cleanUp_.bind(this);
+    menuOptions.push(cleanOption);
+
+    // Add a little animation to collapsing and expanding.
+    var DELAY = 10;
+    if (this.options.collapse) {
+        var hasCollapsedBlocks = false;
+        var hasExpandedBlocks = false;
+        for (var i = 0; i < topBlocks.length; i++) {
+            var block = topBlocks[i];
+            while (block) {
+                if (block.isCollapsed()) {
+                    hasCollapsedBlocks = true;
+                } else {
+                    hasExpandedBlocks = true;
+                }
+                block = block.getNextBlock();
+            }
+        }
+
+        /*
+         * Option to collapse or expand top blocks
+         * @param {boolean} shouldCollapse Whether a block should collapse.
+         * @private
+         */
+        var toggleOption = function(shouldCollapse) {
+            var ms = 0;
+            for (var i = 0; i < topBlocks.length; i++) {
+                var block = topBlocks[i];
+                while (block) {
+                    setTimeout(block.setCollapsed.bind(block, shouldCollapse), ms);
+                    block = block.getNextBlock();
+                    ms += DELAY;
+                }
+            }
+        };
+
+        // Option to collapse top blocks.
+        var collapseOption = {
+            enabled: hasExpandedBlocks
+        };
+        collapseOption.text = Blockly.Msg.COLLAPSE_ALL;
+        collapseOption.callback = function() {
+            toggleOption(true);
+        };
+        menuOptions.push(collapseOption);
+
+        // Option to expand top blocks.
+        var expandOption = {
+            enabled: hasCollapsedBlocks
+        };
+        expandOption.text = Blockly.Msg.EXPAND_ALL;
+        expandOption.callback = function() {
+            toggleOption(false);
+        };
+        menuOptions.push(expandOption);
+    }
+
+    // Option to delete all blocks.
+    // Count the number of blocks that are deletable.
+    var deleteList = [];
+
+    function addDeletableBlocks(block) {
+        if (block.isDeletable()) {
+            deleteList = deleteList.concat(block.getDescendants());
+        } else {
+            var children = block.getChildren();
+            for (var i = 0; i < children.length; i++) {
+                addDeletableBlocks(children[i]);
+            }
+        }
+    }
+    for (var i = 0; i < topBlocks.length; i++) {
+        addDeletableBlocks(topBlocks[i]);
+    }
+    var deleteOption = {
+        text: deleteList.length <= 1 ? Blockly.Msg.DELETE_BLOCK : Blockly.Msg.DELETE_X_BLOCKS.replace('%1', String(deleteList.length)),
+        enabled: deleteList.length > 0,
+        callback: function() {
+            if (deleteList.length < 2 ||
+                window.confirm(Blockly.Msg.DELETE_ALL_BLOCKS.replace('%1',
+                    String(deleteList.length)))) {
+                deleteNext();
+            }
+        }
+    };
+
+
+    function deleteNext() {
+        var block = deleteList.shift();
+        if (block) {
+            if (block.workspace) {
+                block.dispose(false, true);
+                setTimeout(deleteNext, DELAY);
+            } else {
+                deleteNext();
+            }
+        }
+    }
+
+    function renderBlock(id) {
+        var newBlock = workspace.newBlock(id);
+        newBlock.initSvg();
+        Blockly.mainWorkspace.render();
+    }
+
+    function addWorkspaceOptions() {
+        var obj = [{
+            enabled: true,
+            text: "Field Extractor",
+            // callback: CreateFieldExtractor
+            callback: function() {
+                renderBlock('field_extractor');
+            }
+        }, {
+            enabled: true,
+            text: "Binary Operator",
+            // callback: CreateBinaryOperator
+            callback: function() {
+                renderBlock('binary');
+            }
+        }, {
+            enabled: true,
+            text: "Unary Operator",
+            // callback: CreateUnaryOperator
+            callback: function() {
+                renderBlock('unary');
+            }
+        }, {
+            enabled: true,
+            text: "Lookup",
+            // callback: CreateLookupOperator
+            callback: function() {
+                renderBlock('lookup');
+            }
+        }, {
+            enabled: true,
+            text: "Add Constants",
+            // callback: CreateConstants
+            callback: function() {
+                renderBlock('tp_constant');
+            }
+        }, {
+            enabled: true,
+            text: "Logic Control-if",
+            // callback: CreateLogic
+            callback: function() {
+                renderBlock('controls_if');
+            }
+        }, {
+            enabled: true,
+            text: "Pipe",
+            // callback: CreateLogic
+            callback: function() {
+                renderBlock('lists_create_with');
+            }
+        }, {
+            enabled: true,
+            text: "Variable",
+            // callback: CreateLogic
+            callback: function() {
+                renderBlock('output_field');
+            }
+        }];
+        obj.forEach(function(item) {
+            menuOptions.push(item);
+        });
+    }
+    addWorkspaceOptions();
+    menuOptions.push(deleteOption);
+
+
+    Blockly.ContextMenu.show(e, menuOptions, this.RTL);
 };
