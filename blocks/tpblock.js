@@ -639,9 +639,10 @@ Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {
     }
 
     function renderBlock(id) {
-        var newBlock = workspace.newBlock(id);
+        var mainWorkspace = Blockly.getMainWorkspace();
+        var newBlock = mainWorkspace.newBlock(id);
         newBlock.initSvg();
-        Blockly.mainWorkspace.render();
+        mainWorkspace.render();
     }
 
     function addWorkspaceOptions() {
