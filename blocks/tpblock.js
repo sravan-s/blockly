@@ -1,6 +1,31 @@
-Blockly.Msg.dataType = '[["String", "string"], ["Date", "date"], ["Number", "number"]]';
+Blockly.Tp = {};
+Blockly.Tp.dataType = '[["String", "string"], ["Date", "date"], ["Number", "number"]]';
+Blockly.Tp.variableDateTypeMap = {};
+Blockly.Tp.variableMap = {};
 
-Blockly.variableMap = {};
+Blockly.Tp.pushVariableToMap = function(variable) {
+
+};
+Blockly.Tp.getVariableFromMap = function(vaiableName) {
+
+};
+Blockly.Tp.replaceVaribleInMap = function() {
+
+}
+
+var blockObj = function(obj) {
+    obj.renameVar = function(oldName, newName) {
+        if (Blockly.Names.equals(oldName, this.getFieldValue('VAR'))) {
+            this.setFieldValue(newName, 'VAR');
+        }
+    }
+    obj.getVars = function() {
+        return [this.getFieldValue('VAR')];
+    }
+
+};
+
+
 Blockly.Blocks["extractor"] = {
     init: function() {
         this.appendValueInput("line")
@@ -14,21 +39,36 @@ Blockly.Blocks["extractor"] = {
         this.setColour(20);
         this.setTooltip("");
         this.setHelpUrl("http://www.example.com/");
+    },
+    validate: function() {
+        var lines = this.getInputTargetBlock('line');
+        var files = this.getInputTargetBlock('file');
+        if (!lines && !files) {
+            this.setWarningText('Append atleast one extraction or transformation');
+            return false;
+        }
+        this.setWarningText(null);
+        return true;
+    },
+    onchange: function() {
+        this.validate();
     }
 };
 
-
 Blockly.Blocks["field_extractor"] = {
+
     init: function() {
         this.appendDummyInput()
-            .appendField("extract ")
-            .appendField(new Blockly.FieldNumber(''), "get")
-            .appendField("nd  token delimited by")
+            .appendField("token delimited by")
             .appendField(new Blockly.FieldTextInput(""), "delim")
-            .appendField("is of type")
-            .appendField(new Blockly.FieldDropdown(JSON.parse(Blockly.Msg.dataType)), "operation")
+            .appendField("extract ")
+            // .appendField(new Blockly.FieldNumber(''), "get")
+            // .appendField(new Blockly.FieldVariable(''), "get")
+            .appendField(new Blockly.FieldTextInput(''), "get")
+            .appendField("nd column of type")
+            .appendField(new Blockly.FieldDropdown(JSON.parse(Blockly.Tp.dataType)), "operation")
             .appendField(" & is named as")
-            .appendField(new Blockly.FieldVariable(""), "marker");
+            .appendField(new Blockly.FieldVariable(""), "VAR");
         this.appendValueInput("next_marker")
             .setCheck("field_extractor");
         this.setInputsInline(false);
@@ -36,12 +76,65 @@ Blockly.Blocks["field_extractor"] = {
         this.setColour(20);
         this.setTooltip("");
         this.setHelpUrl("http://www.example.com/");
+        blockObj(this);
     },
-    onchange: function() {
+    onchange: function(e) {
         if (!this.workspace) {
             return;
         }
-        Blockly.variableMap[this.getFieldValue("marker")] = this.getFieldValue("operation");
+
+        if (e.type == 'change') {
+            var varType = this.getFieldValue('operation');
+            var variable = this.getFieldValue('VAR');
+            if (e.name == 'VAR') {
+                if (Blockly.Tp.variableDateTypeMap[variable]) {
+                    this.setWarningText('Use unique variable names');
+                    return false;
+                }
+                Blockly.Tp.variableDateTypeMap[e.newValue] = varType;
+                if (e.oldValue) {
+                    delete Blockly.Tp.variableDateTypeMap[e.oldValue];
+                }
+            } else if (e.name == 'operation') {
+                Blockly.Tp.variableDateTypeMap[variable] = e.newValue;
+            }
+        }
+
+        // Blockly.Tp.variableMap[this.getFieldValue("VAR")] = this.getFieldValue("operation");
+        this.getFieldValue('VAR');
+        this.getFieldValue('operation');
+        this.validate();
+
+
+
+    },
+
+    validate: function() {
+        var _isError = [];
+        var number_get = this.getFieldValue('get');
+        var text_delim = this.getFieldValue('delim');
+        var variable_marker = this.getFieldValue('VAR');
+        if (number_get == '') {
+            _isError.push('Give a token ordinal');
+        } else {
+            number_get = +number_get;
+            if (!Number.isInteger(number_get)) {
+                _isError.push('Token ordinal should be a number');
+            }
+        }
+        if (text_delim == '') {
+            _isError.push('Text delimiter missing');
+        }
+        if (variable_marker.charAt(0) == 'f') {
+            _isError.push('Variable names cannot be "f"');
+        }
+        if (_isError.length) {
+            this.setWarningText(_isError.join('\n'));
+            return false;
+        } else {
+            this.setWarningText(null);
+            return true;
+        }
     }
 
 };
@@ -81,51 +174,65 @@ Blockly.Blocks["store"] = {
         this.setColour(345);
         this.setTooltip("");
         this.setHelpUrl("http://www.example.com/");
+    },
+    validate: function() {
+        var location = this.getFieldValue('path');
+        if (location == '') {
+            this.setWarningText('Select a location');
+            return false;
+        }
+        this.setWarningText(null);
+        return true;
+    },
+    onchange: function() {
+        this.validate();
     }
 };
 
 Blockly.Blocks["unary"] = {
-    OPERATIONS : {
+    OPERATIONS: {
         tpDate: {
             unary: [
-                ["convertDate", "tpDate.convertDate(data1, m1, MarkerFactory, str2);"],
+                ["convertDate", "$1 = tpDate.convertDate(data1, $2, MarkerFactory, $3);"],
             ]
         },
         tpString: {
             unary: [
-                ["toLowerCase", "tpString.toLowerCase(data1, m1, mf);"],
-                ["toTitleCase", "tpString.toTitleCase(data1, m1, mf);"],
-                ["toUpperCase", "tpString.toUpperCase(data1, m1, mf);"],
-                ["isNull", "tpString.isNull(data1, m1, mf);"],
-                ["length", "tpString.length(data1, m1, mf);"],
-                ["rTrim", "tpString.rTrim(data1, m1, mf);"],
-                ["lTrim", "tpString.lTrim(data1, m1, mf);"],
-                ["trim", "tpString.trim(data1, m1, mf);"]
+                ["toLowerCase", "$1 = tpString.toLowerCase(data1, $2, mf);"],
+                ["toTitleCase", "$1 = tpString.toTitleCase(data1, $2, mf);"],
+                ["toUpperCase", "$1 = tpString.toUpperCase(data1, $2, mf);"],
+                ["isNull", "$1 = tpString.isNull(data1, $2, mf);"],
+                ["length", "$1 = tpString.length(data1, $2, mf);"],
+                ["rTrim", "$1 = tpString.rTrim(data1, $2, mf);"],
+                ["lTrim", "$1 = tpString.lTrim(data1, $2, mf);"],
+                ["trim", "$1 = tpString.trim(data1, $2, mf);"]
             ]
         },
         tpMath: {
             unary: [
-                ["abs", "tpMath.abs(data1, m1, mf);"],
-                ["ceil", "tpMath.ceil(data1, m1, mf);"],
-                ["round", "tpMath.round(data1, integer, m1, mf);"],
-                ["floor", "tpMath.floor(data1, m1, mf);"],
-                ["isNumber", "tpMath.isNumber(data1, m1, mf);"],
-                ["extractDecimalFractionPart", "tpMath.extractDecimalFractionPart(data1, m1, mf);"],
-                ["extractDecimalIntegerPart", "tpMath.extractDecimalIntegerPart(data1, m1, mf);"],
-                ["toMarker", "tpMath.toMarker(doubleVal , mf);"],
-                ["toMarker", "tpMath.toMarker(long, mf);"]
+                ["abs", "$1 =tpMath.abs(data1, $2, mf);"],
+                ["ceil", "$1 =tpMath.ceil(data1, $2, mf);"],
+                ["round", "$1 =tpMath.round(data1, integer, $2, mf);"],
+                ["floor", "$1 =tpMath.floor(data1, $2, mf);"],
+                ["isNumber", "$1 =tpMath.isNumber(data1, $2, mf);"],
+                ["extractDecimalFractionPart", "$1 =tpMath.extractDecimalFractionPart(data1, $2, mf);"],
+                ["extractDecimalIntegerPart", "$1 =tpMath.extractDecimalIntegerPart(data1, $2, mf);"],
+                ["toMarker", "$1 =tpMath.toMarker($2 , mf);"],
+                ["toMarker", "$1 =tpMath.toMarker($2, mf);"]
             ]
         },
         tpLogic: {
             unary: [
-                ["not", "tpLogic.not(bool)"]
+                ["not", "$1 = tpLogic.not($2)"]
             ]
         }
     },
     init: function() {
         this.appendDummyInput()
             .appendField(new Blockly.FieldVariable(""), "m1")
-            .appendField(new Blockly.FieldDropdown([[]]), "operation")
+            .appendField(new Blockly.FieldDropdown([
+                []
+            ]), "operation")
             .appendField(" & is named as")
             .appendField(new Blockly.FieldVariable(""), "result");
         this.setInputsInline(false);
@@ -135,10 +242,10 @@ Blockly.Blocks["unary"] = {
         this.setTooltip("");
         this.setHelpUrl("http://www.example.com/");
     },
-     getDropDown: function() {
-        var superSet = JSON.parse(Blockly.Msg.dataType);
+    getDropDown: function() {
+        var superSet = JSON.parse(Blockly.Tp.dataType);
         var m1 = this.getFieldValue("m1");
-        var dataType = Blockly.variableMap[m1];
+        var dataType = Blockly.Tp.variableMap[m1];
         switch (dataType) {
             case 'string':
                 return this.OPERATIONS.tpString.unary;
@@ -158,84 +265,149 @@ Blockly.Blocks["unary"] = {
         if (!this.workspace) {
             return;
         }
-        if(changeEvent.type === "ui") {
-        var m1 = this.getFieldValue("m1");
-        var dataType = Blockly.variableMap[m1];
-        var op = this.getFieldValue("operation");
-        var options = this.getDropDown(); // The new options you want to have
-        var drop = this.getField("operation");
-        drop.setText(" "); // set the actual text
-        drop.setValue(" "); // set the actual value
-        drop.menuGenerator_ = options;
-    }
+        if (changeEvent.type === "ui") {
+            var m1 = this.getFieldValue("m1");
+            var dataType = Blockly.Tp.variableMap[m1];
+            var op = this.getFieldValue("operation");
+            var options = this.getDropDown(); // The new options you want to have
+            var drop = this.getField("operation");
+            drop.setText(" "); // set the actual text
+            drop.setValue(" "); // set the actual value
+            drop.menuGenerator_ = options;
+        }
+        this.validate();
+    },
+    validate: function() {
+        var m1 = this.getFieldValue('m1');
+        var operation = this.getFieldValue('operation');
+        var result = this.getFieldValue('result');
+        if (m1 == '' || operation == '' || result == '') {
+            this.setWarningText('Fill all fields');
+            return false;
+        }
+        this.setWarningText(null);
+        return true;
     }
 
 };
 
+Blockly.Blocks['lookup'] = {
+    init: function() {
+        this.appendDummyInput()
+            .appendField("Lookup type")
+            .appendField(new Blockly.FieldDropdown([
+                ["longest prefix", "lp"],
+                ["key-value", "map"],
+                ["Number", "number"]
+            ]), "operation")
+            .appendField("specify data source")
+            .appendField(new Blockly.FieldTextInput("default"), "path");
+        this.appendDummyInput()
+            .appendField("Pick key")
+            .appendField(new Blockly.FieldVariable("item"), "var_key")
+            .appendField("   value called as")
+            .appendField(new Blockly.FieldVariable("item"), "var_value")
+            .appendField(" and is of type")
+            .appendField(new Blockly.FieldVariable(""), "VAR");
+
+        //.appendField(new Blockly.FieldDropdown(Blockly.Blocks.dataType), "data_type");
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour(345);
+        this.setTooltip('');
+        this.setHelpUrl('http://www.example.com/');
+        blockObj(this);
+    }
+};
+
+Blockly.Blocks['tp_constant'] = {
+    init: function() {
+        this.appendDummyInput()
+            .appendField("Define ")
+            .appendField(new Blockly.FieldTextInput("default"), "constant")
+            .appendField("as")
+            .appendField(new Blockly.FieldDropdown([
+                ["String", "OPTIONNAME"],
+                ["Number", "OPTIONNAME"],
+                ["Date", "OPTIONNAME"]
+            ]), "NAME")
+            .appendField("save as")
+            .appendField(new Blockly.FieldTextInput("default"), "VAR");
+        this.setPreviousStatement(true);
+        this.setNextStatement(true);
+        this.setColour(230);
+        this.setTooltip('');
+        this.setHelpUrl('http://www.example.com/');
+        blockObj(this);
+    }
+};
+
 Blockly.Blocks["binary"] = {
-    OPERATIONS : {
+    OPERATIONS: {
         tpDate: {
             binary: [
-                ["after", "tpDate.after(data1, m1, data2, m2);"],
-                ["before", "tpDate.before(data1, m1, data2, m2);"],
-                ["differenceInMillis", "tpDate.differenceInMillis(data1, m1, data2, m2);"]
+                ["after", "$1 = tpDate.after(data1, $2, data2, $3);"],
+                ["before", "$1 = tpDate.before(data1, $2, data2, $3);"],
+                ["differenceInMillis", "$1 = tpDate.differenceInMillis(data1, $2, data2, $3);"]
             ]
         },
         tpString: {
             binary: [
-                ["contains", "tpString.contains(data1, m1, data2, m1, mf);"],
-                ["containsIgnoreCase", "tpString.containsIgnoreCase(data1, m1, data2, m1, mf);"],
-                ["endsWith", "tpString.endsWith(data1, m1, data2, m1, mf);"],
-                ["endsWithIgnore", "tpString.endsWithIgnore(data1, m1, data2, m1, mf);"],
-                ["extractLeading", "tpString.extractLeading(data1, m1, integer, mf);"],
-                ["extractTrailing", "tpString.extractTrailing(data1, m1, integer, mf);"],
-                ["indexOf", "tpString.indexOf(data1, m1, data2, m1, mf);"],
-                ["indexOIgnoreCase", "tpString.indexOIgnoreCase(data1, m1, data2, m1, mf);"],
-                ["merge", "tpString.merge(data1, m1, data2, m1, mf);"],
-                ["startsWith", "tpString.startsWith(data1, m1, data2, m2);"]
+                ["contains", "$1 = tpString.contains(data1, $2, data2, $3, mf);"],
+                ["containsIgnoreCase", "$1 = tpString.containsIgnoreCase(data1, $2, data2, $3, mf);"],
+                ["endsWith", "$1 = tpString.endsWith(data1, $2, data2, $3, mf);"],
+                ["endsWithIgnore", "$1 = tpString.endsWithIgnore(data1, $2, data2, $3, mf);"],
+                ["extractLeading", "$1 = tpString.extractLeading(data1, $1, integer, mf);"],
+                ["extractTrailing", "$1 = tpString.extractTrailing(data1, $1, integer, mf);"],
+                ["indexOf", "$1 = tpString.indexOf(data1, $2, data2, $3, mf);"],
+                ["indexOIgnoreCase", "$1 = tpString.indexOIgnoreCase(data1, $2, data2, $3, mf);"],
+                ["merge", "$1 = tpString.merge(data1, $2, data2, $3, mf);"],
+                ["startsWith", "$1 = tpString.startsWith(data1, $2, data2, $3);"]
             ]
         },
         tpMath: {
             binary: [
-                ["addDouble", "tpMath.addDouble(data1, m1, data2, m1, mf);"],
-                ["addLong", "tpMath.addLong(data1, m1, data2, m1, mf);"],
-                ["eq", "tpMath.eq(data1, m1, data2, m1, mf);"],
-                ["greaterEqThan", "tpMath.greaterEqThan(data1, m1, data2, m1, mf);"],
-                ["greaterThan", "tpMath.greaterThan(data1, m1, data2, m1, mf);"],
-                ["lessEqThan", "tpMath.lessEqThan(data1, m1, data2, m1, mf);"],
-                ["lessThan", "tpMath.lessThan(data1, m1, data2, m1, mf);"],
-                ["max", "tpMath.max(data1, m1, data2, m1, mf);"],
-                ["min", "tpMath.min(data1, m1, data2, m1, mf);"],
-                ["subDouble", "tpMath.subDouble(data1, m1, data2, m1, mf);"],
-                ["subLong", "tpMath.subLong(data1, m1, data2, m1, mf);"]
+                ["addDouble", "$1 = tpMath.addDouble(data1, $2, data2, $3, mf);"],
+                ["addLong", "$1 = tpMath.addLong(data1, $2, data2, $3, mf);"],
+                ["eq", "$1 = tpMath.eq(data1, $2, data2, $3, mf);"],
+                ["greaterEqThan", "$1 = tpMath.greaterEqThan(data1, $2, data2, $3, mf);"],
+                ["greaterThan", "$1 = tpMath.greaterThan(data1, $2, data2, $3, mf);"],
+                ["lessEqThan", "$1 = tpMath.lessEqThan(data1, $2, data2, $3, mf);"],
+                ["lessThan", "$1 = tpMath.lessThan(data1, $2, data2, $3, mf);"],
+                ["max", "$1 = tpMath.max(data1, $2, data2, $3, mf);"],
+                ["min", "$1 = tpMath.min(data1, $2, data2, $3, mf);"],
+                ["subDouble", "$1 = tpMath.subDouble(data1, $2, data2, $3, mf);"],
+                ["subLong", "$1 = tpMath.subLong(data1, $2, data2, $3, mf);"]
             ]
         },
         tpLogic: {
             binary: [
-                ["and", "tpLogic.and(bool, bool)"],
-                ["or", "tpLogic.or(bool, bool)"]
+                ["and", "$1 = tpLogic.and($2, $3)"],
+                ["or", "$1 = tpLogic.or($2, $3)"]
             ]
         }
     },
     init: function() {
-
         this.appendDummyInput('binaryOp')
             .appendField(new Blockly.FieldVariable(""), "m1")
-            .appendField(new Blockly.FieldDropdown([[]]), "operation")
+            .appendField(new Blockly.FieldDropdown([
+                []
+            ]), "operation")
             .appendField(new Blockly.FieldVariable(""), "m2")
             .appendField(" & is named as")
-            .appendField(new Blockly.FieldVariable(""), "result");
+            .appendField(new Blockly.FieldVariable(""), "VAR");
         this.setInputsInline(false);
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
         this.setColour("#006400");
         this.setTooltip("");
         this.setHelpUrl("http://www.example.com/");
+        blockObj(this);
     },
 
     getDropDown: function(m1) {
-        var superSet = JSON.parse(Blockly.Msg.dataType);
-        var dataType = Blockly.variableMap[m1];
+        var superSet = JSON.parse(Blockly.Tp.dataType);
+        var dataType = Blockly.Tp.variableDateTypeMap[m1];
         switch (dataType) {
             case 'string':
                 return this.OPERATIONS.tpString.binary;
@@ -252,24 +424,25 @@ Blockly.Blocks["binary"] = {
         }
     },
 
-    
+
     onchange: function(changeEvent) {
-        if(changeEvent.type === "ui") {
-        var m1 = this.getFieldValue("m1");
-        var dataType = Blockly.variableMap[m1];
-        var op = this.getFieldValue("operation");
-        var options = this.getDropDown(m1); // The new options you want to have
-        var drop = this.getField("operation");
-        drop.setText(" "); // set the actual text
-        drop.setValue(" "); // set the actual value
-        drop.menuGenerator_ = options;
-    }
-       /* if(changeEvent.type === "ui")
+        if (changeEvent.type === "change" && changeEvent.name == 'm1') {
+            var m1 = this.getFieldValue("m1");
+            var dataType = Blockly.Tp.variableMap[m1];
+            var op = this.getFieldValue("operation");
+            var options = this.getDropDown(m1); // The new options you want to have
+            var drop = this.getField("operation");
+            drop.setText(" "); // set the actual text
+            drop.setValue(" "); // set the actual value
+            drop.menuGenerator_ = options;
+        }
+        this.validate();
+        /* if(changeEvent.type === "ui")
         if (!this.workspace) {
             return;
         }
         var m1Field = this.getFieldValue("m1");
-        var binaryOp = Blockly.variableMap[m1Field] === 'string';
+        var binaryOp = Blockly.Tp.variableMap[m1Field] === 'string';
         if (binaryOp) {
             this.updateShape_binary(binaryOp,m1Field);
         }
@@ -289,6 +462,45 @@ Blockly.Blocks["binary"] = {
     } else if (inputExists) {
       this.removeInput('binaryOp');
     }*/
-  },
+    },
+    validate: function() {
+        var m1 = this.getFieldValue('m1');
+        var m2 = this.getFieldValue('m2');
+        var operation = this.getFieldValue('operation');
+        var result = this.getFieldValue('VAR');
+        if (m1 == '' || operation == '' || result == '' || m2 == '') {
+            this.setWarningText('Fill all fields');
+            return false;
+        }
+        this.setWarningText(null);
+        return true;
+    }
 
+};
+
+Blockly.FieldVariable.dropdownCreate = function() {
+    if (this.sourceBlock_ && this.sourceBlock_.workspace) {
+        var variableList =
+            Blockly.Variables.allVariables(this.sourceBlock_.workspace);
+    } else {
+        var variableList = [];
+    }
+    // Ensure that the currently selected variable is an option.
+    var name = this.getText();
+    if (name && variableList.indexOf(name) == -1) {
+        variableList.push(name);
+    }
+    variableList.sort(goog.string.caseInsensitiveCompare);
+    variableList.push(Blockly.Msg.RENAME_VARIABLE);
+    variableList.push(Blockly.Msg.NEW_VARIABLE);
+    if (this.name && this.name != 'VAR') {
+        variableList.splice(-2, 2);
+    }
+    // Variables are not language-specific, use the name as both the user-facing
+    // text and the internal representation.
+    var options = [];
+    for (var x = 0; x < variableList.length; x++) {
+        options[x] = [variableList[x], variableList[x]];
+    }
+    return options;
 };
