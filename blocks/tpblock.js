@@ -371,7 +371,7 @@ Blockly.Blocks["unary"] = {
         var m1 = this.getFieldValue('m1');
         var operation = this.getFieldValue('operation');
         var result = this.getFieldValue('result');
-        if (m1 == '' || operation == '' || result == '') {
+        if (m1 == '' || operation == '' || result == '' || operation == ' ') {
             this.setWarningText('Fill all fields');
             return false;
         }
@@ -586,7 +586,7 @@ Blockly.Blocks["binary"] = {
         var m2 = this.getFieldValue('m2');
         var operation = this.getFieldValue('operation');
         var result = this.getFieldValue('VAR');
-        if (m1 == '' || operation == '' || result == '' || m2 == '') {
+        if (m1 == '' || operation == ' ' || result == '' || m2 == '' || operation == '') {
             this.setWarningText('Fill all fields');
             return false;
         }
