@@ -30,7 +30,7 @@
     window.addEventListener('resize', onresize, true);
     Blockly.svgResize(workspace); 
 
-    var xmlInit = '<xml><block type="extractor" deletable="false" id="D-i{Q5j{]PJ!5f.@f^S^" x="195" y="107"><value name="line"><block type="field_extractor" id="-UBE=0AF-5wVL6~}%=aX"><field name="delim"></field><field name="get"></field><field name="operation">string</field><field name="VAR">i</field></block></value><next><block type="transform" deletable="false" id="`#{siG=4Z=W{9fzG7~Xj"><next><block type="store"  deletable="false" id="x6tnR`YVMw61kvdnf}`B"><field name="operation">hdfs</field><field name="path"></field><field name="headers">TRUE</field></block></next></block></next></block></xml>';
+    var xmlInit = '<xml xmlns="http://www.w3.org/1999/xhtml"><block type="extractor" id="D-i{Q5j{]PJ!5f.@f^S^" deletable="false" x="195" y="107"><value name="line"><block type="field_extractor" id="-UBE=0AF-5wVL6~}%=aX"><field name="delim"></field><field name="get"></field><field name="operation">string</field><field name="VAR">i</field></block></value><next><block type="transform" id="`#{siG=4Z=W{9fzG7~Xj" deletable="false"><next><block type="store" id="x6tnR`YVMw61kvdnf}`B" deletable="false"><field name="operation">hdfs</field><field name="path"></field><field name="headers">TRUE</field><value name="list_to_store"><block type="lists_create_with" deletable="false" id="16zZx+Rs1U{xH7=#)JbU"><mutation items="3"></mutation></block></value></block></next></block></next></block></xml>';
 
                  var xmlDom = Blockly.Xml.textToDom(xmlInit);
                 Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, xmlDom);

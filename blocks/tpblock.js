@@ -50,7 +50,8 @@ Blockly.Blocks["extractor"] = {
         this.setWarningText(null);
         return true;
     },
-    onchange: function() {
+    onchange: function(e) {
+        console.log('ex', e);
         this.validate();
     }
 };
@@ -78,7 +79,8 @@ Blockly.Blocks["field_extractor"] = {
         blockObj(this);
     },
     onchange: function(e) {
-        if (!this.workspace) {
+
+        if (!this.workspace || e.blockId == this.id) {
             return;
         }
 
@@ -86,6 +88,18 @@ Blockly.Blocks["field_extractor"] = {
             var varType = this.getFieldValue('operation');
             var variable = this.getFieldValue('VAR');
             if (e.name == 'VAR') {
+                if (variable.charAt(0) == '_') {
+                    var mainWorkspace = Blockly.getMainWorkspace();
+                    var newBlock = mainWorkspace.newBlock('binary');
+                    newBlock.initSvg();
+                    newBlock.render();
+                    //  cretaebinay
+                    // set deafaut as var
+                    // append to translator
+                } else {
+                    // create varaible => deafutlt
+                    // append to store
+                }
                 if (Blockly.Tp.variableDateTypeMap[variable]) {
                     this.setWarningText('Use unique variable names');
                     return false;
@@ -103,9 +117,6 @@ Blockly.Blocks["field_extractor"] = {
         this.getFieldValue('VAR');
         this.getFieldValue('operation');
         this.validate();
-
-
-
     },
 
     validate: function() {
@@ -261,7 +272,7 @@ Blockly.Blocks["unary"] = {
         }
     },
     onchange: function(changeEvent) {
-        if (!this.workspace) {
+        if (!this.workspace || e.blockId == this.id) {
             return;
         }
         if (changeEvent.type === "ui") {
@@ -318,6 +329,9 @@ Blockly.Blocks['lookup'] = {
         blockObj(this);
     },
     onchange: function() {
+        if (!this.workspace || e.blockId == this.id) {
+            return;
+        }
         this.validate();
     },
     validate: function() {
@@ -447,6 +461,9 @@ Blockly.Blocks["binary"] = {
 
 
     onchange: function(changeEvent) {
+        if (!this.workspace || e.blockId == this.id) {
+            return;
+        }
         if (changeEvent.type === "change" && changeEvent.name == 'm1') {
             var m1 = this.getFieldValue("m1");
             var dataType = Blockly.Tp.variableMap[m1];
@@ -525,6 +542,14 @@ Blockly.FieldVariable.dropdownCreate = function() {
     }
     return options;
 };
+
+function renderBlock(id) {
+    var mainWorkspace = Blockly.getMainWorkspace();
+    var newBlock = mainWorkspace.newBlock(id);
+    newBlock.initSvg();
+    mainWorkspace.render();
+    return newBlock;
+}
 
 
 Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {
@@ -635,13 +660,6 @@ Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {
                 deleteNext();
             }
         }
-    }
-
-    function renderBlock(id) {
-        var mainWorkspace = Blockly.getMainWorkspace();
-        var newBlock = mainWorkspace.newBlock(id);
-        newBlock.initSvg();
-        mainWorkspace.render();
     }
 
     function addWorkspaceOptions() {
