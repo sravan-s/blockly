@@ -96,6 +96,9 @@ Blockly.Blocks["field_extractor"] = {
                     var newBlock = mainWorkspace.newBlock('binary');
                     newBlock.initSvg();
                     newBlock.render();
+                    var c1 = new Blockly.connection(newBlock, Blockly.PREVIOUS_STATEMENT);
+                    var c2 = new Blockly.connection(Blockly.Tp.transform_, Blockly.NEXT_STATEMENT);
+                    Blockly.Tp.transform_.nextConnection.connect(c2, c1);
                     //  cretaebinay
                     // set deafaut as var
                     // append to translator
@@ -277,7 +280,7 @@ Blockly.Blocks["unary"] = {
         }
     },
     onchange: function(changeEvent) {
-        if (!this.workspace || e.blockId != this.id) {
+        if (!this.workspace || changeEvent.blockId != this.id) {
             return;
         }
         if (changeEvent.type === "ui") {
@@ -333,7 +336,7 @@ Blockly.Blocks['lookup'] = {
         this.setHelpUrl('http://www.example.com/');
         blockObj(this);
     },
-    onchange: function() {
+    onchange: function(e) {
         if (!this.workspace || e.blockId != this.id) {
             return;
         }
@@ -466,7 +469,7 @@ Blockly.Blocks["binary"] = {
 
 
     onchange: function(changeEvent) {
-        if (!this.workspace || e.blockId != this.id) {
+        if (!this.workspace || changeEvent.blockId != this.id) {
             return;
         }
         if (changeEvent.type === "change" && changeEvent.name == 'm1') {
