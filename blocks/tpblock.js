@@ -54,7 +54,6 @@ Blockly.Blocks["extractor"] = {
         return true;
     },
     onchange: function(e) {
-        console.log('ex', e);
         this.validate();
     }
 };
@@ -91,20 +90,27 @@ Blockly.Blocks["field_extractor"] = {
             var varType = this.getFieldValue('operation');
             var variable = this.getFieldValue('VAR');
             if (e.name == 'VAR') {
+                var mainWorkspace = Blockly.getMainWorkspace();
                 if (variable.charAt(0) == '_') {
-                    var mainWorkspace = Blockly.getMainWorkspace();
+                    // Appends new block to main workspace
                     var newBlock = mainWorkspace.newBlock('binary');
                     newBlock.initSvg();
                     newBlock.render();
-                    var c1 = new Blockly.connection(newBlock, Blockly.PREVIOUS_STATEMENT);
-                    var c2 = new Blockly.connection(Blockly.Tp.transform_, Blockly.NEXT_STATEMENT);
-                    Blockly.Tp.transform_.nextConnection.connect(c2, c1);
-                    //  cretaebinay
-                    // set deafaut as var
-                    // append to translator
+                    var inputLists = Blockly.Tp.transform_.inputList;
+                    // Sets default value
+                    newBlock.setFieldValue(variable, 'm1');
+                    // Connects to Blockly.Tp.transform_
+                    // @Read more: Blockly.Connection.prototype.connect
+                    var c1 = new Blockly.Connection(newBlock, Blockly.PREVIOUS_STATEMENT);
+                    newBlock.previousConnection.connect(inputLists[inputLists.length - 1].connection);
                 } else {
-                    // create varaible => deafutlt
-                    // append to store
+                    var newVar = mainWorkspace.newBlock('output_field');
+                    var storeArray = Blockly.Tp.store_.childBlocks_[0];
+                    var pipeOutput = storeArray.inputList[storeArray.inputList.length - 1];
+                    newVar.initSvg();
+                    newVar.render();
+                    newVar.setFieldValue(variable, 'NAME');
+                    newVar.outputConnection.connect(pipeOutput.connection);
                 }
                 if (Blockly.Tp.variableDateTypeMap[variable]) {
                     this.setWarningText('Use unique variable names');
