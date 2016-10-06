@@ -13,6 +13,8 @@ Blockly.Tp.replaceVaribleInMap = function() {
 
 }
 
+
+
 var blockObj = function(obj) {
     obj.renameVar = function(oldName, newName) {
         if (Blockly.Names.equals(oldName, this.getFieldValue('VAR'))) {
@@ -39,6 +41,7 @@ Blockly.Blocks["extractor"] = {
         this.setColour(20);
         this.setTooltip("");
         this.setHelpUrl("http://www.example.com/");
+        Blockly.Tp.extractor_ = this;
     },
     validate: function() {
         var lines = this.getInputTargetBlock('line');
@@ -80,7 +83,7 @@ Blockly.Blocks["field_extractor"] = {
     },
     onchange: function(e) {
 
-        if (!this.workspace || e.blockId == this.id) {
+        if (!this.workspace || e.blockId != this.id) {
             return;
         }
 
@@ -161,6 +164,7 @@ Blockly.Blocks["transform"] = {
         this.setColour(180);
         this.setTooltip("");
         this.setHelpUrl("http://www.example.com/");
+        Blockly.Tp.transform_ = this;
     }
 };
 
@@ -184,6 +188,7 @@ Blockly.Blocks["store"] = {
         this.setColour(345);
         this.setTooltip("");
         this.setHelpUrl("http://www.example.com/");
+        Blockly.Tp.store_ = this;
     },
     validate: function() {
         var location = this.getFieldValue('path');
@@ -272,7 +277,7 @@ Blockly.Blocks["unary"] = {
         }
     },
     onchange: function(changeEvent) {
-        if (!this.workspace || e.blockId == this.id) {
+        if (!this.workspace || e.blockId != this.id) {
             return;
         }
         if (changeEvent.type === "ui") {
@@ -329,7 +334,7 @@ Blockly.Blocks['lookup'] = {
         blockObj(this);
     },
     onchange: function() {
-        if (!this.workspace || e.blockId == this.id) {
+        if (!this.workspace || e.blockId != this.id) {
             return;
         }
         this.validate();
@@ -461,7 +466,7 @@ Blockly.Blocks["binary"] = {
 
 
     onchange: function(changeEvent) {
-        if (!this.workspace || e.blockId == this.id) {
+        if (!this.workspace || e.blockId != this.id) {
             return;
         }
         if (changeEvent.type === "change" && changeEvent.name == 'm1') {
