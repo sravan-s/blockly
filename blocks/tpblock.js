@@ -29,7 +29,7 @@ var blockObj = function(obj) {
 Blockly.Blocks["extractor"] = {
     init: function() {
         this.appendValueInput("line")
-            .setCheck(["field_extractor","Array"])
+            .setCheck(['field_extractor', 'Array'])
             .appendField("Extract from line");
         this.appendValueInput("file")
             .setCheck(["field_extractor","Array"])
@@ -56,7 +56,6 @@ Blockly.Blocks["extractor"] = {
 };
 
 Blockly.Blocks["field_extractor"] = {
-
     init: function() {
         this.appendDummyInput()
             .appendField("token delimited by")
@@ -713,3 +712,5 @@ Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {
 
     Blockly.ContextMenu.show(e, menuOptions, this.RTL);
 };
+
+Blockly.Msg.LISTS_CREATE_WITH_INPUT_WITH = 'Splitter';
