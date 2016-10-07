@@ -72,7 +72,7 @@ Blockly.Blocks["field_extractor"] = {
             .appendField(" & is named as")
             .appendField(new Blockly.FieldVariable(""), "VAR");
         this.appendValueInput("next_marker")
-            .setCheck("field_extractor");
+            .setCheck(["field_extractor","Array"]);
         this.setInputsInline(false);
         this.setOutput(true, "field_extractor");
         this.setColour(20);
