@@ -178,8 +178,8 @@ Blockly.Blocks["store"] = {
         this.appendDummyInput()
             .appendField("Pick storage")
             .appendField(new Blockly.FieldDropdown([
-                ["hdfs", "Hdfs"],
-                ["local", "Local"]
+                ["Hdfs", "Hdfs"],
+                ["Local", "Local"]
             ]), "operation")
             .appendField("location")
         //     .appendField(new Blockly.FieldTextInput(""), "path");
@@ -412,6 +412,14 @@ Blockly.Blocks['lookup'] = {
     onchange: function(e) {
         if (!this.workspace || e.blockId != this.id) {
             return;
+        }
+        if(e.type=='create'){
+            var drop = this.getField("VAR");
+            var options = [];
+            drop.setText(" "); // set the actual text
+            drop.setValue(" "); // set the actual value
+            options.push(Blockly.Msg.NEW_VARIABLE);
+            drop.menuGenerator_ = [options];
         }
         this.validate();
     },
