@@ -28,9 +28,9 @@
         // {toolbox: document.getElementById('toolbox')}
         );
     window.addEventListener('resize', onresize, true);
-    Blockly.svgResize(workspace); 
+    Blockly.svgResize(workspace);
 
-    var xmlInit = '<xml xmlns="http://www.w3.org/1999/xhtml"><block type="extractor" id="D-i{Q5j{]PJ!5f.@f^S^" deletable="false" x="195" y="107"><value name="line"><block type="field_extractor" id="-UBE=0AF-5wVL6~}%=aX"><field name="delim"></field><field name="get"></field><field name="operation">string</field><field name="VAR">i</field></block></value><next><block type="transform" id="`#{siG=4Z=W{9fzG7~Xj" deletable="false"><next><block type="store" id="x6tnR`YVMw61kvdnf}`B" deletable="false"><field name="operation">hdfs</field><field name="path"></field><field name="headers">TRUE</field><value name="list_to_store"></value></block></next></block></next></block></xml>';
+    var xmlInit = '<xml xmlns="http://www.w3.org/1999/xhtml"><block type="extractor" id="D-i{Q5j{]PJ!5f.@f^S^" deletable="false" x="195" y="107"><value name="line"><block type="field_extractor" id="-UBE=0AF-5wVL6~}%=aX"><field name="delim"></field><field name="get"></field><field name="operation">string</field><field name="VAR">var_0</field></block></value><next><block type="transform" id="`#{siG=4Z=W{9fzG7~Xj" deletable="false"><next><block type="store" id="x6tnR`YVMw61kvdnf}`B" deletable="false"><mutation items="2"></mutation><field name="operation">hdfs</field><field name="headers">TRUE</field><value name="ADD0"><block type="output_field" id="%ET^t4=|YM6+U^WFWE|x"><field name="NAME">var_0</field></block></value></block></next></block></next></block></xml>';
 
                  var xmlDom = Blockly.Xml.textToDom(xmlInit);
                 Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, xmlDom);

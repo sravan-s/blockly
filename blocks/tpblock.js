@@ -3,10 +3,80 @@ Blockly.Tp.dataType = '[["String", "string"], ["Date", "date"], ["Number", "numb
 Blockly.Tp.variableDateTypeMap = {};
 Blockly.Tp.variableMap = {};
 
+// To keep count of blocks generated
+// Also used to name flags
+Blockly.Tp.counter = {
+    count: 0,
+    generateVarName: function() {
+        this.count++;
+        return 'var_' + this.count;
+    }
+};
+
 // Connects blocks to transform
 Blockly.Tp._connectMeToTransform = function(block) {
     var transformInputLists = Blockly.Tp.transform_.inputList;
     block.previousConnection.connect(transformInputLists[transformInputLists.length - 1].connection);
+};
+
+Blockly.Tp.dateDb = {
+    tpDateFormats: [],
+    deleteDateWithId: function(id) {
+        var index, block;
+        this.tpDateFormats.some(function(dateFormat, i) {
+            if (dateFormat.getFieldValue('prefix') == id) {
+                index = i;
+                block = dateFormat;
+                return true;
+            }
+        });
+        if (block) {
+            block.dispose(true, true);
+        }
+    }
+};
+
+// Appends data into variableDateTypeMap
+// operations => create, rename
+Blockly.Tp.appendToVariableMap = function(config) {
+    // Initates data from config
+    var _variable = config.variable;
+    var _variableType = config.variableType;
+    var _operation = config.operation;
+    var _oldVar = config.oldVar;
+    var callback = config.callback;
+
+    var _db = Blockly.Tp.variableDateTypeMap;
+    var status = {
+        success: true,
+        result: undefined
+    }
+    // Value change
+    if (_operation == 'valueChange') {
+        _db[_variable] = _variableType;
+        status.result = callback();
+        return status;
+    }
+    // return false, if variable is already registered
+    if (_db[_variable]) {
+        status.success = false;
+        status.msg = 'Variable Present'
+        return status;
+    }
+    // rename operation
+    if (_operation == 'rename') {
+        delete _db[_oldVar];
+        _db[_variable] = _variableType;
+        // rename installed variables and operations in workspace
+        status.result = callback();
+        return status;
+    }
+    // create
+    if (_operation == 'create') {
+        _db[_variable] = _variableType;
+        status.result = callback();
+        return status;
+    }
 }
 
 var blockObj = function(obj) {
@@ -64,7 +134,7 @@ Blockly.Blocks["field_extractor"] = {
             .appendField("nd column of type")
             .appendField(new Blockly.FieldDropdown(JSON.parse(Blockly.Tp.dataType)), "operation")
             .appendField(" & is named as")
-            .appendField(new Blockly.FieldVariable(""), "VAR");
+            .appendField(new Blockly.FieldVariable(), 'VAR');
         this.appendValueInput("next_marker")
             .setCheck(["field_extractor","Array"]);
         this.setInputsInline(false);
@@ -75,48 +145,122 @@ Blockly.Blocks["field_extractor"] = {
         blockObj(this);
     },
     onchange: function(e) {
-
+        var self = this;
         if (!this.workspace || e.blockId != this.id) {
             return;
         }
 
         if (e.type == 'change') {
-            var varType = this.getFieldValue('operation');
-            var variable = this.getFieldValue('VAR');
+            var _varType = this.getFieldValue('operation');
+            var _variable = this.getFieldValue('VAR');
+            var config = {
+                variable: _variable,
+                variableType: _varType,
+                oldVar: e.oldValue,
+                operation: 'rename'
+            };
+            var mainWorkspace = Blockly.getMainWorkspace();
             if (e.name == 'VAR') {
-                var mainWorkspace = Blockly.getMainWorkspace();
-                if (variable.charAt(0) == '_') {
-                    // Appends new block to main workspace
+                // To elimiate recursion at init/duplicate
+                if (e.oldValue == e.newValue) {
+                    return false;
+                }
+                Blockly.Tp.appendToVariableMap(config);
+                // if (e.name.oldValue)
+                // var appended = Blockly.To.appendToVariableMap({
+                //     variable: _variable,
+                //     variableType: _varType,
+                //     operation: ,
+                //     oldVar: ,
+                //     callback: ,
+                // });
+                // if (!appended.sucess) {
+                //     this.setWarningText(appended.msg);
+                //     return false;
+                // }
+            } else if (e.name == 'operation') {
+                config.oldVar = _variable;
+                config.operation = 'valueChange';
+                config.callback = function() {
+                    if (e.oldValue == 'date') {
+                        Blockly.Tp.dateDb.deleteDateWithId(_variable);
+                    } else {
+                        var _newDateBlock = renderBlock('tp_date_format');
+                        _newDateBlock.setFieldValue(self.getFieldValue('VAR'), 'prefix');
+                    }
+                    var _newOperation = renderBlock('binary');
+                    _newOperation.setFieldValue(_variable, 'm1');
+                    _newOperation.setFieldValue(_variable, 'm2');
+                    _newOperation.setFieldValue(Blockly.Tp.counter.generateVarName(), 'VAR');
+                    Blockly.Tp._connectMeToTransform(_newOperation);
+                }
+                Blockly.Tp.appendToVariableMap(config);
+            }
+            // if (e.name == 'VAR') {
+            //     var mainWorkspace = Blockly.getMainWorkspace();
+            //     if (variable.charAt(0) == '_') {
+            //         // Appends new block to main workspace
+            //         var newBlock = mainWorkspace.newBlock('binary');
+            //         newBlock.initSvg();
+            //         newBlock.render();
+            //         var inputLists = Blockly.Tp.transform_.inputList;
+            //         // Sets default value
+            //         newBlock.setFieldValue(variable, 'm1');
+            //         // Connects to Blockly.Tp.transform_
+            //         // @Read more: Blockly.Connection.prototype.connect
+            //         var c1 = new Blockly.Connection(newBlock, Blockly.PREVIOUS_STATEMENT);
+            //         newBlock.previousConnection.connect(inputLists[inputLists.length - 1].connection);
+            //     } else {
+            //         var newVar = mainWorkspace.newBlock('output_field');
+            //         newVar.initSvg();
+            //         newVar.render();
+            //         newVar.setFieldValue(variable, 'NAME');
+            //         Blockly.Tp.store_.appendNewVar(newVar.outputConnection);
+            //     }
+            //     if (Blockly.Tp.variableDateTypeMap[variable]) {
+            //         this.setWarningText('Use unique variable names');
+            //         return false;
+            //     }
+            //     Blockly.Tp.variableDateTypeMap[e.newValue] = varType;
+            //     if (e.oldValue) {
+            //         delete Blockly.Tp.variableDateTypeMap[e.oldValue];
+            //     }
+            // } else if (e.name == 'operation') {
+            //     Blockly.Tp.variableDateTypeMap[variable] = e.newValue;
+            //     if (e.oldValue == 'date') {
+            //         // delete previously registered elem
+            //     } else if (e.newValue == 'date') {
+            //         var _newDateBlock = renderBlock('tp_date_format');
+            //         _newDateBlock.setFieldValue(this.getFieldValue('VAR'), 'prefix');
+            //         Blockly.tp._connectMeToTransform();
+            //     }
+            // }
+            // this.setWarningText(null);
+        }
+
+        // For managing duplicate
+        // To set new variable name and init a variable/operation
+        if (e.type == 'create') {
+            var _newVarName = Blockly.Tp.counter.generateVarName();
+            var _variable = this.getFieldValue('VAR');
+            // creates a new variable name
+            Blockly.Tp.appendToVariableMap({
+                variable: _newVarName,
+                variableType: _varType,
+                operation: 'create',
+                callback: function() {
+                    var mainWorkspace = Blockly.getMainWorkspace();
                     var newBlock = mainWorkspace.newBlock('binary');
                     newBlock.initSvg();
                     newBlock.render();
+                    newBlock.setFieldValue(_newVarName, 'm1');
+                    newBlock.setFieldValue(_newVarName, 'm2');
+                    newBlock.setFieldValue(Blockly.Tp.counter.generateVarName(), 'VAR');
                     var inputLists = Blockly.Tp.transform_.inputList;
-                    // Sets default value
-                    newBlock.setFieldValue(variable, 'm1');
-                    // Connects to Blockly.Tp.transform_
-                    // @Read more: Blockly.Connection.prototype.connect
-                    var c1 = new Blockly.Connection(newBlock, Blockly.PREVIOUS_STATEMENT);
-                    newBlock.previousConnection.connect(inputLists[inputLists.length - 1].connection);
-                } else {
-                    var newVar = mainWorkspace.newBlock('output_field');
-                    newVar.initSvg();
-                    newVar.render();
-                    newVar.setFieldValue(variable, 'NAME');
-                    Blockly.Tp.store_.appendNewVar(newVar.outputConnection);
                 }
-                if (Blockly.Tp.variableDateTypeMap[variable]) {
-                    this.setWarningText('Use unique variable names');
-                    return false;
-                }
-                Blockly.Tp.variableDateTypeMap[e.newValue] = varType;
-                if (e.oldValue) {
-                    delete Blockly.Tp.variableDateTypeMap[e.oldValue];
-                }
-            } else if (e.name == 'operation') {
-                Blockly.Tp.variableDateTypeMap[variable] = e.newValue;
-            }
+            });
+            this.setFieldValue(_newVarName, 'VAR');
         }
-
         // Blockly.Tp.variableMap[this.getFieldValue("VAR")] = this.getFieldValue("operation");
         this.getFieldValue('VAR');
         this.getFieldValue('operation');
@@ -477,6 +621,25 @@ Blockly.Blocks['tp_constant'] = {
         }
     }
 };
+
+Blockly.Blocks['tp_date_format'] = {
+    init: function() {
+        this.appendDummyInput()
+            .appendField('Date, ')
+            .appendField('', 'prefix')
+            .appendField('is formatted as')
+            .appendField(new Blockly.FieldTextInput('dd-mm-yyyy'), 'dateFormat');
+        this.setPreviousStatement(true);
+        this.setNextStatement(true);
+        this.setColour(230);
+        this.setTooltip('');
+        this.setHelpUrl('http://www.example.com/');
+        blockObj(this);
+        // connects automatically to translate
+        Blockly.Tp._connectMeToTransform(this);
+        Blockly.Tp.dateDb.tpDateFormats.push(this);
+    }
+}
 
 Blockly.Blocks["binary"] = {
     OPERATIONS: {
