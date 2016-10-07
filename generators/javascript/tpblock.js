@@ -80,7 +80,9 @@ Blockly.JavaScript['binary'] = function(block) {
   var variable_m2 = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('m2'), Blockly.Variables.NAME_TYPE);
   var variable_result = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('VAR'), Blockly.Variables.NAME_TYPE);
   var value_child = Blockly.JavaScript.valueToCode(block, 'child', Blockly.JavaScript.ORDER_ATOMIC);
-  var code = dropdown_operation.replace(/\$1/g,'m'+variable_result)
+  var splitCode = dropdown_operation.split('||');
+  Blockly.JavaScript.variables.push('private '+splitCode[1]+' m'+variable_result+';\n');
+  var code = splitCode[0].replace(/\$1/g,'m'+variable_result)
   .replace(/\$2/g,variable_m1)
   .replace(/\$3/g,variable_m2)
   +'\n';
@@ -92,8 +94,10 @@ Blockly.JavaScript['unary'] = function(block) {
   var variable_m1 = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('m1'), Blockly.Variables.NAME_TYPE);
   var variable_result = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('VAR'), Blockly.Variables.NAME_TYPE);
   var value_child = Blockly.JavaScript.valueToCode(block, 'child', Blockly.JavaScript.ORDER_ATOMIC);
-  Blockly.JavaScript.variables.push('private Marker m'+variable_m1+';\n');
-  var code = dropdown_operation.replace(/\$1/g,'m'+variable_result)
+  var splitCode = dropdown_operation.split('||');
+  Blockly.JavaScript.variables.push('private '+splitCode[1]+' m'+variable_result+';\n');
+
+  var code = splitCode[0].replace(/\$1/g,'m'+variable_result)
   .replace(/\$2/g,variable_m1)
    +'\n';
   return code;
