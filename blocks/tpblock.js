@@ -3,17 +3,11 @@ Blockly.Tp.dataType = '[["String", "string"], ["Date", "date"], ["Number", "numb
 Blockly.Tp.variableDateTypeMap = {};
 Blockly.Tp.variableMap = {};
 
-Blockly.Tp.pushVariableToMap = function(variable) {
-
-};
-Blockly.Tp.getVariableFromMap = function(vaiableName) {
-
-};
-Blockly.Tp.replaceVaribleInMap = function() {
-
+// Connects blocks to transform
+Blockly.Tp._connectMeToTransform = function(block) {
+    var transformInputLists = Blockly.Tp.transform_.inputList;
+    block.previousConnection.connect(transformInputLists[transformInputLists.length - 1].connection);
 }
-
-
 
 var blockObj = function(obj) {
     obj.renameVar = function(oldName, newName) {
@@ -331,6 +325,7 @@ Blockly.Blocks["unary"] = {
         this.setColour("#006400");
         this.setTooltip("");
         this.setHelpUrl("http://www.example.com/");
+        Blockly.Tp._connectMeToTransform(this);
     },
     getDropDown: function() {
         var superSet = JSON.parse(Blockly.Tp.dataType);
@@ -439,12 +434,12 @@ Blockly.Blocks['tp_constant'] = {
     init: function() {
         this.appendDummyInput()
             .appendField("Define ")
-            .appendField(new Blockly.FieldTextInput("default"), "constant")
+            .appendField(new Blockly.FieldTextInput("default"), "value")
             .appendField("as")
             .appendField(new Blockly.FieldDropdown([
-                ["String", "OPTIONNAME"],
-                ["Number", "OPTIONNAME"],
-                ["Date", "OPTIONNAME"]
+                ["String", "string"],
+                ["Number", "number"],
+                ["Date", "date"]
             ]), "NAME")
             .appendField("save as")
             .appendField(new Blockly.FieldTextInput("default"), "VAR");
@@ -454,6 +449,32 @@ Blockly.Blocks['tp_constant'] = {
         this.setTooltip('');
         this.setHelpUrl('http://www.example.com/');
         blockObj(this);
+        // connects automatically to translate
+        Blockly.Tp._connectMeToTransform(this);
+    },
+    onchange: function(changeEvent) {
+        if (!this.workspace || changeEvent.blockId != this.id) {
+            return;
+        }
+        var _var = this.getFieldValue('VAR');
+        var _type = this.getFieldValue('NAME');
+        // Change type is change
+        if (changeEvent.type == 'change') {
+            // If rename => delete previous entry
+            if (changeEvent.name == 'VAR') {
+                // Duplicate entry
+                if (Blockly.Tp.variableDateTypeMap[_var]) {
+                    this.setWarningText('Duplicate variable name');
+                    return false;
+                } else {
+                    // delte old entry
+                    delete Blockly.Tp.variableDateTypeMap[changeEvent.oldValue];
+                }
+            }
+            // set new values
+            Blockly.Tp.variableDateTypeMap[_var] = _type;
+            this.setWarningText(null);
+        }
     }
 };
 
@@ -518,6 +539,7 @@ Blockly.Blocks["binary"] = {
         this.setTooltip("");
         this.setHelpUrl("http://www.example.com/");
         blockObj(this);
+        Blockly.Tp._connectMeToTransform(this);
     },
 
     getDropDown: function(m1) {
@@ -631,7 +653,7 @@ function renderBlock(id) {
     return newBlock;
 }
 
-
+// Overrides currrent context menu
 Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {
     if (this.options.readOnly || this.isFlyout) {
         return;
