@@ -40,10 +40,31 @@
       Blockly.JavaScript.extractPhase = '';
       Blockly.JavaScript.translatePhase = '';
       Blockly.JavaScript.storePhase = '';
+      Blockly.JavaScript.initFunctions = [];
       Blockly.JavaScript.workspaceToCode(Blockly.getMainWorkspace());
-      console.log(Blockly.JavaScript.variables.join('\n'))
-      console.log(Blockly.JavaScript.extractPhase)
-      console.log(Blockly.JavaScript.translatePhase)
+      var output ='';
+      output+= "Variables\n";
+      output+= "--------------------\n";
+      output+= Blockly.JavaScript.variables.join('\n')+'\n';
+      output+= "--------------------\n";
+      output+= "Inits\n";
+      output+= "--------------------\n";
+      output+= Blockly.JavaScript.initFunctions.join('\n')+'\n';
+      output+= "--------------------\n";
+      output+= "Extraction\n";
+      output+= "--------------------\n";
+      output+= Blockly.JavaScript.extractPhase+'\n';
+      output+= "--------------------\n";
+      output+= "Transform\n";
+      output+= "--------------------\n";
+      output+= Blockly.JavaScript.translatePhase+'\n';
+      output+= "--------------------\n";
+      output+= "Store\n";
+      output+= "--------------------\n";
+      output+= Blockly.JavaScript.storePhase+'\n';
+      output+= "--------------------\n";
+
+      console.log(output)
     });
   </script>
 </body>
