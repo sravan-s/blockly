@@ -524,32 +524,36 @@ Blockly.Blocks['tp_date_format'] = {
 }
 
 
-Blockly.FieldVariable.dropdownCreate = function() {
-    if (this.sourceBlock_ && this.sourceBlock_.workspace) {
-        var variableList =
-            Blockly.Variables.allVariables(this.sourceBlock_.workspace);
-    } else {
-        var variableList = [];
-    }
-    // Ensure that the currently selected variable is an option.
-    var name = this.getText();
-    if (name && variableList.indexOf(name) == -1) {
-        variableList.push(name);
-    }
-    variableList.sort(goog.string.caseInsensitiveCompare);
-    variableList.push(Blockly.Msg.RENAME_VARIABLE);
-    variableList.push(Blockly.Msg.NEW_VARIABLE);
-    if (this.name && this.name != 'VAR') {
-        variableList.splice(-2, 2);
-    }
-    // Variables are not language-specific, use the name as both the user-facing
-    // text and the internal representation.
-    var options = [];
-    for (var x = 0; x < variableList.length; x++) {
-        options[x] = [variableList[x], variableList[x]];
-    }
-    return options;
-};
+// Blockly.FieldVariable.dropdownCreate = function() {
+//     if (this.sourceBlock_ && this.sourceBlock_.workspace) {
+//         var variableList =
+//             Blockly.Variables.allVariables(this.sourceBlock_.workspace);
+//     } else {
+//         var variableList = [];
+//     }
+//     // Ensure that the currently selected variable is an option.
+//     var name = this.getText();
+//     if (name && variableList.indexOf(name) == -1) {
+//         variableList.push(name);
+//     }
+//     variableList.sort(goog.string.caseInsensitiveCompare);
+//     if (variableList.indexOf(Blockly.Msg.RENAME_VARIABLE) == -1) {
+//         variableList.push(Blockly.Msg.RENAME_VARIABLE);
+//     }
+//     if (variableList.indexOf(Blockly.Msg.NEW_VARIABLE) == -1) {
+//         variableList.push(Blockly.Msg.NEW_VARIABLE);
+//     }
+//     if (this.name && this.name != 'VAR') {
+//         variableList.splice(-2, 2);
+//     }
+//     // Variables are not language-specific, use the name as both the user-facing
+//     // text and the internal representation.
+//     var options = [];
+//     for (var x = 0; x < variableList.length; x++) {
+//         options[x] = [variableList[x], variableList[x]];
+//     }
+//     return options;
+// };
 
 // Overrides currrent context menu
 Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {

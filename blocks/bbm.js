@@ -152,13 +152,14 @@ Blockly.Blocks.Manager = {
         }
         switch (event.type) {
             case Blockly.Events.CHANGE:
+                // Rename of variable
+                if (event.name == 'VAR' && event.newValue != event.oldValue) {
+                    this.allBlocks.root[event.blockId].variableName = event.newValue;
+                }
                 switch (event.element) {
                     case 'comment':
                         break;
                     case 'field':
-                        if (event.name == 'VAR') {
-                            var _varVal = this.allBlocks.root[event.blockId];
-                        }
                         break;
                     case 'collapsed':
                         break;
