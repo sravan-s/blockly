@@ -23,7 +23,16 @@ Blockly.Blocks.Manager = {
         delNode: function(id) {
             var me = this;
             var node = this.root[id];
+            if (!node) {
+                return;
+            }
             delete this.root[id];
+            // deletes from all nodes
+            this.traverseNodes(function(ds) {
+                if (ds.children.indexOf(node.id) != -1) {
+                    ds.children.splice(ds.children.indexOf(node.id), 1);
+                }
+            });
             // deletes from root
             this.root.children.some(function(child, index) {
                 if (child == id) {
@@ -34,15 +43,14 @@ Blockly.Blocks.Manager = {
             // cleanup root
             for (var key in this.root) {
                 if (key != 'children') {
-                    var _blockId = this.root[key].obj.id;
-                    if (!bbm.ws.getBlockById(_blockId)) {
-                        // to remove any unknown dependencies
+                    if (!bbm.ws.getBlockById(key)) {
+                        delete this.root[key];
                         this.traverseNodes(function(ds) {
-                            if (ds.children.indexOf(_blockId) != -1) {
-                                ds.children.splice(ds.children.indexOf(_blockId), 1);
+                            if (ds.children.indexOf(key) != -1) {
+                                ds.children.splice(ds.children.indexOf(key), 1);
                             }
                         });
-                        delete this.root[key];
+                        // to remove any unknown dependencies
                     }
                 }
             }
@@ -79,6 +87,11 @@ Blockly.Blocks.Manager = {
             if (this.root[id].datatype === olddatatype) {
                 this.root[id].datatype = newdatatype;
             }
+            this.children.forEach(function(child) {
+                if (this.root[child]) {
+                    this.root[child].obj.setWarningText('Parent variable changed');
+                }
+            }.bind(this));
             return this.root[id].children;
         },
         variableNameChange: function(id, oldName, newName) {
@@ -144,6 +157,7 @@ Blockly.Blocks.Manager = {
                         break;
                     case 'field':
                         if (event.name == 'VAR') {
+                            var _varVal = this.allBlocks.root[event.blockId];
                         }
                         break;
                     case 'collapsed':
@@ -162,9 +176,6 @@ Blockly.Blocks.Manager = {
                 // Delimiter
                 if (block.type == 'delimiter') {
                     this.allBlocks.addNode(block, event.blockId);
-                    // var fe = this.renderBlock('field_extractor');
-                    // this.allBlocks.addNode(fe, fe.blockId);
-                    // this.attachBlock(fe, block);
                 }
                 // Output variable
                 if (block.type == 'output_field') {
@@ -190,7 +201,6 @@ Blockly.Blocks.Manager = {
                 }
                 break;
             case Blockly.Events.DELETE:
-            //debugger;
                 this.allBlocks.delNode(event.blockId);
                 //TODO del all children recursively
                 break;
