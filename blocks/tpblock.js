@@ -202,7 +202,7 @@ Blockly.Blocks["unary"] = {
         this.setColour("#006400");
         this.setTooltip("");
         this.setHelpUrl("http://www.example.com/");
-        Blockly.Tp._connectMeToTransform(this);
+        // Blockly.Tp._connectMeToTransform(this);
     },
     getDropDown: function() {
         var superSet = JSON.parse(Blockly.Tp.dataType);
@@ -327,7 +327,7 @@ Blockly.Blocks['tp_constant'] = {
                 ["String", "string"],
                 ["Number", "number"],
                 ["Date", "date"]
-            ]), "NAME")
+            ]), "operation")
             .appendField("save as")
             .appendField(new Blockly.FieldTextInput("default"), "VAR");
         this.setPreviousStatement(true);
@@ -337,7 +337,7 @@ Blockly.Blocks['tp_constant'] = {
         this.setHelpUrl('http://www.example.com/');
         blockObj(this);
         // connects automatically to translate
-        Blockly.Tp._connectMeToTransform(this);
+        // Blockly.Tp._connectMeToTransform(this);
     },
     onchange: function(changeEvent) {
         if (!this.workspace || changeEvent.blockId != this.id) {
@@ -426,7 +426,7 @@ Blockly.Blocks["binary"] = {
         this.setTooltip("");
         this.setHelpUrl("http://www.example.com/");
         blockObj(this);
-        Blockly.Tp._connectMeToTransform(this);
+        // Blockly.Tp._connectMeToTransform(this);
     },
 
     getDropDown: function(m1) {

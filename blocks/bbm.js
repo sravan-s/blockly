@@ -34,7 +34,14 @@ Blockly.Blocks.Manager = {
             // cleanup root
             for (var key in this.root) {
                 if (key != 'children') {
-                    if (!bbm.ws.getBlockById(this.root[key].obj.id)) {
+                    var _blockId = this.root[key].obj.id;
+                    if (!bbm.ws.getBlockById(_blockId)) {
+                        // to remove any unknown dependencies
+                        this.traverseNodes(function(ds) {
+                            if (ds.children.indexOf(_blockId) != -1) {
+                                ds.children.splice(ds.children.indexOf(_blockId), 1);
+                            }
+                        });
                         delete this.root[key];
                     }
                 }
@@ -104,9 +111,20 @@ Blockly.Blocks.Manager = {
         attachChild: function(child, parent) {
             if (!parent.children || parent.children.length == undefined) {
                 parent.children = [];
+            } else if (parent.children.indexOf(child.id) != -1) { // to handle reattaching to same parent
+                return parent;
             }
             parent.children.push(child.id);
             return parent;
+        },
+        // traverses all nodes and execute given callback on each
+        traverseNodes: function(cb) {
+            var _dataStore = this.root;
+            for (var _key in _dataStore) {
+                if (_key != 'children') {
+                    cb.call(this, _dataStore[_key]);
+                }
+            }
         }
     },
     changeListener: function(event) {
@@ -126,7 +144,6 @@ Blockly.Blocks.Manager = {
                         break;
                     case 'field':
                         if (event.name == 'VAR') {
-                            
                         }
                         break;
                     case 'collapsed':
@@ -140,6 +157,7 @@ Blockly.Blocks.Manager = {
                 }
                 break;
             case Blockly.Events.CREATE:
+                // To Do: optimize creation process if to switch, abstract common properties
                 debugger;
                 // Delimiter
                 if (block.type == 'delimiter') {
@@ -149,12 +167,26 @@ Blockly.Blocks.Manager = {
                     // this.attachBlock(fe, block);
                 }
                 // Output variable
-                if (block.type == 'field') {
-                    this.allBlocks.addNode(block, event.blockId, undefined, block.getFieldValue('VAR'));
+                if (block.type == 'output_field') {
+                    // should type matter initally?
+                    var _type = undefined;
+                    this.allBlocks.addNode(block, event.blockId, _type, block.getFieldValue('VAR'));
                 }
                 // field extractor
                 if (block.type == 'field_extractor') {
                     this.allBlocks.addNode(block, event.blockId, block.getFieldValue('operation'), block.getFieldValue('VAR'));
+                }
+                // constant
+                if (block.type == 'tp_constant') {
+                    this.allBlocks.addNode(block, event.blockId, block.getFieldValue('operation'), block.getFieldValue('VAR'));
+                }
+                // unary
+                if (block.type == 'unary') {
+                    this.allBlocks.addNode(block, event.blockId, undefined, block.getFieldValue('VAR'));
+                }
+                // binary
+                if (block.type == 'binary') {
+                    this.allBlocks.addNode(block, event.blockId, undefined, block.getFieldValue('VAR'))
                 }
                 break;
             case Blockly.Events.DELETE:
