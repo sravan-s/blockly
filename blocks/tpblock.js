@@ -309,7 +309,7 @@ Blockly.Blocks['lookup'] = {
 Blockly.Blocks['output_field'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField(new Blockly.FieldVariable(""), "NAME");
+        .appendField(new Blockly.FieldVariable(""), "VAR");
     this.setOutput(true, null);
     this.setColour(330);
     this.setTooltip('');
@@ -562,7 +562,7 @@ Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {
     var cleanOption = {};
     cleanOption.text = Blockly.Msg.CLEAN_UP;
     cleanOption.enabled = topBlocks.length > 1;
-    cleanOption.callback = this.cleanUp_.bind(this);
+    cleanOption.callback = this.cleanUp;
     menuOptions.push(cleanOption);
 
     // Add a little animation to collapsing and expanding.
