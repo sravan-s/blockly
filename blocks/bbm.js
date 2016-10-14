@@ -193,17 +193,26 @@ Blockly.Blocks.Manager = {
                     var _prevOperation = event.oldValue;
                     _mutatedBlock.dataType = event.newValue;
                     if (_newOperation == 'date') {
+                        var _dateBlock;
                         // creates new date_format block
-                        var _newChild = this.renderBlock('tp_date_format');
-                        _newChild.setFieldValue(block.getFieldValue('VAR'), 'VAR');
-                        this.allBlocks.root[block.id].children.$$safePush$$(_newChild.id);
-                        Blockly.Tp._connectMeToTransform(_newChild);
+                        _mutatedBlock.children.some(function(child) {
+                            if (this.allBlocks.root[child].obj.type == 'tp_date_format') {
+                                this.allBlocks.root[child].obj.setWarningText(null);
+                                _dateBlock = this.allBlocks.root[child];
+                            }
+                        }.bind(this));
+                        if (!_dateBlock) {
+                            var _newChild = this.renderBlock('tp_date_format');
+                            _newChild.setFieldValue(block.getFieldValue('VAR'), 'VAR');
+                            _mutatedBlock.children.$$safePush$$(_newChild.id);
+                            Blockly.Tp._connectMeToTransform(_newChild);
+                        }
                     }
                     if (_prevOperation == 'date') {
                         _mutatedBlock.children.some(function(child) {
                             if (this.allBlocks.root[child].obj.type == 'tp_date_format') {
                                 var _dateToDelete = this.ws.getBlockById(child);
-                                _dateToDelete.dispose();
+                                _dateToDelete.setWarningText('Parent datatype changed');
                                 return true;
                             }
                         }.bind(this));
