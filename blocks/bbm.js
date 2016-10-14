@@ -1,9 +1,17 @@
+// Experimental, to safe push array
+Array.prototype.$$safePush$$ = function(value) {
+    if (this.indexOf(value) == -1) {
+        this.push(value);
+        return true;
+    }
+    return false;
+}
+
 Blockly.Blocks.Manager = {
     datatype: '[["String", "string"], ["Date", "date"], ["Number", "number"]]',
     workspaceContainer: {},
     init: function() {
         // To add existing workspace to allBlocks
-        debugger;
         var _blocks = this.ws.getAllBlocks();
         _blocks.forEach(function(block) {
             // main blocks
@@ -62,9 +70,10 @@ Blockly.Blocks.Manager = {
         },
         addNode: function(obj, id, dataType, variableName, parent) {
             if (parent === undefined) {
-                if (this.root.children.indexOf(id) == -1) {
-                    this.root.children.push(id);
-                }
+                this.root.children.$$safePush$$(id);
+                // if (this.root.children.indexOf(id) == -1) {
+                //     this.root.children.push(id);
+                // }
             } else {
                 this.root[parent.id].children.push(id);
             }
@@ -141,11 +150,15 @@ Blockly.Blocks.Manager = {
         }
     },
     changeListener: function(event) {
+        var me = this;
         if (event.internal !== undefined) {
             //ignore
             return;
         }
+
         var block = this.ws.getBlockById(event.blockId);
+        var _mutatedBlock = this.allBlocks.root[event.blockId];
+
         if (!block && event.type == 'move') {
             this.allBlocks.delNode(event.blockId);
             return;
@@ -154,7 +167,43 @@ Blockly.Blocks.Manager = {
             case Blockly.Events.CHANGE:
                 // Rename of variable
                 if (event.name == 'VAR' && event.newValue != event.oldValue) {
-                    this.allBlocks.root[event.blockId].variableName = event.newValue;
+                    _mutatedBlock.variableName = event.newValue;
+                    if (block.type == 'unary' || block.type == 'binary') {
+                        var _renameFlag = null;
+                        this.allBlocks.traverseNodes(function(b) {
+                            if (b.variableName == _mutatedBlock.variableName && b.id != event.blockId) {
+                                _renameFlag = 'Cannot use this variable';
+                            }
+                        });
+                        block.setWarningText(_renameFlag);
+                    }
+                }
+                // change in first operator
+                if (event.name == 'm1') {
+                    var _newM1 = event.newValue;
+                    this.allBlocks.traverseNodes(function(b) {
+                        if (b.variableName == _newM1 && b.dataType) {
+                            block.setDropdown(b.dataType);
+                        }
+                    });
+                }
+                // change in data type
+                if (event.name == 'operation') {
+                    var _newOperation = event.newValue;
+                    _mutatedBlock.dataType = event.newValue;
+                    if (_newOperation == 'date') {
+                        // creates new date_format block
+                        var _newChild = this.renderBlock('tp_date_format');
+                        _newChild.setFieldValue(block.getFieldValue('VAR'), 'VAR');
+                        this.allBlocks.root[block.id].children.$$safePush$$(_newChild.id);
+                        Blockly.Tp._connectMeToTransform(_newChild);
+                    }
+                    this.allBlocks.traverseNodes(function(b) {
+                        if ((b.obj.getFieldValue('m1') == block.getFieldValue('VAR') || b.obj.getFieldValue('m2') == block.getFieldValue('VAR')) && b.id != _mutatedBlock.id) {
+                            b.obj.setDropdown(_newOperation);
+                            b.obj.setWarningText('Please choose a diffrent operation');
+                        }
+                    });
                 }
                 switch (event.element) {
                     case 'comment':
@@ -174,32 +223,31 @@ Blockly.Blocks.Manager = {
             case Blockly.Events.CREATE:
                 // To Do: optimize creation process if to switch, abstract common properties
                 debugger;
-                // Delimiter
-                if (block.type == 'delimiter') {
-                    this.allBlocks.addNode(block, event.blockId);
-                }
-                // Output variable
-                if (block.type == 'output_field') {
-                    // should type matter initally?
-                    var _type = undefined;
-                    this.allBlocks.addNode(block, event.blockId, _type, block.getFieldValue('VAR'));
-                }
-                // field extractor
-                if (block.type == 'field_extractor') {
-                    this.allBlocks.addNode(block, event.blockId, block.getFieldValue('operation'), block.getFieldValue('VAR'));
-                }
-                // constant
-                if (block.type == 'tp_constant') {
-                    this.allBlocks.addNode(block, event.blockId, block.getFieldValue('operation'), block.getFieldValue('VAR'));
-                }
-                // unary
-                if (block.type == 'unary') {
-                    this.allBlocks.addNode(block, event.blockId, undefined, block.getFieldValue('VAR'));
-                }
-                // binary
-                if (block.type == 'binary') {
-                    this.allBlocks.addNode(block, event.blockId, undefined, block.getFieldValue('VAR'))
-                }
+                switch (block.type) {
+                    case 'delimiter':
+                        this.allBlocks.addNode(block, event.blockId);
+                        break;
+                    case 'output_field':
+                        this.allBlocks.addNode(block, event.blockId, undefined, block.getFieldValue('VAR'));
+                        break;
+                    case 'field_extractor':
+                        this.allBlocks.addNode(block, event.blockId, block.getFieldValue('operation'), block.getFieldValue('VAR'));
+                        break;
+                    case 'tp_constant':
+                        this.allBlocks.addNode(block, event.blockId, block.getFieldValue('operation'), block.getFieldValue('VAR'));
+                        break;
+                    case 'unary':
+                        this.allBlocks.addNode(block, event.blockId, undefined, block.getFieldValue('VAR'));
+                        break;
+                    case 'binary':
+                        this.allBlocks.addNode(block, event.blockId, undefined, block.getFieldValue('VAR'));
+                        break;
+                    case 'lookup':
+                        this.allBlocks.addNode(block, event.blockId, block.getFieldValue('operation'), block.getFieldValue('VAR'));
+                        break;
+                    case 'tp_date_format':
+                        this.allBlocks.addNode(block, event.blockId, undefined, block.getFieldValue('VAR'));
+                }       break;
                 break;
             case Blockly.Events.DELETE:
                 this.allBlocks.delNode(event.blockId);
@@ -227,6 +275,18 @@ Blockly.Blocks.Manager = {
                     }
                     //TODO create new block  & add it to either transform block or store
                 } else {
+                    // Field extractor and delimiter are physically related to it's parents
+                    // So removes links from parent and children
+                    if (block.type == 'field_extractor' || block.type == 'delimiter') {
+                        this.allBlocks.traverseNodes(function(b) {
+                            var _indexOfChild  = b.children.indexOf(event.blockId);
+                            if ( _indexOfChild != -1) {
+                                b.children.splice(_indexOfChild, 1);
+                                me.allBlocks.root[event.blockId].parent = [];
+                                me.allBlocks.root.children.$$safePush$$(event.blockId);
+                            }
+                        });
+                    }
                     var c = this.allBlocks.getParent(block);
                     if (c) {
                         // if (c.type == 'delimiter') {
@@ -286,6 +346,12 @@ Blockly.Blocks.Manager = {
     },
     getSupportedDataTypes: function(block) {
         return this.dataType;
+    },
+    // gets list of previously created variables
+    getLastVariables: function() {
+        var _varList = bbm.ws.variableList;
+        var _len = _varList.length;
+        return [_varList[_len - 1], _varList[_len-2] ? _varList[_len - 2] : _varList[_len - 1]];
     },
     renderBlock: function (id) {
         var mainWorkspace = Blockly.getMainWorkspace();

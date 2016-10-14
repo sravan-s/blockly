@@ -11,6 +11,7 @@ Blockly.Tp._connectMeToTransform = function(block) {
 
 Blockly.Tp.Counter = {
     count: 0,
+    factories: [],
     getNewVar: function(type) {
         var prefix = type ? type : 'var_';
         this.count++;
@@ -26,7 +27,6 @@ var blockObj = function(obj) {
     obj.getVars = function() {
         return [this.getFieldValue('VAR')];
     }
-
 };
 
 Blockly.Blocks["transform"] = {
@@ -189,13 +189,14 @@ Blockly.Blocks["unary"] = {
         }
     },
     init: function() {
+        var _variables = bbm.getLastVariables();
         this.appendDummyInput()
-            .appendField(new Blockly.FieldVariable(""), "m1")
+            .appendField(new Blockly.FieldVariable(_variables[0]), "m1")
             .appendField(new Blockly.FieldDropdown([
                 []
             ]), "operation")
             .appendField(" & is named as")
-            .appendField(new Blockly.FieldVariable(""), "VAR");
+            .appendField(new Blockly.FieldVariable(Blockly.Tp.Counter.getNewVar()), "VAR");
         this.setInputsInline(false);
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
@@ -204,38 +205,28 @@ Blockly.Blocks["unary"] = {
         this.setHelpUrl("http://www.example.com/");
         // Blockly.Tp._connectMeToTransform(this);
     },
-    getDropDown: function() {
-        var superSet = JSON.parse(Blockly.Tp.dataType);
-        var m1 = this.getFieldValue("m1");
-        var dataType = Blockly.Tp.variableDateTypeMap[m1];
+    setDropdown: function(dataType) {
+        var _list;
+        var drop = this.getField("operation");
         switch (dataType) {
             case 'string':
-                return this.OPERATIONS.tpString.unary;
+                _list = this.OPERATIONS.tpString.unary;
                 break;
             case 'number':
-                return this.OPERATIONS.tpMath.unary;
+                _list = this.OPERATIONS.tpMath.unary;
                 break;
             case 'date':
-                return this.OPERATIONS.tpDate.unary;
+                _list = this.OPERATIONS.tpDate.unary;
                 break;
             default:
-                return this.OPERATIONS.tpLogic.unary;
-
+                _list = this.OPERATIONS.tpLogic.unary;
         }
+        drop.menuGenerator_ = _list;
     },
     onchange: function(changeEvent) {
         if (changeEvent.blockId != this.id) {
             return;
         }
-        if (changeEvent.type === "change" && changeEvent.name == 'm1') {
-            var m1 = this.getFieldValue("m1");
-            var options = this.getDropDown(m1); // The new options you want to have
-            var drop = this.getField("operation");
-            drop.setText(" "); // set the actual text
-            drop.setValue(" "); // set the actual value
-            drop.menuGenerator_ = options;
-        }
-        this.validate();
     },
     validate: function() {
         var m1 = this.getFieldValue('m1');
@@ -248,13 +239,13 @@ Blockly.Blocks["unary"] = {
         this.setWarningText(null);
         return true;
     }
-
 };
 
 Blockly.Blocks['lookup'] = {
     init: function() {
-            var dummyInput = new Blockly.FieldTextInput(Date.now());
-            dummyInput.setVisible(false);
+        var _variables = bbm.getLastVariables();
+        var dummyInput = new Blockly.FieldTextInput(Date.now());
+        dummyInput.setVisible(false);
         this.appendDummyInput()
             .appendField(dummyInput,"var")
             .appendField("Lookup type")
@@ -268,11 +259,11 @@ Blockly.Blocks['lookup'] = {
             .appendField(new Blockly.FieldTextInput("default"), "path");
         this.appendDummyInput()
             .appendField("Pick key")
-            .appendField(new Blockly.FieldVariable("item"), "var_key")
+            .appendField(new Blockly.FieldVariable(_variables[0]), "var_key")
             .appendField("   value called as")
-            .appendField(new Blockly.FieldVariable(""), "VAR")
+            .appendField(new Blockly.FieldVariable(Blockly.Tp.Counter.getNewVar()), "VAR")
             .appendField(" and is of type")
-            .appendField(new Blockly.FieldDropdown(JSON.parse(Blockly.Tp.dataType)), "type");
+            .appendField(new Blockly.FieldDropdown(JSON.parse(Blockly.Tp.dataType)), "operation");
 
         //.appendField(new Blockly.FieldDropdown(Blockly.Blocks.dataType), "data_type");
         this.setPreviousStatement(true, null);
@@ -287,12 +278,12 @@ Blockly.Blocks['lookup'] = {
             return;
         }
         if(e.type=='create'){
-            var drop = this.getField("VAR");
-            var options = [];
-            drop.setText(" "); // set the actual text
-            drop.setValue(" "); // set the actual value
-            options.push(Blockly.Msg.NEW_VARIABLE);
-            drop.menuGenerator_ = [options];
+            // var drop = this.getField("VAR");
+            // var options = [];
+            // drop.setText(" "); // set the actual text
+            // drop.setValue(" "); // set the actual value
+            // options.push(Blockly.Msg.NEW_VARIABLE);
+            // drop.menuGenerator_ = [options];
         }
         this.validate();
     },
@@ -411,14 +402,15 @@ Blockly.Blocks["binary"] = {
         }
     },
     init: function() {
+        var _variables = bbm.getLastVariables();
         this.appendDummyInput('binaryOp')
-            .appendField(new Blockly.FieldVariable(""), "m1")
+            .appendField(new Blockly.FieldVariable(_variables[0]), "m1")
             .appendField(new Blockly.FieldDropdown([
                 []
             ]), "operation")
-            .appendField(new Blockly.FieldVariable(""), "m2")
+            .appendField(new Blockly.FieldVariable(_variables[1]), "m2")
             .appendField(" & is named as")
-            .appendField(new Blockly.FieldVariable(""), "VAR");
+            .appendField(new Blockly.FieldVariable(Blockly.Tp.Counter.getNewVar()), "VAR");
         this.setInputsInline(false);
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
@@ -429,67 +421,34 @@ Blockly.Blocks["binary"] = {
         // Blockly.Tp._connectMeToTransform(this);
     },
 
-    getDropDown: function(m1) {
-        var superSet = JSON.parse(Blockly.Tp.dataType);
-        var dataType = Blockly.Tp.variableDateTypeMap[m1];
-        switch (dataType) {
+    setDropdown: function(type) {
+        var _list;
+        switch (type) {
             case 'string':
-                return this.OPERATIONS.tpString.binary;
+                _list = this.OPERATIONS.tpString.binary;
                 break;
             case 'number':
-                return this.OPERATIONS.tpMath.binary;
+                _list = this.OPERATIONS.tpMath.binary;
                 break;
             case 'date':
-                return this.OPERATIONS.tpDate.binary;
+                _list = this.OPERATIONS.tpDate.binary;
                 break;
             default:
-                return this.OPERATIONS.tpLogic.binary;
-
+                _list = this.OPERATIONS.tpLogic.binary;
         }
+        var drop = this.getField("operation");
+        drop.menuGenerator_ = _list;
     },
-
 
     onchange: function(changeEvent) {
         if (!this.workspace || changeEvent.blockId != this.id) {
             return;
         }
         if (changeEvent.type === "change" && changeEvent.name == 'm1') {
-            var m1 = this.getFieldValue("m1");
-            var dataType = Blockly.Tp.variableMap[m1];
-            var op = this.getFieldValue("operation");
-            var options = this.getDropDown(m1); // The new options you want to have
-            var drop = this.getField("operation");
-            drop.setText(" "); // set the actual text
-            drop.setValue(" "); // set the actual value
-            drop.menuGenerator_ = options;
         }
-        this.validate();
-        /* if(changeEvent.type === "ui")
-        if (!this.workspace) {
-            return;
-        }
-        var m1Field = this.getFieldValue("m1");
-        var binaryOp = Blockly.Tp.variableMap[m1Field] === 'string';
-        if (binaryOp) {
-            this.updateShape_binary(binaryOp,m1Field);
-        }
+        // this.validate();
     },
-    updateShape_binary: function(binaryOp,m1Field) {
-    var inputExists = this.getInput('binaryOp');
-    if (binaryOp) {
-      if (!inputExists) {
-        this.appendDummyInput('binaryOp')
-            .appendField(new Blockly.FieldVariable(""), "m1")
-            .appendField(new Blockly.FieldDropdown(getDropDown(m1Field)), "operation")
-            .appendField(" & is named as")
-            .appendField(new Blockly.FieldVariable(""), "result");
-        this.setInputsInline(false);
-        
-      }
-    } else if (inputExists) {
-      this.removeInput('binaryOp');
-    }*/
-    },
+
     validate: function() {
         var m1 = this.getFieldValue('m1');
         var m2 = this.getFieldValue('m2');
@@ -502,14 +461,13 @@ Blockly.Blocks["binary"] = {
         this.setWarningText(null);
         return true;
     }
-
 };
 
 Blockly.Blocks['tp_date_format'] = {
    init: function() {
        this.appendDummyInput()
            .appendField('Date, ')
-           .appendField('', 'prefix')
+           .appendField('', 'VAR')
            .appendField('is formatted as')
            .appendField(new Blockly.FieldTextInput('dd-mm-yyyy'), 'dateFormat');
        this.setPreviousStatement(true);
@@ -519,41 +477,8 @@ Blockly.Blocks['tp_date_format'] = {
        this.setHelpUrl('http://www.example.com/');
        blockObj(this);
        // connects automatically to translate
-       // Blockly.Tp._connectMeToTransform(this);
    }
-}
-
-
-// Blockly.FieldVariable.dropdownCreate = function() {
-//     if (this.sourceBlock_ && this.sourceBlock_.workspace) {
-//         var variableList =
-//             Blockly.Variables.allVariables(this.sourceBlock_.workspace);
-//     } else {
-//         var variableList = [];
-//     }
-//     // Ensure that the currently selected variable is an option.
-//     var name = this.getText();
-//     if (name && variableList.indexOf(name) == -1) {
-//         variableList.push(name);
-//     }
-//     variableList.sort(goog.string.caseInsensitiveCompare);
-//     if (variableList.indexOf(Blockly.Msg.RENAME_VARIABLE) == -1) {
-//         variableList.push(Blockly.Msg.RENAME_VARIABLE);
-//     }
-//     if (variableList.indexOf(Blockly.Msg.NEW_VARIABLE) == -1) {
-//         variableList.push(Blockly.Msg.NEW_VARIABLE);
-//     }
-//     if (this.name && this.name != 'VAR') {
-//         variableList.splice(-2, 2);
-//     }
-//     // Variables are not language-specific, use the name as both the user-facing
-//     // text and the internal representation.
-//     var options = [];
-//     for (var x = 0; x < variableList.length; x++) {
-//         options[x] = [variableList[x], variableList[x]];
-//     }
-//     return options;
-// };
+};
 
 // Overrides currrent context menu
 Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {
