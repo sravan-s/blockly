@@ -190,6 +190,7 @@ Blockly.Blocks.Manager = {
                 // change in data type
                 if (event.name == 'operation') {
                     var _newOperation = event.newValue;
+                    var _prevOperation = event.oldValue;
                     _mutatedBlock.dataType = event.newValue;
                     if (_newOperation == 'date') {
                         // creates new date_format block
@@ -197,6 +198,15 @@ Blockly.Blocks.Manager = {
                         _newChild.setFieldValue(block.getFieldValue('VAR'), 'VAR');
                         this.allBlocks.root[block.id].children.$$safePush$$(_newChild.id);
                         Blockly.Tp._connectMeToTransform(_newChild);
+                    }
+                    if (_prevOperation == 'date') {
+                        _mutatedBlock.children.some(function(child) {
+                            if (this.allBlocks.root[child].obj.type == 'tp_date_format') {
+                                var _dateToDelete = this.ws.getBlockById(child);
+                                _dateToDelete.dispose();
+                                return true;
+                            }
+                        }.bind(this));
                     }
                     this.allBlocks.traverseNodes(function(b) {
                         if ((b.obj.getFieldValue('m1') == block.getFieldValue('VAR') || b.obj.getFieldValue('m2') == block.getFieldValue('VAR')) && b.id != _mutatedBlock.id) {
