@@ -189,8 +189,14 @@ Blockly.Blocks.Manager = {
                 }
                 // change in data type
                 if (event.name == 'operation') {
-                    var _newOperation = event.newValue;
-                    var _prevOperation = event.oldValue;
+                    var _newOperation;
+                    var _prevOperation;
+                    if (_mutatedBlock.type != 'field_extractor') {
+                        // type is operator
+                    } else {
+                        _newOperation = event.newValue;
+                        _prevOperation = event.oldValue;
+                    }
                     _mutatedBlock.dataType = event.newValue;
                     if (_newOperation == 'date') {
                         var _dateBlock;
