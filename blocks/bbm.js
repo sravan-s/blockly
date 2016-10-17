@@ -191,8 +191,19 @@ Blockly.Blocks.Manager = {
                 if (event.name == 'operation') {
                     var _newOperation;
                     var _prevOperation;
-                    if (_mutatedBlock.type != 'field_extractor') {
+                    if (_mutatedBlock.obj.type != 'field_extractor') {
                         // type is operator
+                        var _newOpType = event.newValue.split('||')[1];
+                        if (_newOpType != 'binary') {
+                            var _m1 = _mutatedBlock.obj.getFieldValue('m1');
+                            // type of new variable is type of m1
+                            this.allBlocks.traverseNodes(function(b) {
+                                if (b.variableName == _m1 && b.type) {
+                                    _mutatedBlock.type = b.type;
+                                }
+                            });
+                        }
+                        debugger;
                     } else {
                         _newOperation = event.newValue;
                         _prevOperation = event.oldValue;
