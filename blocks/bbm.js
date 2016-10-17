@@ -205,12 +205,13 @@ Blockly.Blocks.Manager = {
                     if (_mutatedBlock.obj.type != 'field_extractor') {
                         // type is operator
                         var _newOpType = event.newValue.split('||')[1];
+                        _mutatedBlock.dataType = _newOpType;
                         if (_newOpType != 'binary') {
                             var _m1 = _mutatedBlock.obj.getFieldValue('m1');
                             // type of new variable is type of m1
                             this.allBlocks.traverseNodes(function(b) {
-                                if (b.variableName == _m1 && b.type) {
-                                    _mutatedBlock.type = b.type;
+                                if (b.variableName == _m1 && b.dataType) {
+                                    _mutatedBlock.dataType = b.dataType;
                                 }
                             });
                         }
@@ -218,8 +219,8 @@ Blockly.Blocks.Manager = {
                     } else {
                         _newOperation = event.newValue;
                         _prevOperation = event.oldValue;
+                        _mutatedBlock.dataType = event.newValue;
                     }
-                    _mutatedBlock.dataType = event.newValue;
                     if (_newOperation == 'date') {
                         var _dateBlock;
                         // creates new date_format block
