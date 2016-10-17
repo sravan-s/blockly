@@ -299,13 +299,14 @@ Blockly.Blocks['lookup'] = {
 
 Blockly.Blocks['output_field'] = {
   init: function() {
+    var _variables = bbm.getLastVariables();
     this.appendDummyInput()
-        .appendField(new Blockly.FieldVariable(""), "VAR");
+        .appendField(new Blockly.FieldVariable(_variables[0]), "VAR");
     this.setOutput(true, null);
     this.setColour(330);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');
-  }
+  },
 };
 
 Blockly.Blocks['tp_constant'] = {

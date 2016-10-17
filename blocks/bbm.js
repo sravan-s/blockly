@@ -16,6 +16,16 @@ Blockly.Blocks.Manager = {
         _blocks.forEach(function(block) {
             // main blocks
             if (block.type == 'extractor' || block.type == 'store' || block.type == 'transform') {
+                switch (block.type){
+                    case 'extractor':
+                        this.__extractor = block;
+                        break;
+                    case 'store':
+                        this.__store = block;
+                        break;
+                    case 'transform':
+                        this.__transform = block;
+                }
                 this.allBlocks.addNode(block, block.id);
             } else {
                 this.allBlocks.addNode(block, block.id, block.getFieldValue('operation'), block.getFieldValue('VAR'), block.getParent());
@@ -158,6 +168,7 @@ Blockly.Blocks.Manager = {
 
         var block = this.ws.getBlockById(event.blockId);
         var _mutatedBlock = this.allBlocks.root[event.blockId];
+        var _productBlock;
 
         if (!block && event.type == 'move') {
             this.allBlocks.delNode(event.blockId);
@@ -268,6 +279,8 @@ Blockly.Blocks.Manager = {
                         break;
                     case 'field_extractor':
                         this.allBlocks.addNode(block, event.blockId, block.getFieldValue('operation'), block.getFieldValue('VAR'));
+                        _productBlock = bbm.renderBlock('output_field');
+                        bbm.allBlocks.attachChild(_productBlock, bbm.allBlocks.root[event.blockId]);
                         break;
                     case 'tp_constant':
                         this.allBlocks.addNode(block, event.blockId, block.getFieldValue('operation'), block.getFieldValue('VAR'));

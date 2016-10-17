@@ -33,6 +33,15 @@ Blockly.Blocks['field_extractor'] = {
   },
   getVars: function() {
     return [this.getFieldValue('VAR')];
+  },
+  validate: function() {
+    var _name = this.getFieldValue('NAME');
+    if (_name == '' || _name == ' ') {
+      this.setWarningText('field missing');
+      return false;
+    }
+    this.setWarningText(null);
+    return true;
   }
 };
 
@@ -104,6 +113,14 @@ Blockly.Blocks["delimiter"] = {
     // if no free inputs, create one
     // this.appendEmptyInput();
     // renderBlock('field_extractor');
+  },
+  validate: function() {
+    if (this.getFieldValue('delim') == '') {
+      this.setWarningText('field missing');
+      return false;
+    }
+    this.setWarningText(null);
+    return true;
   }
 }
 

@@ -23,28 +23,38 @@
  <div id="blocklyDiv" ></div>
 
   <script>
+    var sample = '0003657095|1|2|09-19-16|20:00:45.0|||09-19-16|20:00:45.8|98956|919712569423|0|9141069913091232|17|pps|16|52|919712569423|98956|Asia/Calcutta|0.0000|2|0.0000|1|0.0000|2|9141069913091232||0|0|0|0||404050220707456|0|313|0.0000|0.0000|0.0000|0|0|0|0.00|0|124@@@@@@|12424@@@@|0|0.0000|0|0.0000|0|0.0000|0|0.0000|0|0.0000|0|0.0000|0|0.0000|0|0.0000|0|0.0000|0|0.0000|0|0.0000|0|0.0000|0|0.0000|0|0.0000|0|0.0000|||1|0|36||0|919825401010|404050220707456|101|1||||||||17|0|22|1*CORE BALANCE*10.4490*0.0000*1*+*2*0*2*V2V_LOCAL_BAL*0.0000*0.0000*2*+*2*0*3*SMS_BALANCE*0.0000*0.0000*4*+*2*0*4*V2V_NIGHT_MINUTES*0.0000*0.0000*2*+*2*0*5*STD_MINUTES*0.0000*0.0000*2*+*2*0*6*V2V_LOCAL_MINUTES*0.0000*0.0000*2*+*2*0*7*M2M_LOCAL*0.0000*0.0000*2*+*2*0*8*Minutes_LOCAL*0.0000*0.0000*2*+*2*0*9*SMS_STD_LO*0.0000*0.0000*4*+*2*0*10*LOCAL_NIGHT_MINUTES*0.0000*0.0000*2*+*2*0*11*LOCAL_STD_BAL*0.0000*0.0000*2*+*2*0*22*CORE2_BALANCE*0.0000*0.0000*1*+*2*0*42*V2O_BAL*0.0000*0.0000*2*+*2*0*62*DUMMY_SMS*0.0000*0.0000*4*+*2*0*63*V2V_LOC_NAT_SMS*0.0000*0.0000*4*+*2*0*65*ROAM_INTL_IC_FREE*0.0000*0.0000*2*+*2*0*66*ERW_LOCAL_MOBILE_SECS*0.0000*0.0000*2*+*2*0*67*CallDropV2VL*0.0000*0.0000*2*+*2*0*68*ERW_SMS*0.0000*0.0000*4*+*2*0*69*ERW_NIGHT_V2V_SECS*0.0000*0.0000*2*+*2*0*70*ERW_TALKTIME*0.0000*0.0000*1*+*2*0*73*FLEX_BAL*0.0000*0.0000*1*+*2*0*|1|5*ACCUM_SMS_100*0.0000*0.0000*|0||401D413F0BE4D1|1|0|3|0.0000||';
+
     var gen = document.getElementById('gen');
     var blocklyDiv = document.getElementById('blocklyDiv');
-    var workspace = Blockly.inject(blocklyDiv
-        // {toolbox: document.getElementById('toolbox')}
-        );
+    var workspace = Blockly.inject(blocklyDiv);
     window.addEventListener('resize', onresize, true);
-    Blockly.svgResize(workspace); 
+    Blockly.svgResize(workspace);
 
     // var xmlInit = '<xml xmlns="http://www.w3.org/1999/xhtml"><block type="extractor" id="D-i{Q5j{]PJ!5f.@f^S^" deletable="false" x="192" y="192"><value name="line"><block type="delimiter" id=")_!qb9F/ZEH*[C1F8[a#"><field name="delim">|</field><value name="next_marker"><block type="field_extractor" id=":r/k,#9Opi7y^vqT_6.l"><field name="NAME">0</field><field name="operation">string</field><field name="VAR">string0</field></block></value></block></value><next><block type="transform" id="`#{siG=4Z=W{9fzG7~Xj" deletable="false"><next><block type="store" id="x6tnR`YVMw61kvdnf}`B" deletable="false"><mutation items="2"></mutation><field name="operation">hdfs</field><field name="headers">TRUE</field></block></next></block></next></block></xml>';
 
-    var xmlInit = '<xml xmlns="http://www.w3.org/1999/xhtml"><block type="extractor" id="D-i{Q5j{]PJ!5f.@f^S^" deletable="false" x="247" y="290"><value name="line"><block type="delimiter" id="qMnz}t3a9,,XE4@/jLCb"><mutation items="3"></mutation><field name="delim"></field><value name="next_marker_1"><block type="field_extractor" id="@,~OvNIl-dvxywoxZX8`"><field name="NAME">1</field><field name="operation">string</field><field name="VAR">string2</field></block></value></block></value><next><block type="transform" id="`#{siG=4Z=W{9fzG7~Xj" deletable="false"><next><block type="store" id="x6tnR`YVMw61kvdnf}`B" deletable="false"><mutation items="2"></mutation><field name="operation">hdfs</field><field name="headers">TRUE</field></block></next></block></next></block></xml>';
+    var xmlInit = '<xml xmlns="http://www.w3.org/1999/xhtml"><block type="extractor" id="D-i{Q5j{]PJ!5f.@f^S^" deletable="false" x="247" y="290"><value name="line"><block type="delimiter" id="qMnz}t3a9,,XE4@/jLCb"><mutation items="3"></mutation><field name="delim"></field><value name="next_marker_1"><block type="field_extractor" id="@,~OvNIl-dvxywoxZX8`"><field name="NAME">1</field><field name="operation">string</field><field name="VAR">string0</field></block></value></block></value><next><block type="transform" id="`#{siG=4Z=W{9fzG7~Xj" deletable="false"><next><block type="store" id="x6tnR`YVMw61kvdnf}`B" deletable="false"><mutation items="2"></mutation><field name="operation">hdfs</field><field name="headers">TRUE</field></block></next></block></next></block></xml>';
                  var xmlDom = Blockly.Xml.textToDom(xmlInit);
                 Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, xmlDom);
 
     gen.addEventListener('click', function() {
+      var count = 0;
+      Blockly.JavaScript.initFunctions = ['setInputFileName("TestScript");'];
+      Blockly.JavaScript.initFunctions.push('this.mf.setMaxListSize(' + (count + 4) + ');\n');
       Blockly.JavaScript.variables = [];
       Blockly.JavaScript.extractPhase = '';
       Blockly.JavaScript.translatePhase = '';
       Blockly.JavaScript.storePhase = '';
-      Blockly.JavaScript.initFunctions = [];
       Blockly.JavaScript.workspaceToCode(Blockly.getMainWorkspace());
       var output ='';
+      Blockly.JavaScript.variables.forEach(function(variable) {
+        if (variable.indexOf('boolean ') != -1) {
+          count++;
+        } else if (variable.indexOf('Marker ') != -1) {
+          count++;
+        }
+      });
+      Blockly.JavaScript.initFunctions.push('this.mf.setMaxListSize(' + (count + 4) + ');\n');
       output+= "Variables\n";
       output+= "--------------------\n";
       output+= Blockly.JavaScript.variables.join('\n')+'\n';
@@ -67,6 +77,28 @@
       output+= "--------------------\n";
 
       console.log(output)
+      var http = new XMLHttpRequest();
+      var url = 'http://192.168.14.95:9000/compileNtest/';
+      http.onreadystatechange = function() {//Call a function when the state changes.  
+        if(http.readyState == 4 && http.status == 200) {
+          alert(http.responseText);
+        }
+      }
+      http.open('POST', url, true);
+      // http.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
+      // http.setRequestHeader('Accept', 'application/json');
+      // http.overrideMimeType("text/js; charset=ISO-8859-1")
+      http.setRequestHeader('Content-Type', 'application/json');
+      http.send(JSON.stringify({
+        name: 'TestScript',
+        init: Blockly.JavaScript.initFunctions.join('\n'),
+        absProcessor: Blockly.JavaScript.variables.join('\n'),
+        extract: Blockly.JavaScript.extractPhase,
+        transformation: Blockly.JavaScript.translatePhase,
+        store: Blockly.JavaScript.storePhase,
+        type: 'single',
+        sample: sample
+      }));
     });
   </script>
   <script src="blocks/bbm.js"></script>
