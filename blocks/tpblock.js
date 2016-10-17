@@ -45,38 +45,6 @@ Blockly.Blocks['transform'] = {
         this.setTooltip("");
         this.setHelpUrl("http://www.example.com/");
         Blockly.Tp.transform_ = this;
-    },
-
-    mutationToDom: function() {
-        var container = document.createElement('mutation');
-        container.setAttribute('items', this.itemCount_);
-        return container;
-    },
-
-    domToMutation: function(xmlElement) {
-        this.itemCount_ = parseInt(xmlElement.getAttribute('items'), 10);
-        this.updateShape_();
-    },
-
-    updateShape_: function() {
-        // Delete everything.
-        if (this.getInput('EMPTY')) {
-            this.removeInput('EMPTY');
-        } else {
-            var i = 0;
-            while (this.getInput('next_marker_' + i)) {
-                this.removeInput('next_marker_' + i);
-                i++;
-            }
-        }
-        // Rebuild block.
-        if (this.itemCount_ == 0) {
-            this.appendValueInput('next_marker_' + i);
-        } else {
-            for (var i = 0; i < this.itemCount_; i++) {
-                var input = this.appendValueInput('next_marker_' + i);
-            }
-        }
     }
 };
 
@@ -238,8 +206,7 @@ Blockly.Blocks["unary"] = {
         this.setColour("#006400");
         this.setTooltip("");
         this.setHelpUrl("http://www.example.com/");
-        this.setOutput(true, "unary");
-        // Blockly.Tp._connectMeToTransform(this);
+        Blockly.Tp._connectMeToTransform(this);
     },
     setDropdown: function(dataType) {
         var _list;
@@ -277,108 +244,107 @@ Blockly.Blocks["unary"] = {
     }
 };
 
-Blockly.Blocks["dynamic"] = { 
-    OPERATIONS: { 
-        tpDate: { 
-            data: [ 
-                ["after", "$1 = tpDate.after(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3);||boolean||binary"], 
-                ["before", "$1 = tpDate.before(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3);||boolean||binary"], 
-                ["differenceInMillis", "$1 = tpDate.differenceInMillis(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3);||Marker||binary"], 
-                ["convertDate", "$1 = tpDate.convertDate(m$2.getData() == null ? data: m$2.getData(), m$2, MarkerFactory, m$3);||Marker||unary"] 
-            ]             
-        }, 
-        tpString: { 
-            data: [ 
-                ["contains", "$1 = tpString.contains(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"], 
-                ["containsIgnoreCase", "$1 = tpString.containsIgnoreCase(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"], 
-                ["endsWith", "$1 = tpString.endsWith(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"], 
-                ["endsWithIgnore", "$1 = tpString.endsWithIgnore(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"], 
-                ["extractLeading", "$1 = tpString.extractLeading(m$2.getData() == null ? data: m$2.getData(), $1, integer, mf);||Marker||binary"], 
-                ["extractTrailing", "$1 = tpString.extractTrailing(m$2.getData() == null ? data: m$2.getData(), $1, integer, mf);||Marker||binary"], 
-                ["indexOf", "$1 = tpString.indexOf(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary"], 
-                ["indexOIgnoreCase", "$1 = tpString.indexOIgnoreCase(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary"], 
-                ["merge", "$1 = tpString.merge(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary"], 
-                ["startsWith", "$1 = tpString.startsWith(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3);||boolean||binary"], 
-                ["toLowerCase", "$1 = tpString.toLowerCase(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"], 
-                ["toTitleCase", "$1 = tpString.toTitleCase(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"], 
-                ["toUpperCase", "$1 = tpString.toUpperCase(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"], 
-                ["isNull", "$1 = tpString.isNull(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||boolean||unary"], 
-                ["length", "$1 = tpString.length(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"], 
-                ["rTrim", "$1 = tpString.rTrim(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"], 
-                ["lTrim", "$1 = tpString.lTrim(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"], 
-                ["trim", "$1 = tpString.trim(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"] 
-                 
-            ]             
-        }, 
-        tpMath: { 
-            data: [ 
-                ["addDouble", "$1 = tpMath.addDouble(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary"], 
-                ["addLong", "$1 = tpMath.addLong(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary"], 
-                ["eq", "$1 = tpMath.eq(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"], 
-                ["greaterEqThan", "$1 = tpMath.greaterEqThan(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"], 
-                ["greaterThan", "$1 = tpMath.greaterThan(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"], 
-                ["lessEqThan", "$1 = tpMath.lessEqThan(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"], 
-                ["lessThan", "$1 = tpMath.lessThan(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"], 
-                ["max", "$1 = tpMath.max(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary"], 
-                ["min", "$1 = tpMath.min(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary"], 
-                ["subDouble", "$1 = tpMath.subDouble(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary"], 
-                ["subLong", "$1 = tpMath.subLong(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary"], 
-                ["abs", "$1 =tpMath.abs(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"], 
-                ["ceil", "$1 =tpMath.ceil(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"], 
-                ["round", "$1 =tpMath.round(m$2.getData() == null ? data: m$2.getData(), integer, m$2, mf);||Marker||unary"], 
-                ["floor", "$1 =tpMath.floor(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"], 
-                ["isNumber", "$1 =tpMath.isNumber(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||boolean||unary"], 
-                ["extractDecimalFractionPart", "$1 =tpMath.extractDecimalFractionPart(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"], 
-                ["extractDecimalIntegerPart", "$1 =tpMath.extractDecimalIntegerPart(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"], 
-                ["toMarker", "$1 =tpMath.toMarker(m$2 , mf);||Marker||unary"], 
-                ["toMarker", "$1 =tpMath.toMarker(m$2, mf);||Marker||unary"] 
-            ]             
-        }, 
-        tpLogic: { 
-            data: [ 
-                ["and", "$1 = tpLogic.and(m$2, m$3);||Marker||binary"], 
-                ["or", "$1 = tpLogic.or(m$2, m$3);||Marker||binary"], 
-                ["not", "$1 = tpLogic.not(m$2)||boolean||unary"] 
-            ]             
-        } 
-    }, 
-    init: function() { 
-        var dummyInput = new Blockly.FieldVariable(""); 
-            dummyInput.setVisible(false); 
-        this.appendDummyInput() 
-            .appendField(new Blockly.FieldVariable(""), "m1") 
-            .appendField(new Blockly.FieldDropdown([ 
-                [] 
-            ]), "operation") 
-            .appendField(dummyInput, "m2") 
-            .appendField(" & is named as") 
-            .appendField(new Blockly.FieldVariable(""), "VAR"); 
-        this.setInputsInline(false); 
-        this.setPreviousStatement(true, null); 
-        this.setNextStatement(true, null); 
-        this.setColour("#006400"); 
-        this.setTooltip(""); 
-        this.setHelpUrl("http://www.example.com/"); 
-        Blockly.Tp._connectMeToTransform(this); 
-    }, 
-    getDropDown: function() { 
-        var superSet = JSON.parse(Blockly.Tp.dataType); 
-        var m1 = this.getFieldValue("m1"); 
-        var dataType = Blockly.Tp.variableDateTypeMap[m1]; 
-        switch (dataType) { 
-            case 'string': 
-                return this.OPERATIONS.tpString.data; 
-                break; 
-            case 'number': 
-                return this.OPERATIONS.tpMath.data; 
-                break; 
-            case 'date': 
-                return this.OPERATIONS.tpDate.data; 
-                break; 
-            default: 
-                return this.OPERATIONS.tpLogic.data; 
-        } 
-    }, 
+Blockly.Blocks["dynamic"] = {
+    OPERATIONS: {
+        tpDate: {
+            data: [
+                ["after", "$1 = tpDate.after(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3);||boolean||binary"],
+                ["before", "$1 = tpDate.before(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3);||boolean||binary"],
+                ["differenceInMillis", "$1 = tpDate.differenceInMillis(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3);||Marker||binary"],
+                ["convertDate", "$1 = tpDate.convertDate(m$2.getData() == null ? data: m$2.getData(), m$2, MarkerFactory, m$3);||Marker||unary"]
+            ]
+        },
+        tpString: {
+            data: [
+                ["contains", "$1 = tpString.contains(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"],
+                ["containsIgnoreCase", "$1 = tpString.containsIgnoreCase(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"],
+                ["endsWith", "$1 = tpString.endsWith(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"],
+                ["endsWithIgnore", "$1 = tpString.endsWithIgnore(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"],
+                ["extractLeading", "$1 = tpString.extractLeading(m$2.getData() == null ? data: m$2.getData(), $1, integer, mf);||Marker||binary"],
+                ["extractTrailing", "$1 = tpString.extractTrailing(m$2.getData() == null ? data: m$2.getData(), $1, integer, mf);||Marker||binary"],
+                ["indexOf", "$1 = tpString.indexOf(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary"],
+                ["indexOIgnoreCase", "$1 = tpString.indexOIgnoreCase(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary"],
+                ["merge", "$1 = tpString.merge(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary"],
+                ["startsWith", "$1 = tpString.startsWith(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3);||boolean||binary"],
+                ["toLowerCase", "$1 = tpString.toLowerCase(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"],
+                ["toTitleCase", "$1 = tpString.toTitleCase(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"],
+                ["toUpperCase", "$1 = tpString.toUpperCase(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"],
+                ["isNull", "$1 = tpString.isNull(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||boolean||unary"],
+                ["length", "$1 = tpString.length(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"],
+                ["rTrim", "$1 = tpString.rTrim(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"],
+                ["lTrim", "$1 = tpString.lTrim(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"],
+                ["trim", "$1 = tpString.trim(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"]
+            ]
+        },
+        tpMath: {
+            data: [
+                ["addDouble", "$1 = tpMath.addDouble(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary"],
+                ["addLong", "$1 = tpMath.addLong(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary"],
+                ["eq", "$1 = tpMath.eq(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"],
+                ["greaterEqThan", "$1 = tpMath.greaterEqThan(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"],
+                ["greaterThan", "$1 = tpMath.greaterThan(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"],
+                ["lessEqThan", "$1 = tpMath.lessEqThan(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"],
+                ["lessThan", "$1 = tpMath.lessThan(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"],
+                ["max", "$1 = tpMath.max(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary"],
+                ["min", "$1 = tpMath.min(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary"],
+                ["subDouble", "$1 = tpMath.subDouble(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary"],
+                ["subLong", "$1 = tpMath.subLong(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary"],
+                ["abs", "$1 =tpMath.abs(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"],
+                ["ceil", "$1 =tpMath.ceil(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"],
+                ["round", "$1 =tpMath.round(m$2.getData() == null ? data: m$2.getData(), integer, m$2, mf);||Marker||unary"],
+                ["floor", "$1 =tpMath.floor(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"],
+                ["isNumber", "$1 =tpMath.isNumber(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||boolean||unary"],
+                ["extractDecimalFractionPart", "$1 =tpMath.extractDecimalFractionPart(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"],
+                ["extractDecimalIntegerPart", "$1 =tpMath.extractDecimalIntegerPart(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"],
+                ["toMarker", "$1 =tpMath.toMarker(m$2 , mf);||Marker||unary"],
+                ["toMarker", "$1 =tpMath.toMarker(m$2, mf);||Marker||unary"]
+            ]
+        },
+        tpLogic: {
+            data: [
+                ["and", "$1 = tpLogic.and(m$2, m$3);||Marker||binary"],
+                ["or", "$1 = tpLogic.or(m$2, m$3);||Marker||binary"],
+                ["not", "$1 = tpLogic.not(m$2)||boolean||unary"]
+            ]
+        }
+    },
+    init: function() {
+        var dummyInput = new Blockly.FieldVariable("");
+            dummyInput.setVisible(false);
+        this.appendDummyInput()
+            .appendField(new Blockly.FieldVariable(""), "m1")
+            .appendField(new Blockly.FieldDropdown([
+                []
+            ]), "operation")
+            .appendField(dummyInput, "m2")
+            .appendField(" & is named as")
+            .appendField(new Blockly.FieldVariable(""), "VAR");
+        this.setInputsInline(false);
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour("#006400");
+        this.setTooltip("");
+        this.setHelpUrl("http://www.example.com/");
+        Blockly.Tp._connectMeToTransform(this);
+    },
+    getDropDown: function() {
+        var superSet = JSON.parse(Blockly.Tp.dataType);
+        var m1 = this.getFieldValue("m1");
+        var dataType = Blockly.Tp.variableDateTypeMap[m1];
+        switch (dataType) {
+            case 'string':
+                return this.OPERATIONS.tpString.data;
+                break;
+            case 'number':
+                return this.OPERATIONS.tpMath.data;
+                break;
+            case 'date':
+                return this.OPERATIONS.tpDate.data;
+                break;
+            default:
+                return this.OPERATIONS.tpLogic.data;
+        }
+    },
     setDropdown: function(dataType) {
         var _list;
         var drop = this.getField("operation");
@@ -397,48 +363,48 @@ Blockly.Blocks["dynamic"] = {
         }
         drop.menuGenerator_ = _list;
     },
-    updateField: function(type){ 
-        if(type =='binary'){ 
-            this.getField('m2').setVisible(true) 
-        }else{ 
-            this.getField('m2').setVisible(false) 
-        } 
-        this.render(); 
-    }, 
-    onchange: function(changeEvent) { 
-        if (changeEvent.blockId != this.id) { 
-            return; 
-        } 
-        if (changeEvent.type === "change" && changeEvent.name == 'm1') { 
-            var m1 = this.getFieldValue("m1"); 
-            var options = this.getDropDown(m1); // The new options you want to have 
-            var drop = this.getField("operation"); 
-            drop.setText(" "); // set the actual text 
-            drop.setValue(" "); // set the actual value 
-            drop.menuGenerator_ = options; 
-        } 
-        if (changeEvent.type === "change" && changeEvent.name == 'operation') { 
-            var drop = this.getField("operation"); 
-            var dropType = drop.value_.split('||')[2]; 
-            if(dropType){ 
-                this.updateField(dropType); 
-            } 
-        } 
-        this.validate(); 
-    }, 
-    validate: function() { 
-        var m1 = this.getFieldValue('m1'); 
-        var operation = this.getFieldValue('operation'); 
-        var result = this.getFieldValue('VAR'); 
-        if (m1 == '' || operation == '' || result == '' || operation == ' ') { 
-            this.setWarningText('Fill all fields'); 
-            return false; 
-        } 
-        this.setWarningText(null); 
-        return true; 
-    } 
- 
-}; 
+    updateField: function(type){
+        if(type =='binary'){
+            this.getField('m2').setVisible(true)
+        }else{
+            this.getField('m2').setVisible(false)
+        }
+        this.render();
+    },
+    onchange: function(changeEvent) {
+        if (changeEvent.blockId != this.id) {
+            return;
+        }
+        if (changeEvent.type === "change" && changeEvent.name == 'm1') {
+            var m1 = this.getFieldValue("m1");
+            var options = this.getDropDown(m1); // The new options you want to have
+            var drop = this.getField("operation");
+            drop.setText(" "); // set the actual text
+            drop.setValue(" "); // set the actual value
+            drop.menuGenerator_ = options;
+        }
+        if (changeEvent.type === "change" && changeEvent.name == 'operation') {
+            var drop = this.getField("operation");
+            var dropType = drop.value_.split('||')[2];
+            if(dropType){
+                this.updateField(dropType);
+            }
+        }
+        this.validate();
+    },
+    validate: function() {
+        var m1 = this.getFieldValue('m1');
+        var operation = this.getFieldValue('operation');
+        var result = this.getFieldValue('VAR');
+        if (m1 == '' || operation == '' || result == '' || operation == ' ') {
+            this.setWarningText('Fill all fields');
+            return false;
+        }
+        this.setWarningText(null);
+        return true;
+    }
+
+};
 
 Blockly.Blocks['lookup'] = {
     init: function() {
@@ -618,8 +584,7 @@ Blockly.Blocks["binary"] = {
         this.setTooltip("");
         this.setHelpUrl("http://www.example.com/");
         blockObj(this);
-        this.setOutput(true, "binary");
-        // Blockly.Tp._connectMeToTransform(this);
+        Blockly.Tp._connectMeToTransform(this);
     },
 
     setDropdown: function(type) {
@@ -679,192 +644,6 @@ Blockly.Blocks['tp_date_format'] = {
        blockObj(this);
        // connects automatically to translate
    }
-};
-
-Blockly.Blocks['tp_controls_if'] = {
-  /**
-   * Block for if/elseif/else condition.
-   * @this Blockly.Block
-   */
-  init: function() {
-    this.setHelpUrl(Blockly.Msg.CONTROLS_IF_HELPURL);
-    this.setColour(Blockly.Blocks.logic.HUE);
-    this.appendValueInput('IF0')
-        .setCheck('Boolean')
-        .appendField(Blockly.Msg.CONTROLS_IF_MSG_IF);
-    this.appendStatementInput('DO0')
-        .appendField(Blockly.Msg.CONTROLS_IF_MSG_THEN);
-    this.setPreviousStatement(true);
-    this.setNextStatement(true);
-    this.setMutator(new Blockly.Mutator(['controls_if_elseif',
-                                         'controls_if_else']));
-    // Assign 'this' to a variable for use in the tooltip closure below.
-    var thisBlock = this;
-    this.setTooltip(function() {
-      if (!thisBlock.elseifCount_ && !thisBlock.elseCount_) {
-        return Blockly.Msg.CONTROLS_IF_TOOLTIP_1;
-      } else if (!thisBlock.elseifCount_ && thisBlock.elseCount_) {
-        return Blockly.Msg.CONTROLS_IF_TOOLTIP_2;
-      } else if (thisBlock.elseifCount_ && !thisBlock.elseCount_) {
-        return Blockly.Msg.CONTROLS_IF_TOOLTIP_3;
-      } else if (thisBlock.elseifCount_ && thisBlock.elseCount_) {
-        return Blockly.Msg.CONTROLS_IF_TOOLTIP_4;
-      }
-      return '';
-    });
-    this.elseifCount_ = 0;
-    this.elseCount_ = 0;
-    this.setOutput(true, "tp_controls_if");
-  },
-  /**
-   * Create XML to represent the number of else-if and else inputs.
-   * @return {Element} XML storage element.
-   * @this Blockly.Block
-   */
-  mutationToDom: function() {
-    if (!this.elseifCount_ && !this.elseCount_) {
-      return null;
-    }
-    var container = document.createElement('mutation');
-    if (this.elseifCount_) {
-      container.setAttribute('elseif', this.elseifCount_);
-    }
-    if (this.elseCount_) {
-      container.setAttribute('else', 1);
-    }
-    return container;
-  },
-  /**
-   * Parse XML to restore the else-if and else inputs.
-   * @param {!Element} xmlElement XML storage element.
-   * @this Blockly.Block
-   */
-  domToMutation: function(xmlElement) {
-    this.elseifCount_ = parseInt(xmlElement.getAttribute('elseif'), 10) || 0;
-    this.elseCount_ = parseInt(xmlElement.getAttribute('else'), 10) || 0;
-    this.updateShape_();
-  },
-  /**
-   * Populate the mutator's dialog with this block's components.
-   * @param {!Blockly.Workspace} workspace Mutator's workspace.
-   * @return {!Blockly.Block} Root block in mutator.
-   * @this Blockly.Block
-   */
-  decompose: function(workspace) {
-    var containerBlock = workspace.newBlock('controls_if_if');
-    containerBlock.initSvg();
-    var connection = containerBlock.nextConnection;
-    for (var i = 1; i <= this.elseifCount_; i++) {
-      var elseifBlock = workspace.newBlock('controls_if_elseif');
-      elseifBlock.initSvg();
-      connection.connect(elseifBlock.previousConnection);
-      connection = elseifBlock.nextConnection;
-    }
-    if (this.elseCount_) {
-      var elseBlock = workspace.newBlock('controls_if_else');
-      elseBlock.initSvg();
-      connection.connect(elseBlock.previousConnection);
-    }
-    return containerBlock;
-  },
-  /**
-   * Reconfigure this block based on the mutator dialog's components.
-   * @param {!Blockly.Block} containerBlock Root block in mutator.
-   * @this Blockly.Block
-   */
-  compose: function(containerBlock) {
-    var clauseBlock = containerBlock.nextConnection.targetBlock();
-    // Count number of inputs.
-    this.elseifCount_ = 0;
-    this.elseCount_ = 0;
-    var valueConnections = [null];
-    var statementConnections = [null];
-    var elseStatementConnection = null;
-    while (clauseBlock) {
-      switch (clauseBlock.type) {
-        case 'controls_if_elseif':
-          this.elseifCount_++;
-          valueConnections.push(clauseBlock.valueConnection_);
-          statementConnections.push(clauseBlock.statementConnection_);
-          break;
-        case 'controls_if_else':
-          this.elseCount_++;
-          elseStatementConnection = clauseBlock.statementConnection_;
-          break;
-        default:
-          throw 'Unknown block type.';
-      }
-      clauseBlock = clauseBlock.nextConnection &&
-          clauseBlock.nextConnection.targetBlock();
-    }
-    this.updateShape_();
-    // Reconnect any child blocks.
-    for (var i = 1; i <= this.elseifCount_; i++) {
-      Blockly.Mutator.reconnect(valueConnections[i], this, 'IF' + i);
-      Blockly.Mutator.reconnect(statementConnections[i], this, 'DO' + i);
-    }
-    Blockly.Mutator.reconnect(elseStatementConnection, this, 'ELSE');
-  },
-  /**
-   * Store pointers to any connected child blocks.
-   * @param {!Blockly.Block} containerBlock Root block in mutator.
-   * @this Blockly.Block
-   */
-  saveConnections: function(containerBlock) {
-    var clauseBlock = containerBlock.nextConnection.targetBlock();
-    var i = 1;
-    while (clauseBlock) {
-      switch (clauseBlock.type) {
-        case 'controls_if_elseif':
-          var inputIf = this.getInput('IF' + i);
-          var inputDo = this.getInput('DO' + i);
-          clauseBlock.valueConnection_ =
-              inputIf && inputIf.connection.targetConnection;
-          clauseBlock.statementConnection_ =
-              inputDo && inputDo.connection.targetConnection;
-          i++;
-          break;
-        case 'controls_if_else':
-          var inputDo = this.getInput('ELSE');
-          clauseBlock.statementConnection_ =
-              inputDo && inputDo.connection.targetConnection;
-          break;
-        default:
-          throw 'Unknown block type.';
-      }
-      clauseBlock = clauseBlock.nextConnection &&
-          clauseBlock.nextConnection.targetBlock();
-    }
-  },
-  /**
-   * Modify this block to have the correct number of inputs.
-   * @private
-   * @this Blockly.Block
-   */
-  updateShape_: function() {
-    // Delete everything.
-    if (this.getInput('ELSE')) {
-      this.removeInput('ELSE');
-    }
-    var i = 1;
-    while (this.getInput('IF' + i)) {
-      this.removeInput('IF' + i);
-      this.removeInput('DO' + i);
-      i++;
-    }
-    // Rebuild block.
-    for (var i = 1; i <= this.elseifCount_; i++) {
-      this.appendValueInput('IF' + i)
-          .setCheck('Boolean')
-          .appendField(Blockly.Msg.CONTROLS_IF_MSG_ELSEIF);
-      this.appendStatementInput('DO' + i)
-          .appendField(Blockly.Msg.CONTROLS_IF_MSG_THEN);
-    }
-    if (this.elseCount_) {
-      this.appendStatementInput('ELSE')
-          .appendField(Blockly.Msg.CONTROLS_IF_MSG_ELSE);
-    }
-  }
 };
 
 // Overrides currrent context menu
@@ -1008,12 +787,12 @@ Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {
                 bbm.renderBlock('unary');
             }
         },
-        { 
-            enabled: true, 
-            text: "Dynamic Operator", 
-            // callback: CreateUnaryOperator 
-            callback: function() { 
-                bbm.renderBlock('dynamic'); 
+        {
+            enabled: true,
+            text: "Dynamic Operator",
+            // callback: CreateUnaryOperator
+            callback: function() {
+                bbm.renderBlock('dynamic');
             }
         },
          {
@@ -1035,7 +814,7 @@ Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {
             text: "Logic Control-if",
             // callback: CreateLogic
             callback: function() {
-                bbm.renderBlock('tp_controls_if');
+                bbm.renderBlock('controls_if');
             }
         }, {
             enabled: true,

@@ -285,9 +285,8 @@ Blockly.Blocks.Manager = {
                     case 'tp_constant':
                         this.allBlocks.addNode(block, event.blockId, block.getFieldValue('operation'), block.getFieldValue('VAR'));
                         break;
+                    case 'dynamic':
                     case 'unary':
-                        this.allBlocks.addNode(block, event.blockId, undefined, block.getFieldValue('VAR'));
-                        break;
                     case 'binary':
                         this.allBlocks.addNode(block, event.blockId, undefined, block.getFieldValue('VAR'));
                         break;
