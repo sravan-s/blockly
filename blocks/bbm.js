@@ -214,7 +214,7 @@ Blockly.Blocks.Manager = {
                                 }
                             });
                         }
-                        debugger;
+                        // debugger;
                     } else {
                         _newOperation = event.newValue;
                         _prevOperation = event.oldValue;
@@ -269,7 +269,7 @@ Blockly.Blocks.Manager = {
                 break;
             case Blockly.Events.CREATE:
                 // To Do: optimize creation process if to switch, abstract common properties
-                debugger;
+                // debugger;
                 switch (block.type) {
                     case 'delimiter':
                         this.allBlocks.addNode(block, event.blockId);
