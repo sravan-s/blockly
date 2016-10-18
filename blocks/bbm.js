@@ -311,14 +311,16 @@ Blockly.Blocks.Manager = {
         }
         if (event.newParentId) {//attached
             // this element was previosuly attached to root
+            var blockP = this.ws.getBlockById(event.newParentId);
             if (!event.oldParentId) {
                 var _rootIndex = this.allBlocks.root.children.indexOf(event.blockId);
                 // removes from root's child list
                 if (_rootIndex != -1) {
                     this.allBlocks.root.children.splice(_rootIndex, 1);
                 }
+                this.allBlocks.root[event.newParentId].children.$$safePush$$(event.blockId);
+                _mutatedBlock.parent.push(blockP);
             }
-            var blockP = this.ws.getBlockById(event.newParentId);
             this.allBlocks.attachChild(this.allBlocks.root[event.blockId], this.allBlocks.root[blockP.id]);
             if (blockP.type == 'delimiter'|| blockP.type=='stream' || blockP.type=='batch') {
                 blockP.appendEmptyInput();
