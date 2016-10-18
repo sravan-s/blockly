@@ -176,7 +176,23 @@ Blockly.Blocks.Manager = {
         }
         switch (event.type) {
             case Blockly.Events.CHANGE:
-                // Rename of variable
+                this.changeEvents(block,event);
+                break;
+            case Blockly.Events.CREATE:
+                this.createEvents(block,event);
+                break;
+            case Blockly.Events.DELETE:
+                this.deleteEvents(block,event);
+                break;
+            case Blockly.Events.MOVE:
+                this.moveEvents(block,event);
+                break;
+            case Blockly.Events.UI:
+                break;
+        }
+    },
+    changeEvents: function(block,event){
+        // Rename of variable
                 if (event.name == 'VAR' && event.newValue != event.oldValue) {
                     _mutatedBlock.variableName = event.newValue;
                     if (block.type == 'unary' || block.type == 'binary') {
@@ -252,25 +268,9 @@ Blockly.Blocks.Manager = {
                         }
                     });
                 }
-                switch (event.element) {
-                    case 'comment':
-                        break;
-                    case 'field':
-                        break;
-                    case 'collapsed':
-                        break;
-                    case 'disabled':
-                        break;
-                    case 'inline':
-                        break;
-                    case 'mutate':
-                        break;
-                }
-                break;
-            case Blockly.Events.CREATE:
-                // To Do: optimize creation process if to switch, abstract common properties
-                // debugger;
-                switch (block.type) {
+    },
+    createEvents: function(block,event){
+        switch (block.type) {
                     case 'delimiter':
                         this.allBlocks.addNode(block, event.blockId);
                         break;
@@ -295,14 +295,14 @@ Blockly.Blocks.Manager = {
                         break;
                     case 'tp_date_format':
                         this.allBlocks.addNode(block, event.blockId, undefined, block.getFieldValue('VAR'));
-                }       break;
-                break;
-            case Blockly.Events.DELETE:
-                this.allBlocks.delNode(event.blockId);
-                //TODO del all children recursively
-                break;
-            case Blockly.Events.MOVE:
-                block = this.ws.getBlockById(event.blockId);
+                        break;
+                }       
+    },
+    deleteEvents: function(block,event){
+        this.allBlocks.delNode(event.blockId);
+    },
+    moveEvents: function(block,event){
+        block = this.ws.getBlockById(event.blockId);
                 // Excludes extractor/transform/store
                 if (block.type == 'extractor' || block.type == 'transform' || block.type == 'store') {
                     return false;
@@ -345,10 +345,6 @@ Blockly.Blocks.Manager = {
                         // this.allBlocks.addNode(block, block.id, operation, block.getFieldValue('VAR'), null);
                     }
                 }
-                break;
-            case Blockly.Events.UI:
-                break;
-        }
     },
     registerChangeEvent: function(block, type) {
 
