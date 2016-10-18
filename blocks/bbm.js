@@ -79,7 +79,7 @@ Blockly.Blocks.Manager = {
             this.root[child.id].parent = null;
         },
         addNode: function(obj, id, dataType, variableName, parent) {
-            if (parent === undefined) {
+            if (parent === undefined || parent == null) {
                 this.root.children.$$safePush$$(id);
                 // if (this.root.children.indexOf(id) == -1) {
                 //     this.root.children.push(id);
@@ -176,177 +176,189 @@ Blockly.Blocks.Manager = {
         }
         switch (event.type) {
             case Blockly.Events.CHANGE:
-                this.changeEvents(block,event);
+                this.changeEvents(block, event);
                 break;
             case Blockly.Events.CREATE:
-                this.createEvents(block,event);
+                this.createEvents(block, event);
                 break;
             case Blockly.Events.DELETE:
-                this.deleteEvents(block,event);
+                this.deleteEvents(block, event);
                 break;
             case Blockly.Events.MOVE:
-                this.moveEvents(block,event);
+                this.moveEvents(block, event);
                 break;
             case Blockly.Events.UI:
                 break;
         }
     },
-    changeEvents: function(block,event){
+    changeEvents: function(block, event){
+        var _mutatedBlock = this.allBlocks.root[event.blockId];
+        var _productBlock;
         // Rename of variable
-                if (event.name == 'VAR' && event.newValue != event.oldValue) {
-                    _mutatedBlock.variableName = event.newValue;
-                    if (block.type == 'unary' || block.type == 'binary') {
-                        var _renameFlag = null;
-                        this.allBlocks.traverseNodes(function(b) {
-                            if (b.variableName == _mutatedBlock.variableName && b.id != event.blockId) {
-                                _renameFlag = 'Cannot use this variable';
-                            }
-                        });
-                        block.setWarningText(_renameFlag);
-                    }
+        if (event.name == 'VAR' && event.newValue != event.oldValue) {
+            if (event.oldValue.startsWith('__temp')) { // is selecting a name for current block
+                if (event.newValue.startsWith('_')) {
+                    // renders new dynamic operation
+                    _productBlock = bbm.renderBlock('dynamic');
+                    // attach to transform
+                } else {
+                    _productBlock = bbm.renderBlock('output_field');
+                    // attach to store
                 }
-                // change in first operator
-                if (event.name == 'm1') {
-                    var _newM1 = event.newValue;
+            }
+            // New versions seems to automatically rename variable
+            // _mutatedBlock.variableName = event.newValue;
+            // if (block.type == 'unary' || block.type == 'binary') {
+            //     var _renameFlag = null;
+            //     this.allBlocks.traverseNodes(function(b) {
+            //         if (b.variableName == _mutatedBlock.variableName && b.id != event.blockId) {
+            //             _renameFlag = 'Cannot use this variable';
+            //         }
+            //     });
+            //     block.setWarningText(_renameFlag);
+            // }
+        }
+        // change in first operator
+        if (event.name == 'm1') {
+            var _newM1 = event.newValue;
+            this.allBlocks.traverseNodes(function(b) {
+                if (b.variableName == _newM1 && b.dataType) {
+                    block.setDropdown(b.dataType);
+                }
+            });
+        }
+        // change in data type
+        if (event.name == 'operation') {
+            var _newOperation;
+            var _prevOperation;
+            if (_mutatedBlock.obj.type != 'field_extractor') {
+                // type is operator
+                var _newOpType = event.newValue.split('||')[1];
+                _mutatedBlock.dataType = _newOpType;
+                if (_newOpType != 'binary') {
+                    var _m1 = _mutatedBlock.obj.getFieldValue('m1');
+                    // type of new variable is type of m1
                     this.allBlocks.traverseNodes(function(b) {
-                        if (b.variableName == _newM1 && b.dataType) {
-                            block.setDropdown(b.dataType);
+                        if (b.variableName == _m1 && b.dataType) {
+                            _mutatedBlock.dataType = b.dataType;
                         }
                     });
                 }
-                // change in data type
-                if (event.name == 'operation') {
-                    var _newOperation;
-                    var _prevOperation;
-                    if (_mutatedBlock.obj.type != 'field_extractor') {
-                        // type is operator
-                        var _newOpType = event.newValue.split('||')[1];
-                        _mutatedBlock.dataType = _newOpType;
-                        if (_newOpType != 'binary') {
-                            var _m1 = _mutatedBlock.obj.getFieldValue('m1');
-                            // type of new variable is type of m1
-                            this.allBlocks.traverseNodes(function(b) {
-                                if (b.variableName == _m1 && b.dataType) {
-                                    _mutatedBlock.dataType = b.dataType;
-                                }
-                            });
-                        }
-                        // debugger;
-                    } else {
-                        _newOperation = event.newValue;
-                        _prevOperation = event.oldValue;
-                        _mutatedBlock.dataType = event.newValue;
+                // debugger;
+            } else {
+                _newOperation = event.newValue;
+                _prevOperation = event.oldValue;
+                _mutatedBlock.dataType = event.newValue;
+            }
+            if (_newOperation == 'date') {
+                var _dateBlock;
+                // creates new date_format block
+                _mutatedBlock.children.some(function(child) {
+                    if (this.allBlocks.root[child].obj.type == 'tp_date_format') {
+                        this.allBlocks.root[child].obj.setWarningText(null);
+                        _dateBlock = this.allBlocks.root[child];
                     }
-                    if (_newOperation == 'date') {
-                        var _dateBlock;
-                        // creates new date_format block
-                        _mutatedBlock.children.some(function(child) {
-                            if (this.allBlocks.root[child].obj.type == 'tp_date_format') {
-                                this.allBlocks.root[child].obj.setWarningText(null);
-                                _dateBlock = this.allBlocks.root[child];
-                            }
-                        }.bind(this));
-                        if (!_dateBlock) {
-                            var _newChild = this.renderBlock('tp_date_format');
-                            _newChild.setFieldValue(block.getFieldValue('VAR'), 'VAR');
-                            _mutatedBlock.children.$$safePush$$(_newChild.id);
-                            Blockly.Tp._connectMeToTransform(_newChild);
-                        }
-                    }
-                    if (_prevOperation == 'date') {
-                        _mutatedBlock.children.some(function(child) {
-                            if (this.allBlocks.root[child].obj.type == 'tp_date_format') {
-                                var _dateToDelete = this.ws.getBlockById(child);
-                                _dateToDelete.setWarningText('Parent datatype changed');
-                                return true;
-                            }
-                        }.bind(this));
-                    }
-                    this.allBlocks.traverseNodes(function(b) {
-                        if ((b.obj.getFieldValue('m1') == block.getFieldValue('VAR') || b.obj.getFieldValue('m2') == block.getFieldValue('VAR')) && b.id != _mutatedBlock.id) {
-                            b.obj.setDropdown(_newOperation);
-                            b.obj.setWarningText('Please choose a diffrent operation');
-                        }
-                    });
+                }.bind(this));
+                if (!_dateBlock) {
+                    var _newChild = this.renderBlock('tp_date_format');
+                    _newChild.setFieldValue(block.getFieldValue('VAR'), 'VAR');
+                    _mutatedBlock.children.$$safePush$$(_newChild.id);
+                    Blockly.Tp._connectMeToTransform(_newChild);
                 }
+            }
+            if (_prevOperation == 'date') {
+                _mutatedBlock.children.some(function(child) {
+                    if (this.allBlocks.root[child].obj.type == 'tp_date_format') {
+                        var _dateToDelete = this.ws.getBlockById(child);
+                        _dateToDelete.setWarningText('Parent datatype changed');
+                        return true;
+                    }
+                }.bind(this));
+            }
+            this.allBlocks.traverseNodes(function(b) {
+                if ((b.obj.getFieldValue('m1') == block.getFieldValue('VAR') || b.obj.getFieldValue('m2') == block.getFieldValue('VAR')) && b.id != _mutatedBlock.id) {
+                    b.obj.setDropdown(_newOperation);
+                    b.obj.setWarningText('Please choose a diffrent operation');
+                }
+            });
+        }
     },
     createEvents: function(block,event){
+        var _mutatedBlock = this.allBlocks.root[event.blockId];
         switch (block.type) {
-                    case 'delimiter':
-                        this.allBlocks.addNode(block, event.blockId);
-                        break;
-                    case 'output_field':
-                        this.allBlocks.addNode(block, event.blockId, undefined, block.getFieldValue('VAR'));
-                        break;
-                    case 'field_extractor':
-                        this.allBlocks.addNode(block, event.blockId, block.getFieldValue('operation'), block.getFieldValue('VAR'));
-                        _productBlock = bbm.renderBlock('output_field');
-                        bbm.allBlocks.attachChild(_productBlock, bbm.allBlocks.root[event.blockId]);
-                        break;
-                    case 'tp_constant':
-                        this.allBlocks.addNode(block, event.blockId, block.getFieldValue('operation'), block.getFieldValue('VAR'));
-                        break;
-                    case 'dynamic':
-                    case 'unary':
-                    case 'binary':
-                        this.allBlocks.addNode(block, event.blockId, undefined, block.getFieldValue('VAR'));
-                        break;
-                    case 'lookup':
-                        this.allBlocks.addNode(block, event.blockId, block.getFieldValue('operation'), block.getFieldValue('VAR'));
-                        break;
-                    case 'tp_date_format':
-                        this.allBlocks.addNode(block, event.blockId, undefined, block.getFieldValue('VAR'));
-                        break;
-                }       
+            case 'delimiter':
+                this.allBlocks.addNode(block, event.blockId);
+                break;
+            case 'output_field':
+                this.allBlocks.addNode(block, event.blockId, undefined, block.getFieldValue('VAR'));
+                break;
+            case 'field_extractor':
+                this.allBlocks.addNode(block, event.blockId, block.getFieldValue('operation'), block.getFieldValue('VAR'));
+                break;
+            case 'tp_constant':
+                this.allBlocks.addNode(block, event.blockId, block.getFieldValue('operation'), block.getFieldValue('VAR'));
+                break;
+            case 'dynamic':
+            case 'unary':
+            case 'binary':
+                this.allBlocks.addNode(block, event.blockId, undefined, block.getFieldValue('VAR'));
+                break;
+            case 'lookup':
+                this.allBlocks.addNode(block, event.blockId, block.getFieldValue('operation'), block.getFieldValue('VAR'));
+                break;
+            case 'tp_date_format':
+                this.allBlocks.addNode(block, event.blockId, undefined, block.getFieldValue('VAR'));
+                break;
+        }
     },
     deleteEvents: function(block,event){
         this.allBlocks.delNode(event.blockId);
     },
     moveEvents: function(block,event){
         var me = this;
-        block = this.ws.getBlockById(event.blockId);
-                // Excludes extractor/transform/store
-                if (block.type == 'extractor' || block.type == 'transform' || block.type == 'store') {
-                    return false;
+        var _mutatedBlock = this.allBlocks.root[event.blockId];
+        // Excludes extractor/transform/store
+        if (block.type == 'extractor' || block.type == 'transform' || block.type == 'store') {
+            return false;
+        }
+        if (event.newParentId) {//attached
+            // this element was previosuly attached to root
+            if (!event.oldParentId) {
+                var _rootIndex = this.allBlocks.root.children.indexOf(event.blockId);
+                // removes from root's child list
+                if (_rootIndex != -1) {
+                    this.allBlocks.root.children.splice(_rootIndex, 1);
                 }
-                if (event.newParentId) {//attached
-                    // this element was previosuly attached to root
-                    if (!event.oldParentId) {
-                        var _rootIndex = this.allBlocks.root.children.indexOf(event.blockId);
-                        // removes from root's child list
-                        if (_rootIndex != -1) {
-                            this.allBlocks.root.children.splice(_rootIndex, 1);
-                        }
+            }
+            var blockP = this.ws.getBlockById(event.newParentId);
+            this.allBlocks.attachChild(this.allBlocks.root[event.blockId], this.allBlocks.root[blockP.id]);
+            if (blockP.type == 'delimiter') {
+                blockP.appendEmptyInput();
+            }
+            //TODO create new block  & add it to either transform block or store
+        } else {
+            // Field extractor and delimiter are physically related to it's parents
+            // So removes links from parent and children
+            if (block.type == 'field_extractor' || block.type == 'delimiter') {
+                this.allBlocks.traverseNodes(function(b) {
+                    var _indexOfChild  = b.children.indexOf(event.blockId);
+                    if ( _indexOfChild != -1) {
+                        b.children.splice(_indexOfChild, 1);
+                        me.allBlocks.root[event.blockId].parent = [];
+                        me.allBlocks.root.children.$$safePush$$(event.blockId);
                     }
-                    var blockP = this.ws.getBlockById(event.newParentId);
-                    this.allBlocks.attachChild(this.allBlocks.root[event.blockId], this.allBlocks.root[blockP.id]);
-                    if (blockP.type == 'delimiter') {
-                        blockP.appendEmptyInput();
-                    }
-                    //TODO create new block  & add it to either transform block or store
-                } else {
-                    // Field extractor and delimiter are physically related to it's parents
-                    // So removes links from parent and children
-                    if (block.type == 'field_extractor' || block.type == 'delimiter') {
-                        this.allBlocks.traverseNodes(function(b) {
-                            var _indexOfChild  = b.children.indexOf(event.blockId);
-                            if ( _indexOfChild != -1) {
-                                b.children.splice(_indexOfChild, 1);
-                                me.allBlocks.root[event.blockId].parent = [];
-                                me.allBlocks.root.children.$$safePush$$(event.blockId);
-                            }
-                        });
-                    }
-                    var c = this.allBlocks.getParent(block);
-                    if (c) {
-                        // if (c.type == 'delimiter') {
+                });
+            }
+            var c = this.allBlocks.getParent(block);
+            if (c) {
+                // if (c.type == 'delimiter') {
 
-                        // }
-                        // var operation = block.getFieldValue('operation');
-                        // this.allBlocks.dettachChild(block, this.allBlocks.root[]);
-                        // this.allBlocks.addNode(block, block.id, operation, block.getFieldValue('VAR'), null);
-                    }
-                }
+                // }
+                // var operation = block.getFieldValue('operation');
+                // this.allBlocks.dettachChild(block, this.allBlocks.root[]);
+                // this.allBlocks.addNode(block, block.id, operation, block.getFieldValue('VAR'), null);
+            }
+        }
     },
     registerChangeEvent: function(block, type) {
 
@@ -395,7 +407,7 @@ Blockly.Blocks.Manager = {
     },
     // gets list of previously created variables
     getLastVariables: function() {
-        var _varList = bbm.ws.variableList;
+        var _varList = bbm.ws.variableList || ['__temp__0', '__temp__1'];
         var _len = _varList.length;
         return [_varList[_len - 1], _varList[_len-2] ? _varList[_len - 2] : _varList[_len - 1]];
     },
@@ -419,8 +431,5 @@ Blockly.Blocks.Manager = {
             .run(true);
     }
 };
+
 var bbm = Blockly.Blocks.Manager;
-Blockly.Blocks.Manager.ws = Blockly.getMainWorkspace();
-//Blockly.Blocks.Manager.workspaceContainer = Blockly.inject('workspaceDiv', {});
-Blockly.getMainWorkspace().addChangeListener(Blockly.Blocks.Manager.changeListener.bind(bbm));
-bbm.init();

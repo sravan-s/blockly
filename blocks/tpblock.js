@@ -13,7 +13,7 @@ Blockly.Tp.Counter = {
     count: 0,
     factories: [],
     getNewVar: function(type) {
-        var prefix = type ? type : 'var_';
+        var prefix = type ? type : '__temp';
         this.count++;
         return prefix + this.count;
     }

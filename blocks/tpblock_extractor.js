@@ -7,7 +7,7 @@ Blockly.Blocks['field_extractor'] = {
       .appendField("as")
       .appendField(new Blockly.FieldDropdown(JSON.parse(Blockly.Tp.dataType)), "operation")
       .appendField("named as")
-      .appendField(new Blockly.FieldVariable(Blockly.Tp.Counter.getNewVar(this.getFieldValue('operation'))), "VAR");
+      .appendField(new Blockly.FieldVariable(Blockly.Tp.Counter.getNewVar()), "VAR");
     this.setInputsInline(false);
     this.setOutput(true, "field_extractor");
     this.setColour(20);
