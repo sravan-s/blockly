@@ -328,8 +328,8 @@ Blockly.Blocks.Manager = {
             //TODO create new block  & add it to either transform block or store
         } else {
             // check if detached element has a preious parent element
-            if(_mutatedBlock.parent[0]){
-                var parentBlock = _mutatedBlock.parent[0];
+            var parentBlock = _mutatedBlock.parent[0];
+            if(parentBlock && parentBlock.removeEmptyInput){
                 setTimeout(function(){
                     parentBlock.removeEmptyInput();
                 },100);
