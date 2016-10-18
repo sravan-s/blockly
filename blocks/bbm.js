@@ -273,6 +273,8 @@ Blockly.Blocks.Manager = {
         var _mutatedBlock = this.allBlocks.root[event.blockId];
         switch (block.type) {
             case 'delimiter':
+            case 'stream':
+            case 'batch':
                 this.allBlocks.addNode(block, event.blockId);
                 break;
             case 'output_field':
