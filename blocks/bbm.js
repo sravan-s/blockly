@@ -303,6 +303,7 @@ Blockly.Blocks.Manager = {
         this.allBlocks.delNode(event.blockId);
     },
     moveEvents: function(block,event){
+        var me = this;
         block = this.ws.getBlockById(event.blockId);
                 // Excludes extractor/transform/store
                 if (block.type == 'extractor' || block.type == 'transform' || block.type == 'store') {
