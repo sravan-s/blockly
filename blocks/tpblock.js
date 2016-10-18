@@ -5,8 +5,26 @@ Blockly.Tp.variableMap = {};
 
 // Connects blocks to transform
 Blockly.Tp._connectMeToTransform = function(block) {
-    var transformInputLists = Blockly.Tp.transform_.inputList;
-    block.previousConnection.connect(transformInputLists[transformInputLists.length - 1].connection);
+    function _connect(child, parent) {
+        if (parent.nextConnection.targetConnection) {
+            _connect(child, parent.nextConnection.targetConnection.sourceBlock_);
+        } else {
+            bbm.attachBlock(child, parent);
+        }
+    }
+    // attach directly t transform if transform block is empty
+    if (Blockly.Tp.transform_.getChildren().length == 1) {
+        var transformInputLists = Blockly.Tp.transform_.inputList;
+        block.previousConnection.connect(transformInputLists[transformInputLists.length - 1].connection);
+    } else {
+        var _tpChilds = Blockly.Tp.transform_.getChildren();
+        _tpChilds.some(function(child) {
+            if (child.type != 'store') {
+                _connect(block, child);
+                return true;
+            }
+        });
+    }
 }
 
 Blockly.Tp.Counter = {

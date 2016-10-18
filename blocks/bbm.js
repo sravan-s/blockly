@@ -196,27 +196,14 @@ Blockly.Blocks.Manager = {
         var _productBlock;
         // Rename of variable
         if (event.name == 'VAR' && event.newValue != event.oldValue) {
-            if (event.oldValue.startsWith('__temp')) { // is selecting a name for current block
+            if (event.oldValue.startsWith('__temp') && !event.newValue.startsWith('__temp')) { // is selecting a name for current block
                 if (event.newValue.startsWith('_')) {
-                    // renders new dynamic operation
                     _productBlock = bbm.renderBlock('dynamic');
-                    // attach to transform
                 } else {
                     _productBlock = bbm.renderBlock('output_field');
                     // attach to store
                 }
             }
-            // New versions seems to automatically rename variable
-            // _mutatedBlock.variableName = event.newValue;
-            // if (block.type == 'unary' || block.type == 'binary') {
-            //     var _renameFlag = null;
-            //     this.allBlocks.traverseNodes(function(b) {
-            //         if (b.variableName == _mutatedBlock.variableName && b.id != event.blockId) {
-            //             _renameFlag = 'Cannot use this variable';
-            //         }
-            //     });
-            //     block.setWarningText(_renameFlag);
-            // }
         }
         // change in first operator
         if (event.name == 'm1') {
