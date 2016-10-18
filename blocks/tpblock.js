@@ -206,7 +206,6 @@ Blockly.Blocks["unary"] = {
         this.setColour("#006400");
         this.setTooltip("");
         this.setHelpUrl("http://www.example.com/");
-        Blockly.Tp._connectMeToTransform(this);
     },
     setDropdown: function(dataType) {
         var _list;
@@ -241,6 +240,9 @@ Blockly.Blocks["unary"] = {
         }
         this.setWarningText(null);
         return true;
+    },
+    afterInit: function() {
+        Blockly.Tp._connectMeToTransform(this);
     }
 };
 
@@ -309,23 +311,23 @@ Blockly.Blocks["dynamic"] = {
         }
     },
     init: function() {
-        var dummyInput = new Blockly.FieldVariable("");
+        var _variables = bbm.getLastVariables();
+        var dummyInput = new Blockly.FieldVariable(_variables[0]);
             dummyInput.setVisible(false);
         this.appendDummyInput()
-            .appendField(new Blockly.FieldVariable(""), "m1")
+            .appendField(new Blockly.FieldVariable(_variables[0]), "m1")
             .appendField(new Blockly.FieldDropdown([
                 []
             ]), "operation")
             .appendField(dummyInput, "m2")
             .appendField(" & is named as")
-            .appendField(new Blockly.FieldVariable(""), "VAR");
+            .appendField(new Blockly.FieldVariable(Blockly.Tp.Counter.getNewVar()), "VAR");
         this.setInputsInline(false);
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
         this.setColour("#006400");
         this.setTooltip("");
         this.setHelpUrl("http://www.example.com/");
-        Blockly.Tp._connectMeToTransform(this);
     },
     getDropDown: function() {
         var superSet = JSON.parse(Blockly.Tp.dataType);
@@ -402,8 +404,10 @@ Blockly.Blocks["dynamic"] = {
         }
         this.setWarningText(null);
         return true;
+    },
+    afterInit: function() {
+        Blockly.Tp._connectMeToTransform(this);
     }
-
 };
 
 Blockly.Blocks['lookup'] = {
@@ -459,6 +463,9 @@ Blockly.Blocks['lookup'] = {
         var var_key = this.getFieldValue('var_key');
         var var_value = this.getFieldValue('VAR');
         var type = this.getFieldValue('type');
+    },
+    afterInit: function() {
+        Blockly.Tp._connectMeToTransform(this);
     }
 };
 
@@ -519,6 +526,9 @@ Blockly.Blocks['tp_constant'] = {
             Blockly.Tp.variableDateTypeMap[_var] = _type;
             this.setWarningText(null);
         }
+    },
+    afterInit: function() {
+        Blockly.Tp._connectMeToTransform(this);
     }
 };
 
@@ -584,7 +594,6 @@ Blockly.Blocks["binary"] = {
         this.setTooltip("");
         this.setHelpUrl("http://www.example.com/");
         blockObj(this);
-        Blockly.Tp._connectMeToTransform(this);
     },
 
     setDropdown: function(type) {
@@ -626,6 +635,10 @@ Blockly.Blocks["binary"] = {
         }
         this.setWarningText(null);
         return true;
+    },
+
+    afterInit: function() {
+        Blockly.Tp._connectMeToTransform(this);
     }
 };
 
@@ -643,7 +656,10 @@ Blockly.Blocks['tp_date_format'] = {
        this.setHelpUrl('http://www.example.com/');
        blockObj(this);
        // connects automatically to translate
-   }
+    },
+    afterInit: function() {
+        Blockly.Tp._connectMeToTransform(this);
+    }
 };
 
 // Overrides currrent context menu
