@@ -7,7 +7,8 @@ Blockly.Blocks['field_extractor'] = {
       .appendField("as")
       .appendField(new Blockly.FieldDropdown(JSON.parse(Blockly.Tp.dataType)), "operation")
       .appendField("named as")
-      .appendField(new Blockly.FieldVariable(Blockly.Tp.Counter.getNewVar()), "VAR");
+      .appendField(new Blockly.FieldVariable(Blockly.Tp.Counter.getNewVar()), "VAR")
+      .setCheck(['Array']);
     this.setInputsInline(false);
     this.setOutput(true, "field_extractor");
     this.setColour(20);
@@ -70,7 +71,18 @@ Blockly.Blocks["delimiter"] = {
     this.itemCount_ = parseInt(xmlElement.getAttribute('items'), 10);
     this.updateShape_();
   },
+  removeEmptyInput: function() {
 
+      var emptyConnections = [];
+      var inputList = this.inputList;
+      var removeItem = [];
+      for (var i = 0; i < (inputList.length-1); i++) {
+          if(inputList[i].connection && !inputList[i].connection.targetConnection){
+              this.removeInput(inputList[i].name);
+          }
+      }
+      
+  },
   appendEmptyInput: function() {
     // loop through all lines
     for (var i = 0; i < (this.itemCount_ + 1); i++) {

@@ -167,7 +167,6 @@ Blockly.Blocks.Manager = {
         }
 
         var block = this.ws.getBlockById(event.blockId);
-        var _mutatedBlock = this.allBlocks.root[event.blockId];
         var _productBlock;
 
         if (!block && event.type == 'move') {
@@ -305,7 +304,7 @@ Blockly.Blocks.Manager = {
         var me = this;
         var _mutatedBlock = this.allBlocks.root[event.blockId];
         // Excludes extractor/transform/store
-        if (block.type == 'extractor' || block.type == 'transform' || block.type == 'store') {
+        if (block.type == 'extractor') {
             return false;
         }
         if (event.newParentId) {//attached
@@ -319,11 +318,18 @@ Blockly.Blocks.Manager = {
             }
             var blockP = this.ws.getBlockById(event.newParentId);
             this.allBlocks.attachChild(this.allBlocks.root[event.blockId], this.allBlocks.root[blockP.id]);
-            if (blockP.type == 'delimiter') {
+            if (blockP.type == 'delimiter'|| blockP.type=='stream' || blockP.type=='batch') {
                 blockP.appendEmptyInput();
             }
             //TODO create new block  & add it to either transform block or store
         } else {
+            // check if detached element has a preious parent element
+            if(_mutatedBlock.parent[0]){
+                var parentBlock = _mutatedBlock.parent[0];
+                setTimeout(function(){
+                    parentBlock.removeEmptyInput();
+                },100);
+            }
             // Field extractor and delimiter are physically related to it's parents
             // So removes links from parent and children
             if (block.type == 'field_extractor' || block.type == 'delimiter') {
