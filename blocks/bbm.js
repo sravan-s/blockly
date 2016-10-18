@@ -378,6 +378,21 @@ Blockly.Blocks.Manager = {
             }
         });
     },
+    // position => {x: 20, y: 50}
+    moveBlock: function(block, position) {
+        this._executeEvent({
+            type: "move",
+            blockId: block.id,
+            internal: true,
+            toJson: function() {
+                return {
+                    type: 'move',
+                    blockId: block.id,
+                    newCoordinate: position.x + ',' + position.y
+                };
+            }
+        });
+    },
     deattachBlock: function(child, parent) {
         this._executeEvent({
             type: "move",
@@ -408,11 +423,14 @@ Blockly.Blocks.Manager = {
         var _len = _varList.length;
         return [_varList[_len - 1], _varList[_len-2] ? _varList[_len - 2] : _varList[_len - 1]];
     },
-    renderBlock: function (id) {
+    renderBlock: function (id, position) {
         var mainWorkspace = Blockly.getMainWorkspace();
         var newBlock = mainWorkspace.newBlock(id);
         newBlock.initSvg();
         mainWorkspace.render();
+        if (position) {
+            this.moveBlock(newBlock, position);
+        }
         // meathod to call after block is rendered
         // more lke an initcalback
         if (newBlock.afterInit) {

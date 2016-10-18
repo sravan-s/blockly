@@ -804,7 +804,12 @@ Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {
             text: "Field Extractor",
             // callback: CreateFieldExtractor
             callback: function() {
-                bbm.renderBlock('field_extractor');
+                // e is from Blockly.WorkspaceSvg.prototype.showContextMenu_
+                console.log(e);
+                bbm.renderBlock('field_extractor', {
+                    x: e.clientX,
+                    y: e.clientY
+                });
             }
         }, {
             enabled: true,
@@ -848,7 +853,10 @@ Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {
             text: "Logic Control-if",
             // callback: CreateLogic
             callback: function() {
-                bbm.renderBlock('controls_if');
+                bbm.renderBlock('controls_if', {
+                    x: e.clientX,
+                    y: e.clientY
+                });
             }
         }, {
             enabled: true,
@@ -862,15 +870,24 @@ Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {
             text: "stream",
             // callback: CreateLogic
             callback: function() {
-                bbm.renderBlock('stream');
-                bbm.renderBlock('batch');
+                bbm.renderBlock('stream', {
+                    x: e.clientX,
+                    y: e.clientY
+                });
+                bbm.renderBlock('batch', {
+                    x: e.clientX,
+                    y: e.clientY
+                });
             }
         }, {
             enabled: true,
             text: "Variable",
             // callback: CreateLogic
             callback: function() {
-                bbm.renderBlock('output_field');
+                bbm.renderBlock('output_field', {
+                    x: e.clientX,
+                    y: e.clientY
+                });
             }
         }];
         obj.forEach(function(item) {
