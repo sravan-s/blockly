@@ -147,6 +147,7 @@ Blockly.Blocks.Manager = {
                 return parent;
             }
             parent.children.push(child.id);
+            child.parent.push(parent.id);
             return parent;
         },
         // traverses all nodes and execute given callback on each
@@ -319,7 +320,7 @@ Blockly.Blocks.Manager = {
                     this.allBlocks.root.children.splice(_rootIndex, 1);
                 }
                 this.allBlocks.root[event.newParentId].children.$$safePush$$(event.blockId);
-                _mutatedBlock.parent.push(blockP);
+                // _mutatedBlock.parent.push(blockP);
             }
             this.allBlocks.attachChild(this.allBlocks.root[event.blockId], this.allBlocks.root[blockP.id]);
             if (blockP.type == 'delimiter'|| blockP.type=='stream' || blockP.type=='batch') {

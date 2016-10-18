@@ -77,15 +77,15 @@ Blockly.Blocks["delimiter"] = {
       var inputList = this.inputList;
       inputList.forEach(function(item){
           if(item.connection && !item.connection.targetConnection){
-              this.removeInput(item.name);
+            emptyConnections.push(item.name);
           }
-
       }.bind(this));
-      // for (var i = 0; i < (inputList.length-1); i++) {
-      //     if(inputList[i].connection && !inputList[i].connection.targetConnection){
-      //         this.removeInput(inputList[i].name);
-      //     }
-      // }
+      // emptyConnections.forEach(function(con) {
+      //   this.removeInput(con);
+      // }.bind(this));
+      for (var i = 0; i < (emptyConnections.length-1); i++) {
+          this.removeInput(emptyConnections[i]);
+      }
       
   },
   appendEmptyInput: function() {
