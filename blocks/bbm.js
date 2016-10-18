@@ -92,7 +92,7 @@ Blockly.Blocks.Manager = {
                 'obj': obj,
                 'dataType': dataType,
                 'variableName': variableName,
-                'parent': [parent], // since we are taking semantic realtion bwtween nodes
+                'parent': parent ? [parent]: [], // since we are taking semantic realtion bwtween nodes
                 // a block could have mutiple parents
                 'children': []
             };
@@ -144,10 +144,9 @@ Blockly.Blocks.Manager = {
             if (!parent.children || parent.children.length == undefined) {
                 parent.children = [];
             } else if (parent.children.indexOf(child.id) != -1) { // to handle reattaching to same parent
-                return parent;
+                parent.children.$$safePush$$(child.id);
+                child.parent.push(parent.obj);
             }
-            parent.children.push(child.id);
-            child.parent.push(parent.id);
             return parent;
         },
         // traverses all nodes and execute given callback on each
