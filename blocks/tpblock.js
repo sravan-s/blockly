@@ -442,8 +442,8 @@ Blockly.Blocks['lookup'] = {
                 ["PrefixLookup", "PrefixLookup"],
                 ["MatchKey", "MatchKey"]
             ]), "operation")
-            .appendField("specify data source")
-            .appendField(new Blockly.FieldTextInput("default"), "path");
+            .appendField("located @")
+            .appendField(new Blockly.FieldTextInput("path"), "path");
         this.appendDummyInput()
             .appendField("Pick key")
             .appendField(new Blockly.FieldVariable(_variables[0]), "var_key")
@@ -811,21 +811,7 @@ Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {
                     y: e.clientY
                 });
             }
-        }, {
-            enabled: true,
-            text: "Binary Operator",
-            // callback: CreateBinaryOperator
-            callback: function() {
-                bbm.renderBlock('binary');
-            }
-        }, {
-            enabled: true,
-            text: "Unary Operator",
-            // callback: CreateUnaryOperator
-            callback: function() {
-                bbm.renderBlock('unary');
-            }
-        },
+        }, 
         {
             enabled: true,
             text: "Dynamic Operator",
@@ -857,6 +843,10 @@ Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {
                     x: e.clientX,
                     y: e.clientY
                 });
+                bbm.renderBlock('test', {
+                    x: e.clientX+10,
+                    y: e.clientY
+                });
             }
         }, {
             enabled: true,
@@ -867,14 +857,32 @@ Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {
             }
         },{
             enabled: true,
-            text: "stream",
+            text: "event",
             // callback: CreateLogic
             callback: function() {
-                bbm.renderBlock('stream', {
+                bbm.renderBlock('event_field', {
                     x: e.clientX,
                     y: e.clientY
                 });
-                bbm.renderBlock('batch', {
+            }
+        },
+        {
+            enabled: true,
+            text: "test",
+            // callback: CreateLogic
+            callback: function() {
+                bbm.renderBlock('test', {
+                    x: e.clientX,
+                    y: e.clientY
+                });
+            }
+        },
+        {
+            enabled: true,
+            text: "ternary",
+            // callback: CreateLogic
+            callback: function() {
+                bbm.renderBlock('ternary', {
                     x: e.clientX,
                     y: e.clientY
                 });
@@ -988,8 +996,9 @@ Blockly.Blocks["batch"] = {
     this.appendDummyInput()
       .appendField("Batch")
     this.setColour(Blockly.Blocks.lists.HUE);
-    this.appendValueInput('next_marker_' + this.itemCount_);
-    this.setOutput(true, 'Array');
+    this.appendValueInput('next_marker_' + this.itemCount_)
+    .setCheck("field_extractor")
+    this.setOutput(true, 'field_extractor');
   },
 
   mutationToDom: function() {
@@ -1055,5 +1064,81 @@ Blockly.Blocks["batch"] = {
     return true;
   }
 }
+
+Blockly.Blocks['event_field'] = {
+  init0: function() {
+    this.appendValueInput("NAME")
+      .setCheck("event_field")
+      .appendField("circle id #")
+      .appendField(new Blockly.FieldTextInput("1"), "NAME")
+      .appendField("as")
+      .appendField(new Blockly.FieldDropdown(JSON.parse(Blockly.Tp.dataType)), "operation")
+      .appendField("named as")
+      .appendField(new Blockly.FieldVariable(Blockly.Tp.Counter.getNewVar()), "VAR")
+      .setCheck(['Array']);
+    this.setInputsInline(false);
+    this.setOutput(true, "event_field");
+    this.setColour(20);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.example.com/');
+  },
+
+  init:function(){
+    var _variables = bbm.getLastVariables();
+        this.appendDummyInput()
+
+            .appendField("Subscriber")
+            .appendField(new Blockly.FieldVariable(_variables[0]), "m1");
+        this.appendDummyInput()
+            .appendField("Circle")
+            .appendField(new Blockly.FieldVariable(_variables[0]), "m2");
+        this.appendDummyInput()
+            .appendField("Event Data Type")
+            .appendField(new Blockly.FieldDropdown([
+                 ["SECONDS", "SECONDS"],
+                 ["COUNT", "COUNT"],
+                 ["AMOUNT", "AMOUNT"],
+                 ["DATE", "DATE"],
+                 ["NAME", "NAME"]
+            ]), "operation")
+        this.appendDummyInput()
+            .appendField("Event Aggragation Type")
+            .appendField(new Blockly.FieldCheckbox("TRUE"), "aggragation")
+        this.appendDummyInput()
+            .appendField("Old Value")
+            .appendField(new Blockly.FieldVariable(_variables[0]), "m3")
+        this.appendDummyInput()
+            .appendField("New Value")
+            .appendField(new Blockly.FieldVariable(_variables[0]), "m4")
+        this.appendDummyInput()
+            .appendField(" & is named as eventName")
+            .appendField(new Blockly.FieldVariable(Blockly.Tp.Counter.getNewVar()), "VAR");
+        this.appendDummyInput()
+        this.setOutput(true, "event_field");
+        this.setInputsInline(false);
+        this.setColour("#006400");
+        this.setTooltip("");
+        this.setHelpUrl("http://www.example.com/");
+  },
+
+  renameVar: function(oldName, newName) {
+    if (Blockly.Names.equals(oldName, this.getFieldValue('VAR'))) {
+      this.setFieldValue(newName, 'VAR');
+    }
+  },
+  getVars: function() {
+    return [this.getFieldValue('VAR')];
+  },
+  validate: function() {
+    var _name = this.getFieldValue('NAME');
+    if (_name == '' || _name == ' ') {
+      this.setWarningText('field missing');
+      return false;
+    }
+    this.setWarningText(null);
+    return true;
+  }
+};
+
 
 Blockly.Msg.LISTS_CREATE_WITH_INPUT_WITH = 'Splitter';

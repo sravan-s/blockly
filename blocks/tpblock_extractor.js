@@ -144,10 +144,10 @@ Blockly.Blocks["delimiter"] = {
 Blockly.Blocks["extractor"] = {
   init: function() {
     this.appendValueInput("line")
-      .setCheck(['field_extractor', 'Array'])
+      .setCheck(['Array'])
       .appendField("Extract from line");
     this.appendValueInput("file")
-      .setCheck(["field_extractor","Array"])
+      .setCheck(["Array"])
       .appendField("Extract from file name");
     this.setInputsInline(false);
     this.setNextStatement("transform");

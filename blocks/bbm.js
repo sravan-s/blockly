@@ -280,6 +280,12 @@ Blockly.Blocks.Manager = {
             case 'output_field':
                 this.allBlocks.addNode(block, event.blockId, undefined, block.getFieldValue('VAR'));
                 break;
+            case 'test':
+                this.allBlocks.addNode(block, event.blockId, undefined, block.getFieldValue('VAR'));
+                break;
+            case 'ternary':
+                this.allBlocks.addNode(block, event.blockId, undefined, block.getFieldValue('VAR'));
+                break;
             case 'field_extractor':
                 this.allBlocks.addNode(block, event.blockId, block.getFieldValue('operation'), block.getFieldValue('VAR'));
                 break;
@@ -295,6 +301,9 @@ Blockly.Blocks.Manager = {
                 this.allBlocks.addNode(block, event.blockId, block.getFieldValue('operation'), block.getFieldValue('VAR'));
                 break;
             case 'tp_date_format':
+                this.allBlocks.addNode(block, event.blockId, undefined, block.getFieldValue('VAR'));
+                break;
+            case 'event_field':
                 this.allBlocks.addNode(block, event.blockId, undefined, block.getFieldValue('VAR'));
                 break;
         }
