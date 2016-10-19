@@ -1,6 +1,7 @@
-Blockly.JavaScript['extractor'] = function(block) {
-  var value_line = Blockly.JavaScript.valueToCode(block, 'line', Blockly.JavaScript.ORDER_ATOMIC);
-  var value_file = Blockly.JavaScript.valueToCode(block, 'file', Blockly.JavaScript.ORDER_ATOMIC);
+Blockly.JavaScript['flytxt'] = function(block) {
+  var value_line = Blockly.JavaScript.valueToCode(block, 'lineName', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_file = Blockly.JavaScript.valueToCode(block, 'fileName', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_transform = Blockly.JavaScript.valueToCode(block, 'transform', Blockly.JavaScript.ORDER_ATOMIC);
   // Blockly.JavaScript.variables.push('protected final Marker line  = new Marker();\n');
   // Blockly.JavaScript.variables.push('protected String currentFileName;\n');
   var code ='';
@@ -11,9 +12,24 @@ Blockly.JavaScript['extractor'] = function(block) {
     code += value_file.replace('$$', "fileName");
   }
   Blockly.JavaScript.extractPhase = code;
-  // console.log('extractor',code)
+  // check if trnaform has children
+  if(value_transform){
+    var statementCode = Blockly.JavaScript.statementToCode(block, 'transform');
+    Blockly.JavaScript.translatePhase = statementCode;
+  }
+
   return [code, Blockly.JavaScript.ORDER_ATOMIC];
 };
+Blockly.JavaScript['lists_create_with'] = function(block) {
+  var code = [];
+  block.inputList.forEach(function(input){
+    if(input.connection && input.connection.targetConnection){
+      var getChildCode = Blockly.JavaScript.valueToCode(block, input.name, Blockly.JavaScript.ORDER_ATOMIC);
+      code.push(getChildCode);
+    }
+  });
+  return [code, Blockly.JavaScript.ORDER_ATOMIC];
+}
 
 Blockly.JavaScript['output_field'] = function(block) {
   var code = block.getFieldValue('NAME') || null;
@@ -164,6 +180,12 @@ Blockly.JavaScript['lookup'] = function(block) {
   code += 'm'+valueName+' = m'+get_var+'.get(m'+keyName+'.getData() == null ? data: m'+keyName+'.getData())';
   // code += 'm'+valueName+' = m'+get_var+'.get(m'+keyName+'.getBytes());\n';
   return code;
+}
+Blockly.JavaScript['test'] = function(block) {
+var m1 = block.getFieldValue('m1');
+var m2 = block.getFieldValue('m2');
+var code ='m'+m1+'.toString(data).contains(m'+m2+'.toString(data))';
+return [code, Blockly.JavaScript.ORDER_ATOMIC];
 }
 
 Blockly.JavaScript['store'] = function(block) {

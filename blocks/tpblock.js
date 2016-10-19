@@ -158,7 +158,7 @@ Blockly.Blocks["dynamic"] = {
                 ["extractLeading", "$1 = tpString.extractLeading(m$2.getData() == null ? data: m$2.getData(), $1, integer, mf);||Marker||binary"],
                 ["extractTrailing", "$1 = tpString.extractTrailing(m$2.getData() == null ? data: m$2.getData(), $1, integer, mf);||Marker||binary"],
                 ["indexOf", "$1 = tpString.indexOf(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary"],
-                ["indexOIgnoreCase", "$1 = tpString.indexOIgnoreCase(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary"],
+                ["indexOfIgnoreCase", "$1 = tpString.indexOfIgnoreCase(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary"],
                 ["merge", "$1 = tpString.merge(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary"],
                 ["startsWith", "$1 = tpString.startsWith(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3);||boolean||binary"],
                 ["toLowerCase", "$1 = tpString.toLowerCase(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"],
@@ -221,24 +221,6 @@ Blockly.Blocks["dynamic"] = {
         this.setColour("#006400");
         this.setTooltip("");
         this.setHelpUrl("http://www.example.com/");
-    },
-    getDropDown: function() {
-        var superSet = JSON.parse(Blockly.Tp.dataType);
-        var m1 = this.getFieldValue("m1");
-        var dataType = Blockly.Tp.variableDateTypeMap[m1];
-        switch (dataType) {
-            case 'string':
-                return this.OPERATIONS.tpString.data;
-                break;
-            case 'number':
-                return this.OPERATIONS.tpMath.data;
-                break;
-            case 'date':
-                return this.OPERATIONS.tpDate.data;
-                break;
-            default:
-                return this.OPERATIONS.tpLogic.data;
-        }
     },
     setDropdown: function(dataType) {
         var _list;
@@ -435,7 +417,7 @@ Blockly.Blocks["binary"] = {
                 ["extractLeading", "$1 = tpString.extractLeading(m$2.getData() == null ? data: m$2.getData(), $1, integer, mf);||Marker"],
                 ["extractTrailing", "$1 = tpString.extractTrailing(m$2.getData() == null ? data: m$2.getData(), $1, integer, mf);||Marker"],
                 ["indexOf", "$1 = tpString.indexOf(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker"],
-                ["indexOIgnoreCase", "$1 = tpString.indexOIgnoreCase(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker"],
+                ["indexOfIgnoreCase", "$1 = tpString.indexOfIgnoreCase(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker"],
                 ["merge", "$1 = tpString.merge(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker"],
                 ["startsWith", "$1 = tpString.startsWith(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3);||boolean"]
             ]

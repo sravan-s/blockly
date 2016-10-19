@@ -2,12 +2,13 @@ Blockly.Blocks['flytxt'] = {
   init: function() {
     this.appendValueInput("fileName")
         .setAlign(Blockly.ALIGN_RIGHT)
-        .appendField("From file name");
+        .appendField("Extract from file line");
     this.appendValueInput("lineName")
         .setAlign(Blockly.ALIGN_RIGHT)
-        .appendField("From file name");
-    this.appendStatementInput("NAME")
+        .appendField("Extract from file name");
+    this.appendStatementInput("transform")
         .setCheck(null)
+        .appendField("Apply transformation")
         .setAlign(Blockly.ALIGN_RIGHT);
     this.appendValueInput("store_stream")
         .setCheck(null)
