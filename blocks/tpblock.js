@@ -464,14 +464,6 @@ Blockly.Blocks['lookup'] = {
         if (!this.workspace || e.blockId != this.id) {
             return;
         }
-        if(e.type=='create'){
-            // var drop = this.getField("VAR");
-            // var options = [];
-            // drop.setText(" "); // set the actual text
-            // drop.setValue(" "); // set the actual value
-            // options.push(Blockly.Msg.NEW_VARIABLE);
-            // drop.menuGenerator_ = [options];
-        }
         this.validate();
     },
     validate: function() {
@@ -636,8 +628,6 @@ Blockly.Blocks["binary"] = {
     onchange: function(changeEvent) {
         if (!this.workspace || changeEvent.blockId != this.id) {
             return;
-        }
-        if (changeEvent.type === "change" && changeEvent.name == 'm1') {
         }
         // this.validate();
     },
