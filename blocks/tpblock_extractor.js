@@ -140,33 +140,3 @@ Blockly.Blocks["delimiter"] = {
     return true;
   }
 }
-
-Blockly.Blocks["extractor"] = {
-  init: function() {
-    this.appendValueInput("line")
-      .setCheck(['Array'])
-      .appendField("Extract from line");
-    this.appendValueInput("file")
-      .setCheck(["Array"])
-      .appendField("Extract from file name");
-    this.setInputsInline(false);
-    this.setNextStatement("transform");
-    this.setColour(20);
-    this.setTooltip("");
-    this.setHelpUrl("http://www.example.com/");
-    Blockly.Tp.extractor_ = this;
-  },
-  validate: function() {
-    var lines = this.getInputTargetBlock('line');
-    var files = this.getInputTargetBlock('file');
-    if (!lines && !files) {
-      this.setWarningText('Append atleast one extraction or transformation');
-      return false;
-    }
-    this.setWarningText(null);
-    return true;
-  },
-  onchange: function(e) {
-    this.validate();
-  }
-};

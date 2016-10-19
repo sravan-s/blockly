@@ -13,18 +13,18 @@ Blockly.Tp._connectMeToTransform = function(block) {
         }
     }
     // attach directly t transform if transform block is empty
-    if (Blockly.Tp.transform_.getChildren().length == 1) {
-        var transformInputLists = Blockly.Tp.transform_.inputList;
-        block.previousConnection.connect(transformInputLists[transformInputLists.length - 1].connection);
-    } else {
-        var _tpChilds = Blockly.Tp.transform_.getChildren();
-        _tpChilds.some(function(child) {
-            if (child.type != 'store') {
-                _connect(block, child);
-                return true;
-            }
-        });
-    }
+    // if (.getChildren().length == 1) {
+    //     var transformInputLists = Blockly.Tp.transform_.inputList;
+    //     block.previousConnection.connect(transformInputLists[transformInputLists.length - 1].connection);
+    // } else {
+    //     var _tpChilds = Blockly.Tp.transform_.getChildren();
+    //     _tpChilds.some(function(child) {
+    //         if (child.type != 'store') {
+    //             _connect(block, child);
+    //             return true;
+    //         }
+    //     });
+    // }
 }
 
 Blockly.Tp.Counter = {
@@ -46,131 +46,6 @@ var blockObj = function(obj) {
         return [this.getFieldValue('VAR')];
     }
 };
-
-Blockly.Blocks['transform'] = {
-    init: function() {
-        this.itemCount_ = 1;
-        this.appendDummyInput()
-            .appendField("Translate");
-        this.appendStatementInput("NAME")
-            .setCheck(null);
-        // this.appendValueInput('next_marker_' + this.itemCount_)
-        //     .setCheck(['binary', 'unary', 'tp_controls_if','date_format','lookup','dynamic']);
-        this.setInputsInline(false);
-        this.setPreviousStatement(true, "extractor");
-        this.setNextStatement(true, "store");
-        this.setColour(180);
-        this.setTooltip("");
-        this.setHelpUrl("http://www.example.com/");
-        Blockly.Tp.transform_ = this;
-    }
-};
-
-Blockly.Blocks["store"] = {
-    init: function() {
-        this.appendDummyInput()
-            .appendField("Pick storage")
-            .appendField(new Blockly.FieldDropdown([
-                ["Hdfs", "Hdfs"],
-                ["Local", "Local"]
-            ]), "operation");
-            // .appendDummyInput(null)
-            // .appendField("location")
-        //     .appendField(new Blockly.FieldTextInput(""), "path");
-        this.appendDummyInput()
-            .appendField("Use variable names as header")
-            .appendField(new Blockly.FieldCheckbox("TRUE"), "headers");
-        this.setInputsInline(false);
-        this.setPreviousStatement(true, null);
-        this.setColour(345);
-        this.setTooltip("");
-        this.setMutator(new Blockly.Mutator(['lists_create_with_item']));
-        this.setHelpUrl("http://www.example.com/");
-        Blockly.Tp.store_ = this;
-        this.itemCount_ = 2;
-        this.updateShape_();
-    },
-    validate: function() {
-        var location = this.getFieldValue('path');
-        if (location == '') {
-            this.setWarningText('Select a location');
-            return false;
-        }
-        this.setWarningText(null);
-        return true;
-    },
-    onchange: function() {
-        this.validate();
-    },
-    decompose: function(workspace) {
-        var containerBlock = workspace.newBlock('lists_create_with_container');
-        containerBlock.initSvg();
-        var connection = containerBlock.getInput('STACK').connection;
-        for (var i = 0; i < this.itemCount_; i++) {
-            var itemBlock = workspace.newBlock('lists_create_with_item');
-            itemBlock.initSvg();
-            connection.connect(itemBlock.previousConnection);
-            connection = itemBlock.nextConnection;
-        }
-        return containerBlock;
-    },
-    mutationToDom: function() {
-        var container = document.createElement('mutation');
-        container.setAttribute('items', this.itemCount_);
-        return container;
-    },
-    domToMutation: function(xmlElement) {
-        this.itemCount_ = parseInt(xmlElement.getAttribute('items'), 10);
-        this.updateShape_();
-    },
-    compose: function(containerBlock) {
-        var itemBlock = containerBlock.getInputTargetBlock('STACK');
-        // Count number of inputs.
-        var connections = [];
-        while (itemBlock) {
-            connections.push(itemBlock.valueConnection_);
-            itemBlock = itemBlock.nextConnection && itemBlock.nextConnection.targetBlock();
-        }
-        this.itemCount_ = connections.length;
-        this.updateShape_();
-        // Reconnect any child blocks.
-        for (var i = 0; i < this.itemCount_; i++) {
-            if (connections[i]) {
-                this.getInput('ADD' + i).connection.connect(connections[i]);
-            }
-        }
-    },
-    updateShape_: function() {
-        // Delete everything.
-        if (this.getInput('EMPTY')) {
-            this.removeInput('EMPTY');
-        } else {
-            var i = 0;
-            while (this.getInput('ADD' + i)) {
-                this.removeInput('ADD' + i);
-                i++;
-            }
-        }
-        // Rebuild block.
-        if (this.itemCount_ == 0) {
-            this.appendDummyInput('EMPTY')
-                .appendField(Blockly.Msg.LISTS_CREATE_EMPTY_TITLE);
-        } else {
-            for (var i = 0; i < this.itemCount_; i++) {
-                var input = this.appendValueInput('ADD' + i);
-                // if (i == 0) {
-                //     input.appendField(Blockly.Msg.LISTS_CREATE_WITH_INPUT_WITH);
-                // }
-            }
-        }
-    },
-    appendNewVar: function(connection) {
-        this.itemCount_++;
-        this.updateShape_();
-        this.getInput('ADD' + (this.itemCount_ - 1)).connection.connect(connection);
-    }
-};
-
 Blockly.Blocks["unary"] = {
     OPERATIONS: {
         tpDate: {

@@ -39,40 +39,28 @@ Blockly.Blocks.Manager = {
             children: []
         },
         delNode: function(id) {
-            var me = this;
-            var node = this.root[id];
-            if (!node) {
-                return;
-            }
-            delete this.root[id];
-            // deletes from all nodes
-            this.traverseNodes(function(ds) {
-                if (ds.children.indexOf(node.id) != -1) {
-                    ds.children.splice(ds.children.indexOf(node.id), 1);
+            // Deleting a node could have unknown side effects
+            // Delete event won't fired for blocks that are physically attached to block
+            // So, should remove all dead nodes
+            _deletedNodes = id ? [id] : [];
+            // creates a list of delted nodes
+            this.traverseNodes(function(node, nodeId) {
+                var _physicalBlock = bbm.ws.getBlockById(nodeId);
+                if (!_physicalBlock) {
+                    _deletedNodes.$$safePush$$(nodeId);
                 }
             });
-            // deletes from root
-            this.root.children.some(function(child, index) {
-                if (child == id) {
-                    this.root.children.splice(index, 1);
-                    return true;
-                }
-            }.bind(this));
-            // cleanup root
-            for (var key in this.root) {
-                if (key != 'children') {
-                    if (!bbm.ws.getBlockById(key)) {
-                        delete this.root[key];
-                        this.traverseNodes(function(ds) {
-                            if (ds.children.indexOf(key) != -1) {
-                                ds.children.splice(ds.children.indexOf(key), 1);
-                            }
-                        });
-                        // to remove any unknown dependencies
+            // function to remove children
+            function removeChildIfPresent(node) {
+                this.traverseNodes(function(item) {
+                    var _childIndex = item.children.indexOf(node);
+                    if (_childIndex != -1) {
+                        item.children.splice(_childIndex, 1);
                     }
-                }
-            }
-            return this.root;
+                });
+            };
+
+            _deletedNodes.forEach(removeChildIfPresent.bind(this));
         },
         dettachChild: function(child, parent) {
             this.root[parent.id].children.splice(child.id, 1);
@@ -81,9 +69,6 @@ Blockly.Blocks.Manager = {
         addNode: function(obj, id, dataType, variableName, parent) {
             if (parent === undefined || parent == null) {
                 this.root.children.$$safePush$$(id);
-                // if (this.root.children.indexOf(id) == -1) {
-                //     this.root.children.push(id);
-                // }
             } else {
                 this.root[parent.id].children.push(id);
             }
@@ -154,7 +139,7 @@ Blockly.Blocks.Manager = {
             var _dataStore = this.root;
             for (var _key in _dataStore) {
                 if (_key != 'children') {
-                    cb.call(this, _dataStore[_key]);
+                    cb.call(this, _dataStore[_key], _key);
                 }
             }
         }
@@ -272,9 +257,8 @@ Blockly.Blocks.Manager = {
     createEvents: function(block,event){
         var _mutatedBlock = this.allBlocks.root[event.blockId];
         switch (block.type) {
-            case 'delimiter':
-            case 'stream':
-            case 'batch':
+            case 'flytxt':
+            case 'lists_create_with':
                 this.allBlocks.addNode(block, event.blockId);
                 break;
             case 'output_field':
@@ -386,6 +370,16 @@ Blockly.Blocks.Manager = {
                 };
             }
         });
+    },
+    // To return the type of a variable
+    getType: function(variable) {
+        var _type;
+        this.allBlocks.traverseNodes(function(node) {
+            if (node.variableName == variable && node.dataType) {
+                _type = node.dataType;
+            }
+        });
+        return _type;
     },
     // position => {x: 20, y: 50}
     moveBlock: function(block, position) {
