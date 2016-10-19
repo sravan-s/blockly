@@ -202,7 +202,7 @@ Blockly.Blocks.Manager = {
         if (event.name == 'operation') {
             var _newOperation;
             var _prevOperation;
-            if (_mutatedBlock.obj.type != 'field_extractor') {
+            if (_mutatedBlock && _mutatedBlock.obj.type != 'field_extractor') {
                 // type is operator
                 var _newOpType = event.newValue.split('||')[1];
                 _mutatedBlock.dataType = _newOpType;

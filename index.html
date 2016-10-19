@@ -37,7 +37,7 @@
 
     // Complex init
 
-    var xmlInit = '<xml xmlns="http://www.w3.org/1999/xhtml"><block type="flytxt" id="u0m~iVrRcWYMEM2B2{rJ" x="63" y="184"><value name="fileName"><block type="lists_create_with" id="{{,nmR,%`Cv^{tD%ZeU{"><mutation items="3"></mutation><value name="ADD0"><block type="delimiter" id="qXV?+vyj8|Q3eT-;tsQR"><mutation items="2"></mutation><field name="delim"></field><value name="next_marker_1"><block type="field_extractor" id="ajy)8jOSY4ZF4g[nzmSa"><field name="NAME">1</field><field name="operation">string</field><field name="VAR">__temp1</field></block></value></block></value></block></value><value name="lineName"><block type="lists_create_with" id="p(?^da/A)56,z#lCK3#/"><mutation items="3"></mutation><value name="ADD0"><block type="delimiter" id="as1b:A[6,ur?D7Oo{Wb3"><mutation items="2"></mutation><field name="delim"></field><value name="next_marker_1"><block type="field_extractor" id="d:^:ZU*NIdBat*Y:2?#O"><field name="NAME">1</field><field name="operation">string</field><field name="VAR">__temp2</field></block></value></block></value></block></value><value name="store_stream"><block type="lists_create_with" id="t$zhGi(*AKu,-o`GImaM"><mutation items="2"></mutation></block></value><value name="store_batch"><block type="lists_create_with" id="klsocCP6=vQzfSf]]X?}"><mutation items="3"></mutation></block></value></block></xml>';
+    var xmlInit = '<xml xmlns="http://www.w3.org/1999/xhtml"><block type="flytxt" id="u0m~iVrRcWYMEM2B2{rJ" x="63" y="184"><value name="fileName"><block type="lists_create_with" id="{{,nmR,%`Cv^{tD%ZeU{"><mutation items="3"></mutation><value name="ADD0"><block type="delimiter" id="qXV?+vyj8|Q3eT-;tsQR"><mutation items="2"></mutation><field name="delim">,</field><value name="next_marker_1"><block type="field_extractor" id="ajy)8jOSY4ZF4g[nzmSa"><field name="NAME">1</field><field name="operation">string</field><field name="VAR">_55</field></block></value></block></value></block></value><value name="lineName"><block type="lists_create_with" id="p(?^da/A)56,z#lCK3#/"><mutation items="3"></mutation><value name="ADD0"><block type="delimiter" id="as1b:A[6,ur?D7Oo{Wb3"><mutation items="2"></mutation><field name="delim">*</field><value name="next_marker_1"><block type="field_extractor" id="d:^:ZU*NIdBat*Y:2?#O"><field name="NAME">1</field><field name="operation">string</field><field name="VAR">__temp2</field></block></value></block></value></block></value><statement name="transform"><block type="controls_if" id="9#CXA0_W$y=/WK_X%~]c"><value name="IF0"><block type="test" id="[(z4YZHa3!qYPYH+wrd)"><field name="m1">_55</field><field name="operation">$1 = tpString.contains(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary</field><field name="m2">__temp__1</field></block></value><statement name="DO0"><block type="dynamic" id="+]LG}*Lpbw,~^WwN`h`9"><field name="m1">_55</field><field name="operation">$1 = tpString.merge(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary</field><field name="m2">__temp2</field><field name="VAR">__temp3</field></block></statement></block></statement><value name="store_stream"><block type="lists_create_with" id="t$zhGi(*AKu,-o`GImaM"><mutation items="2"></mutation></block></value><value name="store_batch"><block type="lists_create_with" id="klsocCP6=vQzfSf]]X?}"><mutation items="3"></mutation></block></value></block></xml>';
                  var xmlDom = Blockly.Xml.textToDom(xmlInit);
                 Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, xmlDom);
 
@@ -47,9 +47,14 @@
 
     gen.addEventListener('click', function() {
       var count = 0;
-      Blockly.JavaScript.initFunctions = ['setInputFileName("TestScript");'];
-      Blockly.JavaScript.initFunctions.push('this.mf.setMaxListSize(' + (count + 4) + ');\n');
+      Blockly.JavaScript.initFunctions = [];
+      // Blockly.JavaScript.initFunctions = ['setInputFileName("TestScript");'];
+      // Blockly.JavaScript.initFunctions.push('this.mf.setMaxListSize(' + (count + 4) + ');\n');
       Blockly.JavaScript.variables = [];
+      Blockly.JavaScript.variables.push('private Store store = new ConsoleStore("/tmp/output");\n');
+      Blockly.JavaScript.variables.push('public final String folderName = "/tmp/java/INRecharge/";\n');
+      Blockly.JavaScript.variables.push('public final String regex = "(.*)";\n');
+
       Blockly.JavaScript.extractPhase = '';
       Blockly.JavaScript.translatePhase = '';
       Blockly.JavaScript.storePhase = '';
