@@ -179,9 +179,10 @@ Blockly.Blocks.Manager = {
         var _mutatedBlock = this.allBlocks.root[event.blockId];
         var _productBlock;
         // Rename of variable
-        if (event.name == 'VAR' && event.newValue != event.oldValue) {
+        if (event.name == 'VAR' && event.newValue != event.oldValue && _mutatedBlock.obj.type != 'output_field') {
             if (event.oldValue.startsWith('__temp') && !event.newValue.startsWith('__temp')) { // is selecting a name for current block
                 if (event.newValue.startsWith('_')) {
+                    // Insert if there isn't a variable with current name
                     _productBlock = bbm.renderBlock('dynamic');
                 } else {
                     _productBlock = bbm.renderBlock('output_field');
