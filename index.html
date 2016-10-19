@@ -5,6 +5,7 @@
 <script src="blocks_compressed.js"></script>
 <script src="javascript_compressed.js"></script>
 <script src="msg/js/en.js"></script>
+<script src="blocks/flytxt.js"></script>
 <script src="blocks/bbm.js"></script>
 <script src="blocks/tpblock.js"></script>
 <script src="blocks/test.js"></script>
@@ -36,7 +37,7 @@
 
     // Complex init
 
-    var xmlInit = '<xml xmlns="http://www.w3.org/1999/xhtml"><block type="extractor" id="D-i{Q5j{]PJ!5f.@f^S^" deletable="false" x="247" y="290"><value name="line"><block type="delimiter" id="qMnz}t3a9,,XE4@/jLCb"><mutation items="0"></mutation><field name="delim">1</field><value name="next_marker_1"><block type="field_extractor" id="FnM}{:Z.hs*sVseQLXf;"><field name="NAME">1</field><field name="operation">string</field><field name="VAR">_temp5</field></block></value></block></value><next><block type="transform" id="`#{siG=4Z=W{9fzG7~Xj" deletable="false" movable="false"><next><block type="store" id="x6tnR`YVMw61kvdnf}`B" deletable="false" movable="false"><mutation items="2"></mutation><field name="operation">hdfs</field><field name="headers">TRUE</field><value name="ADD0"><block type="stream" id="e6/].UqQ)lNE#lmlK^hg" movable="false"><mutation items="1"></mutation></block></value><value name="ADD1"><block type="batch" id="Kl!3%ToR$c7F{h7Hrj-G" movable="false"><mutation items="1"></mutation></block></value></block></next></block></next></block></xml>';
+    var xmlInit = '<xml xmlns="http://www.w3.org/1999/xhtml"><block type="flytxt" id="u0m~iVrRcWYMEM2B2{rJ" x="63" y="184"><value name="fileName"><block type="lists_create_with" id="{{,nmR,%`Cv^{tD%ZeU{"><mutation items="3"></mutation><value name="ADD0"><block type="delimiter" id="qXV?+vyj8|Q3eT-;tsQR"><mutation items="2"></mutation><field name="delim"></field><value name="next_marker_1"><block type="field_extractor" id="ajy)8jOSY4ZF4g[nzmSa"><field name="NAME">1</field><field name="operation">string</field><field name="VAR">__temp1</field></block></value></block></value></block></value><value name="lineName"><block type="lists_create_with" id="p(?^da/A)56,z#lCK3#/"><mutation items="3"></mutation><value name="ADD0"><block type="delimiter" id="as1b:A[6,ur?D7Oo{Wb3"><mutation items="2"></mutation><field name="delim"></field><value name="next_marker_1"><block type="field_extractor" id="d:^:ZU*NIdBat*Y:2?#O"><field name="NAME">1</field><field name="operation">string</field><field name="VAR">__temp2</field></block></value></block></value></block></value><value name="store_stream"><block type="lists_create_with" id="t$zhGi(*AKu,-o`GImaM"><mutation items="2"></mutation></block></value><value name="store_batch"><block type="lists_create_with" id="klsocCP6=vQzfSf]]X?}"><mutation items="3"></mutation></block></value></block></xml>';
                  var xmlDom = Blockly.Xml.textToDom(xmlInit);
                 Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, xmlDom);
 
