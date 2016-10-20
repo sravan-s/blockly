@@ -2,26 +2,26 @@ Blockly.Blocks["test"] = {
     OPERATIONS: {
         tpDate: {
             data: [
-                ["after", "$1 = tpDate.after(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3);||boolean||binary"],
-                ["before", "$1 = tpDate.before(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3);||boolean||binary"],
+                ["after","after"],
+                ["before","before"]
             ]
         },
         tpString: {
             data: [
-                ["contains", "$1 = tpString.contains(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"],
-                ["containsIgnoreCase", "$1 = tpString.containsIgnoreCase(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"],
-                ["endsWith", "$1 = tpString.endsWith(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"],
-                ["endsWithIgnore", "$1 = tpString.endsWithIgnore(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"],
-                ["startsWith", "$1 = tpString.startsWith(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3);||boolean||binary"],
+                ["contains","contains"],
+                ["containsIgnoreCase","containsIgnoreCase"],
+                ["endsWith","endsWith"],
+                ["endsWithIgnore","endsWithIgnore"],
+                ["startsWith","startsWith"]
             ]
         },
         tpMath: {
             data: [
-                ["eq", "$1 = tpMath.eq(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"],
-                ["greaterEqThan", "$1 = tpMath.greaterEqThan(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"],
-                ["greaterThan", "$1 = tpMath.greaterThan(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"],
-                ["lessEqThan", "$1 = tpMath.lessEqThan(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"],
-                ["lessThan", "$1 = tpMath.lessThan(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"],
+                ["eq","eq"],
+                ["greaterEqThan","greaterEqThan"],
+                ["greaterThan","greaterThan"],
+                ["lessEqThan","lessEqThan"],
+                ["lessThan","lessThan"]
             ]
         }
     },
@@ -39,6 +39,16 @@ Blockly.Blocks["test"] = {
         this.setOutput(true, "Boolean");
         this.setTooltip("");
         this.setHelpUrl("http://www.example.com/");
+    },
+    mutationToDom: function() {
+        var container = document.createElement('mutation');
+        container.setAttribute('testAttr', this.getFieldValue('operation'));
+        return container;
+    },
+
+    domToMutation: function(xmlElement) {
+        this.checkOperation = bbm.Consts.DYNAMIC_OPERATIONS[xmlElement.getAttribute('testAttr')];
+        this.setDropdown();
     },
     setDropdown: function(dataType) {
         var _list;

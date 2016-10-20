@@ -64,3 +64,25 @@ bbm.Consts.DYNAMIC_OPERATIONS= {
   or: "$1 = tpLogic.or(m$2, m$3);||Marker||binary",
   not: "$1 = tpLogic.not(m$2)||boolean||unary"
 }
+bbm.Consts.TEST_OPERATIONS= {
+
+  "after":"tpDate.after(data, $1, data, $2);",
+  "before":"tpDate.before(data, $1, data, $2);",
+  "contains":"tpString.contains(data, $1, data, $2, mf);",
+  "containsIgnoreCase":"tpString.containsIgnoreCase(data, $1, data, $2, mf);",
+  "endsWith":"tpString.endsWith(data, $1, data, $2, mf);",
+  "endsWithIgnore":"tpString.endsWithIgnore(data, $1, data, $2, mf);",
+  "startsWith":"tpString.startsWith(data, $1, data, $2, mf);",
+  "eq":"tpMath.eq(data, $1, data, $2, mf);",
+  "greaterEqThan":"tpMath.greaterEqThan(data, $1, data, $2, mf);",
+  "greaterThan":"tpMath.greaterThan(data, $1, data, $2, mf);",
+  "lessEqThan":"tpMath.lessEqThan(data, $1, data, $2, mf);",
+  "lessThan":"tpMath.lessThan(data, $1, data, $2, mf);"
+}
+bbm.Consts.STREAM_EVENT_OPERATIONS= {
+  "AGG_AND_TIME" : "AGG_AND_TIME((byte) 1)",
+  "AGG_ONLY" : "AGG_ONLY((byte) 2)",
+  "TIME_ONLY" : "TIME_ONLY((byte) 3)",
+  "DEFAULT_STATEFULL" : "DEFAULT_STATEFULL((byte) 4)",
+  "STATELESS" : "STATELESS((byte) 5)"
+}

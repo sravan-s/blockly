@@ -1,7 +1,7 @@
 Blockly.JavaScript['flytxt'] = function(block) {
   var value_line = Blockly.JavaScript.valueToCode(block, 'lineName', Blockly.JavaScript.ORDER_ATOMIC);
   var value_file = Blockly.JavaScript.valueToCode(block, 'fileName', Blockly.JavaScript.ORDER_ATOMIC);
-  var value_transform = Blockly.JavaScript.valueToCode(block, 'transform', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_transform = Blockly.JavaScript.statementToCode(block, 'transform',Blockly.JavaScript.ORDER_ATOMIC);
   var value_store_stream = Blockly.JavaScript.valueToCode(block, 'store_stream', Blockly.JavaScript.ORDER_ATOMIC);
   var value_store_batch = Blockly.JavaScript.valueToCode(block, 'store_batch', Blockly.JavaScript.ORDER_ATOMIC);
   // Blockly.JavaScript.variables.push('protected final Marker line  = new Marker();\n');
@@ -16,12 +16,11 @@ Blockly.JavaScript['flytxt'] = function(block) {
   Blockly.JavaScript.extractPhase = code;
   // check if trnaform has children
   if(value_transform){
-    var statementCode = Blockly.JavaScript.statementToCode(block, 'transform');
-    Blockly.JavaScript.translatePhase = statementCode;
+    Blockly.JavaScript.translatePhase = value_transform;
   }
 
   if(value_store_stream){
-    storeStream(block);
+    Blockly.JavaScript.storePhase += value_store_stream+'\n';
   }
 
   if(value_store_batch){
@@ -105,7 +104,7 @@ Blockly.JavaScript['delimiter'] = function(block) {
       childCode.push(getChildCode[2]);
     }
   })
-    childCol = childCol.join('');
+    childCol = childCol.join(',');
     childVar = childVar.length > 0 ? ','+childVar.join(',') : '';
     code = '$$.splitAndGetMarkers(data,'+ascii+',new int[]{'+childCol+'},mf'+childVar+');\n';
     code+=childCode.join('');
@@ -185,7 +184,7 @@ Blockly.JavaScript['dynamic'] = function(block) {
   var variable_m2 = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('m2'), Blockly.Variables.NAME_TYPE); 
   var variable_result = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('VAR'), Blockly.Variables.NAME_TYPE); 
   var value_child = Blockly.JavaScript.valueToCode(block, 'child', Blockly.JavaScript.ORDER_ATOMIC); 
-  var splitCode = dropdown_operation.split('||'); 
+  var splitCode = dropdown_operation.split('||');
   Blockly.JavaScript.variables.push('private '+splitCode[1]+' m'+variable_result+';\n'); 
  
   var code = splitCode[0].replace(/\$1/g,'m'+variable_result) 
@@ -193,6 +192,25 @@ Blockly.JavaScript['dynamic'] = function(block) {
   .replace(/\$3/g,variable_m2) 
    +'\n'; 
   return code; 
+};
+
+Blockly.JavaScript['event_field'] = function(block) { 
+  var subscriber = block.getFieldValue('m1');
+  var circle = block.getFieldValue('m2');
+  var dataType = bbm.Consts.STREAM_EVENT_OPERATIONS[block.getFieldValue('dataType')];
+  var fieldType = block.getFieldValue('fieldType');
+  var aggregateType = block.getFieldValue('aggragation');
+  var timeIndex = block.getFieldValue('m5');
+  var oldValue = block.getFieldValue('m3');
+  var newValue = block.getFieldValue('m4');
+  var eventName = block.getFieldValue('VAR');
+
+  Blockly.JavaScript.variables.push('private String m'+eventName+';\n'); 
+  Blockly.JavaScript.variables.push('private boolean aggregatable;\n'); 
+
+  var code='FieldType "'+fieldType+'";\n';
+      code+='EventType '+dataType+';\n';
+  return [code, Blockly.JavaScript.ORDER_ATOMIC];; 
 }; 
 
 
@@ -223,7 +241,13 @@ Blockly.JavaScript['lookup'] = function(block) {
 Blockly.JavaScript['test'] = function(block) {
   var m1 = block.getFieldValue('m1');
   var m2 = block.getFieldValue('m2');
-  var code ='m'+m1+'.toString(data).contains(m'+m2+'.toString(data))';
+  var dropdown_operation = bbm.Consts.TEST_OPERATIONS[block.getFieldValue('operation')];
+  var code = dropdown_operation.replace(/\$1/g,'m'+m1) 
+  .replace(/\$2/g,'m'+m2) 
+  .replace(/\$3/g,null) 
+   +'\n'; 
+
+  // var code ='m'+m1+'.toString(data).contains(m'+m2+'.toString(data))';
   return [code, Blockly.JavaScript.ORDER_ATOMIC];
 }
 
@@ -242,9 +266,9 @@ function storeBatch(block) {
   if(header_check==='TRUE'){
     Blockly.JavaScript.initFunctions.push('store.set("TestScript");\n');
   }
-  Blockly.JavaScript.variables.push('private Store store = new '+get_Storage+'Store(folderName,"'+childCode+'");\n');
+  Blockly.JavaScript.variables.push('private Store store = new '+get_Storage+'Store(outputFolderName,"'+childCode+'");\n');
 
-  Blockly.JavaScript.storePhase = 'store.save(data, fileName.toString(), '+mapCode.join(',')+');\n';
+  Blockly.JavaScript.storePhase += 'store.save(data, fileName.toString(), '+mapCode.join(',')+');\n';
   // Blockly.JavaScript.storePhase = 'store.save(data, currentFileName '+code+');\n';
   return '';
 }
