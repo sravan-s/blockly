@@ -12,19 +12,12 @@ Blockly.Tp._connectMeToTransform = function(block) {
             bbm.attachBlock(child, parent);
         }
     }
-    // attach directly t transform if transform block is empty
-    // if (.getChildren().length == 1) {
-    //     var transformInputLists = Blockly.Tp.transform_.inputList;
-    //     block.previousConnection.connect(transformInputLists[transformInputLists.length - 1].connection);
-    // } else {
-    //     var _tpChilds = Blockly.Tp.transform_.getChildren();
-    //     _tpChilds.some(function(child) {
-    //         if (child.type != 'store') {
-    //             _connect(block, child);
-    //             return true;
-    //         }
-    //     });
-    // }
+    var _transformInput = bbm._flytxt.getInput('transform');
+    if (_transformInput.connection.targetBlock()) {
+        _connect(block, _transformInput.connection.targetBlock()); // Connect block to children
+    } else { // No children
+        block.previousConnection.connect(_transformInput.connection)
+    }
 }
 
 Blockly.Tp.Counter = {

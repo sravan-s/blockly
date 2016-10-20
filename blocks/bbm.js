@@ -15,17 +15,8 @@ Blockly.Blocks.Manager = {
         var _blocks = this.ws.getAllBlocks();
         _blocks.forEach(function(block) {
             // main blocks
-            if (block.type == 'extractor' || block.type == 'store' || block.type == 'transform') {
-                switch (block.type){
-                    case 'extractor':
-                        this.__extractor = block;
-                        break;
-                    case 'store':
-                        this.__store = block;
-                        break;
-                    case 'transform':
-                        this.__transform = block;
-                }
+            if (block.type == 'flytxt') {
+                this._flytxt = block;
                 this.allBlocks.addNode(block, block.id);
             } else {
                 this.allBlocks.addNode(block, block.id, block.getFieldValue('operation'), block.getFieldValue('VAR'), block.getParent());

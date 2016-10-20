@@ -18,13 +18,12 @@ Blockly.Blocks['flytxt'] = {
         .setCheck(null)
         .setAlign(Blockly.ALIGN_RIGHT)
         .appendField("to")
-        .appendField(new Blockly.FieldDropdown([ 
-            ["Hdfs", "Hdfs"], 
-            ["Local", "LocalFile"] 
+        .appendField(new Blockly.FieldDropdown([
+            ["Hdfs", "Hdfs"],
+            ["Local", "LocalFile"]
         ]), "operation")
-        // this.appendDummyInput() 
-            .appendField("save headers") 
-            .appendField(new Blockly.FieldCheckbox("TRUE"), "headers"); 
+            .appendField("save headers")
+            .appendField(new Blockly.FieldCheckbox("TRUE"), "headers");
 
     this.setInputsInline(false);
     this.setColour(290);
