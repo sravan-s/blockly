@@ -158,18 +158,19 @@ Blockly.Blocks.Manager = {
             this.allBlocks.delNode(event.blockId);
             return;
         }
+        // functions are debounced to reduce the rolling effect of various actions
         switch (event.type) {
             case Blockly.Events.CHANGE:
-                this.changeEvents(block, event);
+                this.debounce(this.changeEvents(block, event), 200);
                 break;
             case Blockly.Events.CREATE:
-                this.createEvents(block, event);
+                this.debounce(this.createEvents(block, event), 200);
                 break;
             case Blockly.Events.DELETE:
-                this.deleteEvents(block, event);
+                this.debounce(this.deleteEvents(block, event), 200);
                 break;
             case Blockly.Events.MOVE:
-                this.moveEvents(block, event);
+                this.debounce(this.moveEvents(block, event), 200);
                 break;
             case Blockly.Events.UI:
                 break;
@@ -447,6 +448,23 @@ Blockly.Blocks.Manager = {
         }
         return newBlock;
     },
+
+    // https://davidwalsh.name/javascript-debounce-function
+    debounce: function (func, wait, immediate) {
+        var timeout;
+        return function() {
+            var context = this, args = arguments;
+            var later = function() {
+                timeout = null;
+                if (!immediate) func.apply(context, args);
+            };
+            var callNow = immediate && !timeout;
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+            if (callNow) func.apply(context, args);
+        };
+    },
+
     _dataTypeChanged: function(block, olddatatype, newdatatype){
         this.allBlocks.changeDatatype(block.id, olddatatype, newdatatype);
     },
