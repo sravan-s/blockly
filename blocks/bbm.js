@@ -261,6 +261,7 @@ Blockly.Blocks.Manager = {
         switch (block.type) {
             case 'flytxt':
             case 'lists_create_with':
+            case 'delimiter':
                 this.allBlocks.addNode(block, event.blockId);
                 break;
             case 'output_field':
@@ -306,7 +307,7 @@ Blockly.Blocks.Manager = {
         var me = this;
         var _mutatedBlock = this.allBlocks.root[event.blockId];
         // Excludes extractor/transform/store
-        if (block.type == 'extractor') {
+        if (block.type == 'flytxt') {
             return false;
         }
         if (event.newParentId) {//attached
