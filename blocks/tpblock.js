@@ -245,14 +245,7 @@ Blockly.Blocks["dynamic"] = {
         if (changeEvent.blockId != this.id) {
             return;
         }
-        if (changeEvent.type === "change" && changeEvent.name == 'm1') {
-            var m1 = this.getFieldValue("m1");
-            var options = this.getDropDown(m1); // The new options you want to have
-            var drop = this.getField("operation");
-            drop.setText(" "); // set the actual text
-            drop.setValue(" "); // set the actual value
-            drop.menuGenerator_ = options;
-        }
+
         if (changeEvent.type === "change" && changeEvent.name == 'operation') {
             var drop = this.getField("operation");
             var dropType = drop.value_.split('||')[2];
@@ -333,8 +326,8 @@ Blockly.Blocks['output_field'] = {
   init: function() {
     var _variables = bbm.getLastVariables();
     this.appendDummyInput()
-        .appendField(new Blockly.FieldVariable(_variables[0]), "VAR");
-    this.setOutput(true, null);
+        .appendField(new Blockly.FieldVariable(_variables[0]), "VAR")
+    this.setOutput(true, 'output_field');
     this.setColour(330);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');
@@ -737,6 +730,17 @@ Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {
                     y: e.clientY
                 });
             }
+        },
+        {
+            enabled: true,
+            text: "Check",
+            // callback: CreateLogic
+            callback: function() {
+                bbm.renderBlock('lists_create_with_stream', {
+                    x: e.clientX,
+                    y: e.clientY
+                });
+            }
         }];
         obj.forEach(function(item) {
             menuOptions.push(item);
@@ -749,179 +753,7 @@ Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {
     Blockly.ContextMenu.show(e, menuOptions, this.RTL);
 };
 
-Blockly.Blocks["stream"] = {
-  /**
-   * Block for creating a list with any number of elements of any type.
-   * @this Blockly.Block
-   */
-  init: function() {
-    this.itemCount_ = 0;
-    this.appendDummyInput()
-      .appendField("Stream")
-    this.setColour(Blockly.Blocks.lists.HUE);
-    this.appendValueInput('next_marker_' + this.itemCount_);
-    this.setOutput(true, 'Array');
-  },
-
-  mutationToDom: function() {
-    var container = document.createElement('mutation');
-    container.setAttribute('items', this.itemCount_);
-    return container;
-  },
-
-  domToMutation: function(xmlElement) {
-    this.itemCount_ = parseInt(xmlElement.getAttribute('items'), 10);
-    this.updateShape_();
-  },
-
-  appendEmptyInput: function() {
-    // loop through all lines
-    for (var i = 0; i < (this.itemCount_ + 1); i++) {
-      var input = this.getInput('next_marker_' + i);
-      // if there is a free input with this name
-      // break from loop
-      if (input && !input.connection.targetBlock()) {
-        return false;
-      }
-    }
-    // If there are no empty inputs, create one
-    this.appendValueInput('next_marker_' + this.itemCount_);
-    this.itemCount_ += 1;
-    this.mutationToDom();
-  },
-
-  updateShape_: function() {
-    // Delete everything.
-    if (this.getInput('EMPTY')) {
-      this.removeInput('EMPTY');
-    } else {
-      var i = 0;
-      while (this.getInput('next_marker_' + i)) {
-        this.removeInput('next_marker_' + i);
-        i++;
-      }
-    }
-    // Rebuild block.
-    if (this.itemCount_ == 0) {
-      this.appendValueInput('next_marker_' + i);
-    } else {
-      for (var i = 0; i < this.itemCount_; i++) {
-        var input = this.appendValueInput('next_marker_' + i);
-      }
-    }
-  },
-
-  // call abck after init
-  afterInit: function() {
-    // if no free inputs, create one
-    // this.appendEmptyInput();
-    // renderBlock('field_extractor');
-  },
-  validate: function() {
-    if (this.getFieldValue('stream') == '') {
-      this.setWarningText('field missing');
-      return false;
-    }
-    this.setWarningText(null);
-    return true;
-  }
-}
-Blockly.Blocks["batch"] = {
-  /**
-   * Block for creating a list with any number of elements of any type.
-   * @this Blockly.Block
-   */
-  init: function() {
-    this.itemCount_ = 0;
-    this.appendDummyInput()
-      .appendField("Batch")
-    this.setColour(Blockly.Blocks.lists.HUE);
-    this.appendValueInput('next_marker_' + this.itemCount_)
-    .setCheck("field_extractor")
-    this.setOutput(true, 'field_extractor');
-  },
-
-  mutationToDom: function() {
-    var container = document.createElement('mutation');
-    container.setAttribute('items', this.itemCount_);
-    return container;
-  },
-
-  domToMutation: function(xmlElement) {
-    this.itemCount_ = parseInt(xmlElement.getAttribute('items'), 10);
-    this.updateShape_();
-  },
-
-  appendEmptyInput: function() {
-    // loop through all lines
-    for (var i = 0; i < (this.itemCount_ + 1); i++) {
-      var input = this.getInput('next_marker_' + i);
-      // if there is a free input with this name
-      // break from loop
-      if (input && !input.connection.targetBlock()) {
-        return false;
-      }
-    }
-    // If there are no empty inputs, create one
-    this.appendValueInput('next_marker_' + this.itemCount_);
-    this.itemCount_ += 1;
-    this.mutationToDom();
-  },
-
-  updateShape_: function() {
-    // Delete everything.
-    if (this.getInput('EMPTY')) {
-      this.removeInput('EMPTY');
-    } else {
-      var i = 0;
-      while (this.getInput('next_marker_' + i)) {
-        this.removeInput('next_marker_' + i);
-        i++;
-      }
-    }
-    // Rebuild block.
-    if (this.itemCount_ == 0) {
-      this.appendValueInput('next_marker_' + i);
-    } else {
-      for (var i = 0; i < this.itemCount_; i++) {
-        var input = this.appendValueInput('next_marker_' + i);
-      }
-    }
-  },
-
-  // call abck after init
-  afterInit: function() {
-    // if no free inputs, create one
-    // this.appendEmptyInput();
-    // renderBlock('field_extractor');
-  },
-  validate: function() {
-    if (this.getFieldValue('stream') == '') {
-      this.setWarningText('field missing');
-      return false;
-    }
-    this.setWarningText(null);
-    return true;
-  }
-}
-
 Blockly.Blocks['event_field'] = {
-  init0: function() {
-    this.appendValueInput("NAME")
-      .setCheck("event_field")
-      .appendField("circle id #")
-      .appendField(new Blockly.FieldTextInput("1"), "NAME")
-      .appendField("as")
-      .appendField(new Blockly.FieldDropdown(JSON.parse(Blockly.Tp.dataType)), "operation")
-      .appendField("named as")
-      .appendField(new Blockly.FieldVariable(Blockly.Tp.Counter.getNewVar()), "VAR")
-      .setCheck(['Array']);
-    this.setInputsInline(false);
-    this.setOutput(true, "event_field");
-    this.setColour(20);
-    this.setTooltip('');
-    this.setHelpUrl('http://www.example.com/');
-  },
 
   init:function(){
     var _variables = bbm.getLastVariables();
@@ -981,4 +813,5 @@ Blockly.Blocks['event_field'] = {
 };
 
 
-Blockly.Msg.LISTS_CREATE_WITH_INPUT_WITH = 'Splitter';
+
+Blockly.Msg.LISTS_CREATE_WITH_INPUT_WITH = ' ';

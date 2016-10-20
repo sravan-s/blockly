@@ -40,6 +40,36 @@ Blockly.JavaScript['lists_create_with'] = function(block) {
   });
   return [code, Blockly.JavaScript.ORDER_ATOMIC];
 }
+Blockly.JavaScript['lists_create_with_extract'] = function(block) {
+  var code ='';
+  block.inputList.forEach(function(input){
+    if(input.connection && input.connection.targetConnection){
+      var getChildCode = Blockly.JavaScript.valueToCode(block, input.name, Blockly.JavaScript.ORDER_ATOMIC);
+      code+=getChildCode;
+    }
+  });
+  return [code, Blockly.JavaScript.ORDER_ATOMIC];
+}
+Blockly.JavaScript['lists_create_with_stream'] = function(block) {
+  var code ='';
+  block.inputList.forEach(function(input){
+    if(input.connection && input.connection.targetConnection){
+      var getChildCode = Blockly.JavaScript.valueToCode(block, input.name, Blockly.JavaScript.ORDER_ATOMIC);
+      code+=getChildCode;
+    }
+  });
+  return [code, Blockly.JavaScript.ORDER_ATOMIC];
+}
+Blockly.JavaScript['lists_create_with_batch'] = function(block) {
+  var code ='';
+  block.inputList.forEach(function(input){
+    if(input.connection && input.connection.targetConnection){
+      var getChildCode = Blockly.JavaScript.valueToCode(block, input.name, Blockly.JavaScript.ORDER_ATOMIC);
+      code+=getChildCode;
+    }
+  });
+  return [code, Blockly.JavaScript.ORDER_ATOMIC];
+}
 
 Blockly.JavaScript['output_field'] = function(block) {
   var code = block.getFieldValue('VAR') || null;
@@ -210,11 +240,11 @@ function storeBatch(block) {
   });
 
   if(header_check==='TRUE'){
-    Blockly.JavaScript.initFunctions.push('store.set("TestScript",'+mapCode.join(',')+');\n');
+    Blockly.JavaScript.initFunctions.push('store.set("TestScript");\n');
   }
-  Blockly.JavaScript.variables.push('private Store store = new '+get_Storage+'Store(folderName,'+childCode+');\n');
+  Blockly.JavaScript.variables.push('private Store store = new '+get_Storage+'Store(folderName,"'+childCode+'");\n');
 
-  Blockly.JavaScript.storePhase = 'store.save(data, fileName.toString(), '+childCode+');\n';
+  Blockly.JavaScript.storePhase = 'store.save(data, fileName.toString(), '+mapCode.join(',')+');\n';
   // Blockly.JavaScript.storePhase = 'store.save(data, currentFileName '+code+');\n';
   return '';
 }
