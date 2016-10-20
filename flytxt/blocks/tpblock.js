@@ -136,63 +136,63 @@ Blockly.Blocks["dynamic"] = {
     OPERATIONS: {
         tpDate: {
             data: [
-                ["after", "$1 = tpDate.after(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3);||boolean||binary"],
-                ["before", "$1 = tpDate.before(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3);||boolean||binary"],
-                ["differenceInMillis", "$1 = tpDate.differenceInMillis(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3);||Marker||binary"],
-                ["convertDate", "$1 = tpDate.convertDate(m$2.getData() == null ? data: m$2.getData(), m$2, MarkerFactory, m$3);||Marker||unary"]
+                ["after","after"],
+                ["before","before"],
+                ["differenceInMillis","differenceInMillis"],
+                ["convertDate","convertDate"]
             ]
         },
         tpString: {
             data: [
-                ["contains", "$1 = tpString.contains(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"],
-                ["containsIgnoreCase", "$1 = tpString.containsIgnoreCase(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"],
-                ["endsWith", "$1 = tpString.endsWith(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"],
-                ["endsWithIgnore", "$1 = tpString.endsWithIgnore(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"],
-                ["extractLeading", "$1 = tpString.extractLeading(m$2.getData() == null ? data: m$2.getData(), $1, integer, mf);||Marker||binary"],
-                ["extractTrailing", "$1 = tpString.extractTrailing(m$2.getData() == null ? data: m$2.getData(), $1, integer, mf);||Marker||binary"],
-                ["indexOf", "$1 = tpString.indexOf(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary"],
-                ["indexOfIgnoreCase", "$1 = tpString.indexOfIgnoreCase(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary"],
-                ["merge", "$1 = tpString.merge(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary"],
-                ["startsWith", "$1 = tpString.startsWith(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3);||boolean||binary"],
-                ["toLowerCase", "$1 = tpString.toLowerCase(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"],
-                ["toTitleCase", "$1 = tpString.toTitleCase(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"],
-                ["toUpperCase", "$1 = tpString.toUpperCase(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"],
-                ["isNull", "$1 = tpString.isNull(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||boolean||unary"],
-                ["length", "$1 = tpString.length(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"],
-                ["rTrim", "$1 = tpString.rTrim(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"],
-                ["lTrim", "$1 = tpString.lTrim(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"],
-                ["trim", "$1 = tpString.trim(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"]
+                ["contains","contains"],
+                ["containsIgnoreCase","containsIgnoreCase"],
+                ["endsWith","endsWith"],
+                ["endsWithIgnore","endsWithIgnore"],
+                ["extractLeading","extractLeading"],
+                ["extractTrailing","extractTrailing"],
+                ["indexOf","indexOf"],
+                ["indexOfIgnoreCase","indexOfIgnoreCase"],
+                ["merge","merge"],
+                ["startsWith","startsWith"],
+                ["toLowerCase","toLowerCase"],
+                ["toTitleCase","toTitleCase"],
+                ["toUpperCase","toUpperCase"],
+                ["isNull","isNull"],
+                ["length","length"],
+                ["rTrim","rTrim"],
+                ["lTrim","lTrim"],
+                ["trim","trim"]
             ]
         },
         tpMath: {
             data: [
-                ["addDouble", "$1 = tpMath.addDouble(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary"],
-                ["addLong", "$1 = tpMath.addLong(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary"],
-                ["eq", "$1 = tpMath.eq(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"],
-                ["greaterEqThan", "$1 = tpMath.greaterEqThan(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"],
-                ["greaterThan", "$1 = tpMath.greaterThan(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"],
-                ["lessEqThan", "$1 = tpMath.lessEqThan(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"],
-                ["lessThan", "$1 = tpMath.lessThan(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary"],
-                ["max", "$1 = tpMath.max(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary"],
-                ["min", "$1 = tpMath.min(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary"],
-                ["subDouble", "$1 = tpMath.subDouble(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary"],
-                ["subLong", "$1 = tpMath.subLong(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary"],
-                ["abs", "$1 =tpMath.abs(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"],
-                ["ceil", "$1 =tpMath.ceil(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"],
-                ["round", "$1 =tpMath.round(m$2.getData() == null ? data: m$2.getData(), integer, m$2, mf);||Marker||unary"],
-                ["floor", "$1 =tpMath.floor(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"],
-                ["isNumber", "$1 =tpMath.isNumber(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||boolean||unary"],
-                ["extractDecimalFractionPart", "$1 =tpMath.extractDecimalFractionPart(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"],
-                ["extractDecimalIntegerPart", "$1 =tpMath.extractDecimalIntegerPart(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary"],
-                ["toMarker", "$1 =tpMath.toMarker(m$2 , mf);||Marker||unary"],
-                ["toMarker", "$1 =tpMath.toMarker(m$2, mf);||Marker||unary"]
+                ["addDouble","addDouble"],
+                ["addLong","addLong"],
+                ["eq","eq"],
+                ["greaterEqThan","greaterEqThan"],
+                ["greaterThan","greaterThan"],
+                ["lessEqThan","lessEqThan"],
+                ["lessThan","lessThan"],
+                ["max","max"],
+                ["min","min"],
+                ["subDouble","subDouble"],
+                ["subLong","subLong"],
+                ["abs","abs"],
+                ["ceil","ceil"],
+                ["round","round"],
+                ["floor","floor"],
+                ["isNumber","isNumber"],
+                ["extractDecimalFractionPart","extractDecimalFractionPart"],
+                ["extractDecimalIntegerPart","extractDecimalIntegerPart"],
+                ["toMarker","toMarker"],
+                ["toMarker","toMarker"]
             ]
         },
         tpLogic: {
             data: [
-                ["and", "$1 = tpLogic.and(m$2, m$3);||Marker||binary"],
-                ["or", "$1 = tpLogic.or(m$2, m$3);||Marker||binary"],
-                ["not", "$1 = tpLogic.not(m$2)||boolean||unary"]
+                ["and","and"],
+                ["or","or"],
+                ["not","not"]
             ]
         }
     },
@@ -214,6 +214,15 @@ Blockly.Blocks["dynamic"] = {
         this.setColour("#006400");
         this.setTooltip("");
         this.setHelpUrl("http://www.example.com/");
+    },
+    mutationToDom: function() {
+    var container = document.createElement('mutation');
+    container.setAttribute('operation', this.getFieldValue('operation'));
+    return container;
+  },
+    domToMutation: function(xmlElement) {
+    this.checkOperation = bbm.Consts.DYNAMIC_OPERATIONS[xmlElement.getAttribute('operation')];
+    this.getOperationType(this.checkOperation);
     },
     setDropdown: function(dataType) {
         var _list;
@@ -247,13 +256,16 @@ Blockly.Blocks["dynamic"] = {
         }
 
         if (changeEvent.type === "change" && changeEvent.name == 'operation') {
-            var drop = this.getField("operation");
-            var dropType = drop.value_.split('||')[2];
+            var drop = bbm.Consts.DYNAMIC_OPERATIONS[this.getFieldValue('operation')];
+            this.getOperationType(drop);
+        }
+        this.validate();
+    },
+    getOperationType: function(text){
+        var dropType = text.split('||')[2];
             if(dropType){
                 this.updateField(dropType);
             }
-        }
-        this.validate();
     },
     validate: function() {
         var m1 = this.getFieldValue('m1');
@@ -267,6 +279,7 @@ Blockly.Blocks["dynamic"] = {
         return true;
     },
     afterInit: function() {
+        debugger;
         Blockly.Tp._connectMeToTransform(this);
     }
 };

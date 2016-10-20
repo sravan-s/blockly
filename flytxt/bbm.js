@@ -262,6 +262,7 @@ Blockly.Blocks.Manager = {
             case bbm.Consts.BLOCKS.FLYTXT:
             case 'lists_create_with':
             case 'delimiter':
+            case 'controls_if':
                 this.allBlocks.addNode(block, event.blockId);
                 break;
             case 'output_field':
@@ -297,7 +298,9 @@ Blockly.Blocks.Manager = {
         // To set dropdown
         if (block.getFieldValue('m1')) {
             var _m1Type = this.getType(block.getFieldValue('m1'));
-            block.setDropdown(_m1Type);
+            if(block.setDropdown){
+                block.setDropdown(_m1Type);
+            }
         }
     },
     deleteEvents: function(block,event){
@@ -434,7 +437,7 @@ Blockly.Blocks.Manager = {
         var _len = _varList.length;
         return [_varList[_len - 1], _varList[_len-2] ? _varList[_len - 2] : _varList[_len - 1]];
     },
-    renderBlock: function (id, position) {
+    renderBlock: function (id, position, callback) {
         var mainWorkspace = Blockly.getMainWorkspace();
         var newBlock = mainWorkspace.newBlock(id);
         newBlock.initSvg();
@@ -446,6 +449,7 @@ Blockly.Blocks.Manager = {
         // more lke an initcalback
         if (newBlock.afterInit) {
             newBlock.afterInit();
+            callback();
         }
         return newBlock;
     },

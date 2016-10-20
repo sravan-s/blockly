@@ -180,7 +180,7 @@ Blockly.JavaScript['unary'] = function(block) {
 };
 
 Blockly.JavaScript['dynamic'] = function(block) { 
-  var dropdown_operation = block.getFieldValue('operation'); 
+  var dropdown_operation = bbm.Consts.DYNAMIC_OPERATIONS[block.getFieldValue('operation')]; 
   var variable_m1 = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('m1'), Blockly.Variables.NAME_TYPE); 
   var variable_m2 = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('m2'), Blockly.Variables.NAME_TYPE); 
   var variable_result = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('VAR'), Blockly.Variables.NAME_TYPE); 
