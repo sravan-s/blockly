@@ -181,6 +181,15 @@ Blockly.Blocks.Manager = {
         var _productBlock;
         // Rename of variable
         if (event.name == 'VAR' && event.newValue != event.oldValue && _mutatedBlock.obj.type != 'output_field') {
+            var _renameFlag = false
+            this.allBlocks.traverseNodes(function(node) {
+                if (node.variableName == event.oldValue && node.obj.type == 'output_field') {
+                    _renameFlag = true;
+                }
+            });
+            if (_renameFlag) {
+                return false;
+            }
             if (event.oldValue.startsWith('__temp') && !event.newValue.startsWith('__temp')) { // is selecting a name for current block
                 if (event.newValue.startsWith('_')) {
                     // Insert if there isn't a variable with current name
