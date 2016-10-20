@@ -155,7 +155,8 @@ Blockly.Blocks.Manager = {
                 this.debounce(this.changeEvents(block, event), 200);
                 break;
             case Blockly.Events.CREATE:
-                this.debounce(this.createEvents(block, event), 200);
+                // create events shoudl run at exact instance
+                this.createEvents(block, event);
                 break;
             case Blockly.Events.DELETE:
                 this.debounce(this.deleteEvents(block, event), 200);
@@ -449,7 +450,9 @@ Blockly.Blocks.Manager = {
         // more lke an initcalback
         if (newBlock.afterInit) {
             newBlock.afterInit();
-            callback();
+        }
+        if (callback && typeof callback === 'function') {
+            callback(newBlock);
         }
         return newBlock;
     },

@@ -657,7 +657,7 @@ Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {
                     y: e.clientY
                 });
             }
-        }, 
+        },
         {
             enabled: true,
             text: "Dynamic Operator",
@@ -687,10 +687,6 @@ Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {
             callback: function() {
                 bbm.renderBlock('controls_if', {
                     x: e.clientX,
-                    y: e.clientY
-                });
-                bbm.renderBlock('test', {
-                    x: e.clientX+10,
                     y: e.clientY
                 });
             }
@@ -824,7 +820,5 @@ Blockly.Blocks['event_field'] = {
     return true;
   }
 };
-
-
 
 Blockly.Msg.LISTS_CREATE_WITH_INPUT_WITH = ' ';
