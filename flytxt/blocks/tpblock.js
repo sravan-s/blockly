@@ -216,14 +216,17 @@ Blockly.Blocks["dynamic"] = {
         this.setHelpUrl("http://www.example.com/");
     },
     mutationToDom: function() {
-    var container = document.createElement('mutation');
-    container.setAttribute('operation', this.getFieldValue('operation'));
-    return container;
-  },
-    domToMutation: function(xmlElement) {
-    this.checkOperation = bbm.Consts.DYNAMIC_OPERATIONS[xmlElement.getAttribute('operation')];
-    this.getOperationType(this.checkOperation);
+        var container = document.createElement('mutation');
+        container.setAttribute('operation', this.getFieldValue('operation'));
+        return container;
     },
+
+    domToMutation: function(xmlElement) {
+        this.checkOperation = bbm.Consts.DYNAMIC_OPERATIONS[xmlElement.getAttribute('operation')];
+        this.getOperationType(this.checkOperation);
+        this.setDropdown();
+    },
+
     setDropdown: function(dataType) {
         var _list;
         var drop = this.getField("operation");
@@ -279,7 +282,6 @@ Blockly.Blocks["dynamic"] = {
         return true;
     },
     afterInit: function() {
-        debugger;
         Blockly.Tp._connectMeToTransform(this);
     }
 };

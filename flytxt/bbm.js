@@ -250,9 +250,14 @@ Blockly.Blocks.Manager = {
                 }.bind(this));
             }
             this.allBlocks.traverseNodes(function(b) {
+                if(!block.getFieldValue('VAR')){
+                    return false;
+                }
                 if ((b.obj.getFieldValue('m1') == block.getFieldValue('VAR') || b.obj.getFieldValue('m2') == block.getFieldValue('VAR')) && b.id != _mutatedBlock.id) {
-                    b.obj.setDropdown(_newOperation);
-                    b.obj.setWarningText('Please choose a diffrent operation');
+                    if(b.obj.setDropdown){
+                        b.obj.setDropdown(_newOperation);
+                        b.obj.setWarningText('Please choose a diffrent operation');
+                    }
                 }
             });
         }
