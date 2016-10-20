@@ -194,22 +194,31 @@ Blockly.JavaScript['dynamic'] = function(block) {
   return code; 
 };
 
-Blockly.JavaScript['event_field'] = function(block) { 
-  var subscriber = block.getFieldValue('m1');
-  var circle = block.getFieldValue('m2');
+Blockly.JavaScript['event_field'] = function(block) {
+  var subscriber = 'm'+block.getFieldValue('m1');
+  var circle = 'm'+block.getFieldValue('m2');
   var dataType = bbm.Consts.STREAM_EVENT_OPERATIONS[block.getFieldValue('dataType')];
   var fieldType = block.getFieldValue('fieldType');
   var aggregateType = block.getFieldValue('aggragation');
-  var timeIndex = block.getFieldValue('m5');
-  var oldValue = block.getFieldValue('m3');
-  var newValue = block.getFieldValue('m4');
-  var eventName = block.getFieldValue('VAR');
+  var statefull = block.getFieldValue('statefull');
+  var passthrough = block.getFieldValue('passthrough');
+  var timeIndex = 'm'+block.getFieldValue('m5');
+  var eventID = 'm'+block.getFieldValue('m6');
+  var oldValue = 'm'+block.getFieldValue('m3');
+  var newValue = 'm'+block.getFieldValue('m4');
+  var eventName = 'm'+block.getFieldValue('VAR');
 
-  Blockly.JavaScript.variables.push('private String m'+eventName+';\n'); 
-  Blockly.JavaScript.variables.push('private boolean aggregatable;\n'); 
+  Blockly.JavaScript.variables.push('private Store streamStore = new StreamStore("/tmp/test");\n'); 
+  Blockly.JavaScript.variables.push('private Marker '+eventName+';\n');
+  Blockly.JavaScript.variables.push('private Marker statefull = '+bbm.Consts.MARKER_CHECK[statefull]+';\n');
+  Blockly.JavaScript.variables.push('private Marker aggregatable = '+bbm.Consts.MARKER_CHECK[aggregateType]+';\n');
+  Blockly.JavaScript.variables.push('private Marker '+timeIndex+';\n');
+  Blockly.JavaScript.variables.push('private Marker '+eventID+';\n');
+  Blockly.JavaScript.variables.push('private Marker passthrough = '+bbm.Consts.MARKER_CHECK[passthrough]+';\n');
+  Blockly.JavaScript.variables.push('private Marker eventType = mf.createImmutable("'+dataType+'".getBytes(), 0, '+(dataType.length-1)+');\n');
+  Blockly.JavaScript.variables.push('private Marker fieldType = mf.createImmutable("'+fieldType+'".getBytes(), 0, '+(fieldType.length-1)+');\n');
 
-  var code='FieldType "'+fieldType+'";\n';
-      code+='EventType '+dataType+';\n';
+  var code ='streamStore.save(data,"",eventType,fieldType,'+eventName+',statefull,aggregatable,'+timeIndex+','+newValue+','+oldValue+','+eventID+',passthrough);\n';
   return [code, Blockly.JavaScript.ORDER_ATOMIC];; 
 }; 
 
@@ -266,7 +275,7 @@ function storeBatch(block) {
   if(header_check==='TRUE'){
     Blockly.JavaScript.initFunctions.push('store.set("TestScript");\n');
   }
-  Blockly.JavaScript.variables.push('private Store store = new '+get_Storage+'Store(outputFolderName,"'+childCode+'");\n');
+  Blockly.JavaScript.variables.push('private Store store = new '+get_Storage+'Store(outputFolder,"'+childCode+'");\n');
 
   Blockly.JavaScript.storePhase += 'store.save(data, fileName.toString(), '+mapCode.join(',')+');\n';
   // Blockly.JavaScript.storePhase = 'store.save(data, currentFileName '+code+');\n';

@@ -22,24 +22,27 @@ bbm.Consts.DYNAMIC_OPERATIONS= {
   before: "$1 = tpDate.before(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3);||boolean||binary",
   differenceInMillis: "$1 = tpDate.differenceInMillis(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3);||Marker||binary",
   convertDate: "$1 = tpDate.convertDate(m$2.getData() == null ? data: m$2.getData(), m$2, MarkerFactory, m$3);||Marker||unary",
-  contains: "$1 = tpString.contains(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary",
-  containsIgnoreCase: "$1 = tpString.containsIgnoreCase(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary",
-  endsWith: "$1 = tpString.endsWith(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary",
-  endsWithIgnore: "$1 = tpString.endsWithIgnore(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary",
-  extractLeading: "$1 = tpString.extractLeading(m$2.getData() == null ? data: m$2.getData(), $1, integer, mf);||Marker||binary",
-  extractTrailing: "$1 = tpString.extractTrailing(m$2.getData() == null ? data: m$2.getData(), $1, integer, mf);||Marker||binary",
-  indexOf: "$1 = tpString.indexOf(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary",
-  indexOfIgnoreCase: "$1 = tpString.indexOfIgnoreCase(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary",
-  merge: "$1 = tpString.merge(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary",
+
+  contains: "$1 = tpString.contains(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3);||boolean||binary",
+  containsIgnoreCase: "$1 = tpString.containsIgnoreCase(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3);||boolean||binary",
+  endsWith: "$1 = tpString.endsWith(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3);||boolean||binary",
+  endsWithIgnore: "$1 = tpString.endsWithIgnore(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3);||boolean||binary",
+  extractLeading: "$1 = tpString.extractLeading(m$2.getData() == null ? data: m$2.getData(), $1, integer);||Marker||binary",
+  extractTrailing: "$1 = tpString.extractTrailing(m$2.getData() == null ? data: m$2.getData(), $1, integer);||Marker||binary",
+  indexOf: "$1 = tpString.indexOf(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3);||Marker||binary",
+  indexOfIgnoreCase: "$1 = tpString.indexOfIgnoreCase(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3);||Marker||binary",
+  merge: "$1 = tpString.merge(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3);||Marker||binary",
   startsWith: "$1 = tpString.startsWith(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3);||boolean||binary",
-  toLowerCase: "$1 = tpString.toLowerCase(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary",
-  toTitleCase: "$1 = tpString.toTitleCase(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary",
-  toUpperCase: "$1 = tpString.toUpperCase(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary",
-  isNull: "$1 = tpString.isNull(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||boolean||unary",
-  length: "$1 = tpString.length(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary",
-  rTrim: "$1 = tpString.rTrim(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary",
-  lTrim: "$1 = tpString.lTrim(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary",
-  trim: "$1 = tpString.trim(m$2.getData() == null ? data: m$2.getData(), m$2, mf);||Marker||unary",
+  toLowerCase: "$1 = tpString.toLowerCase(m$2.getData() == null ? data: m$2.getData(), m$2);||Marker||unary",
+  toTitleCase: "$1 = tpString.toTitleCase(m$2.getData() == null ? data: m$2.getData(), m$2);||Marker||unary",
+  toUpperCase: "$1 = tpString.toUpperCase(m$2.getData() == null ? data: m$2.getData(), m$2);||Marker||unary",
+  isNull: "$1 = tpString.isNull(m$2.getData() == null ? data: m$2.getData(), m$2);||boolean||unary",
+  length: "$1 = tpString.length(m$2.getData() == null ? data: m$2.getData(), m$2);||Marker||unary",
+  rTrim: "$1 = tpString.rTrim(m$2.getData() == null ? data: m$2.getData(), m$2);||Marker||unary",
+  lTrim: "$1 = tpString.lTrim(m$2.getData() == null ? data: m$2.getData(), m$2);||Marker||unary",
+  trim: "$1 = tpString.trim(m$2.getData() == null ? data: m$2.getData(), m$2);||Marker||unary",
+
+
   addDouble: "$1 = tpMath.addDouble(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary",
   addLong: "$1 = tpMath.addLong(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||Marker||binary",
   eq: "$1 = tpMath.eq(m$2.getData() == null ? data: m$2.getData(), m$2, m$3.getData() == null ? data: m$3.getData(), m$3, mf);||boolean||binary",
@@ -66,23 +69,27 @@ bbm.Consts.DYNAMIC_OPERATIONS= {
 }
 bbm.Consts.TEST_OPERATIONS= {
 
-  "after":"tpDate.after(data, $1, data, $2);",
-  "before":"tpDate.before(data, $1, data, $2);",
-  "contains":"tpString.contains(data, $1, data, $2, mf);",
-  "containsIgnoreCase":"tpString.containsIgnoreCase(data, $1, data, $2, mf);",
-  "endsWith":"tpString.endsWith(data, $1, data, $2, mf);",
-  "endsWithIgnore":"tpString.endsWithIgnore(data, $1, data, $2, mf);",
-  "startsWith":"tpString.startsWith(data, $1, data, $2, mf);",
-  "eq":"tpMath.eq(data, $1, data, $2, mf);",
-  "greaterEqThan":"tpMath.greaterEqThan(data, $1, data, $2, mf);",
-  "greaterThan":"tpMath.greaterThan(data, $1, data, $2, mf);",
-  "lessEqThan":"tpMath.lessEqThan(data, $1, data, $2, mf);",
-  "lessThan":"tpMath.lessThan(data, $1, data, $2, mf);"
+  "after":"tpDate.after(data, $1, data, $2)",
+  "before":"tpDate.before(data, $1, data, $2)",
+  "contains":"tpString.contains(data, $1, data, $2)",
+  "containsIgnoreCase":"tpString.containsIgnoreCase(data, $1, data, $2)",
+  "endsWith":"tpString.endsWith(data, $1, data, $2)",
+  "endsWithIgnore":"tpString.endsWithIgnore(data, $1, data, $2)",
+  "startsWith":"tpString.startsWith(data, $1, data, $2)",
+  "eq":"tpMath.eq(data, $1, data, $2, mf)",
+  "greaterEqThan":"tpMath.greaterEqThan(data, $1, data, $2, mf)",
+  "greaterThan":"tpMath.greaterThan(data, $1, data, $2, mf)",
+  "lessEqThan":"tpMath.lessEqThan(data, $1, data, $2, mf)",
+  "lessThan":"tpMath.lessThan(data, $1, data, $2, mf)"
 }
 bbm.Consts.STREAM_EVENT_OPERATIONS= {
-  "AGG_AND_TIME" : "AGG_AND_TIME((byte) 1)",
-  "AGG_ONLY" : "AGG_ONLY((byte) 2)",
-  "TIME_ONLY" : "TIME_ONLY((byte) 3)",
-  "DEFAULT_STATEFULL" : "DEFAULT_STATEFULL((byte) 4)",
-  "STATELESS" : "STATELESS((byte) 5)"
+  "AGG_AND_TIME" : "AGG_AND_TIME",
+  "AGG_ONLY" : "AGG_ONLY",
+  "TIME_ONLY" : "TIME_ONLY",
+  "DEFAULT_STATEFULL" : "DEFAULT_STATEFULL",
+  "STATELESS" : "STATELESS"
 }
+bbm.Consts.MARKER_CHECK = {
+    'TRUE': 'TpConstant.booleanTrueMarker',
+    'FALSE': 'TpConstant.booleanFalseMarker'
+} 

@@ -55,7 +55,7 @@
       Blockly.JavaScript.variables = [];
       // Blockly.JavaScript.variables.push('private Store store = new ConsoleStore("/tmp/output");\n');
       // Blockly.JavaScript.variables.push('public final String folderName = "/tmp/java/INRecharge/";\n');
-      Blockly.JavaScript.variables.push('public final String regex = "(.*)";\n');
+      // Blockly.JavaScript.variables.push('public final String regex = "(.*)";\n');
 
       Blockly.JavaScript.extractPhase = '';
       Blockly.JavaScript.translatePhase = '';
@@ -104,16 +104,16 @@
       // http.setRequestHeader('Accept', 'application/json');
       // http.overrideMimeType("text/js; charset=ISO-8859-1")
       http.setRequestHeader('Content-Type', 'application/json');
-      // http.send(JSON.stringify({
-      //   name: 'TestScript',
-      //   init: Blockly.JavaScript.initFunctions.join('\n'),
-      //   absProcessor: Blockly.JavaScript.variables.join('\n'),
-      //   extract: Blockly.JavaScript.extractPhase,
-      //   transformation: Blockly.JavaScript.translatePhase,
-      //   store: Blockly.JavaScript.storePhase,
-      //   type: 'single',
-      //   sample: sample
-      // }));
+      http.send(JSON.stringify({
+        name: 'TestScript',
+        init: Blockly.JavaScript.initFunctions.join('\n'),
+        absProcessor: Blockly.JavaScript.variables.join('\n'),
+        extract: Blockly.JavaScript.extractPhase,
+        transformation: Blockly.JavaScript.translatePhase,
+        store: Blockly.JavaScript.storePhase,
+        type: 'single',
+        sample: sample
+      }));
     });
     Blockly.Blocks.Manager.ws = Blockly.getMainWorkspace();
     Blockly.getMainWorkspace().addChangeListener(Blockly.Blocks.Manager.changeListener.bind(bbm));
