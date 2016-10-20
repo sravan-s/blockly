@@ -630,7 +630,7 @@ Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {
             text: "Delimiter",
             // callback: CreateFieldExtractor
             callback: function() {
-                bbm.renderBlock('delimiter');
+                bbm.renderBlock(bbm.Consts.BLOCKS.DELIMITER);
             }
         }, {
             enabled: true,

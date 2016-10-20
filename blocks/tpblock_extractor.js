@@ -1,7 +1,7 @@
-Blockly.Blocks['field_extractor'] = {
+Blockly.Blocks[bbm.Consts.BLOCKS.FIELD_EXTRACTOR] = {
   init: function() {
     this.appendValueInput("NAME")
-      .setCheck("field_extractor")
+      .setCheck(bbm.Consts.BLOCKS.FIELD_EXTRACTOR)
       .appendField("get col#")
       .appendField(new Blockly.FieldTextInput("1"), "NAME")
       .appendField("as")
@@ -10,7 +10,7 @@ Blockly.Blocks['field_extractor'] = {
       .appendField(new Blockly.FieldVariable(Blockly.Tp.Counter.getNewVar()), "VAR")
       .setCheck(['Array']);
     this.setInputsInline(false);
-    this.setOutput(true, "field_extractor");
+    this.setOutput(true, bbm.Consts.BLOCKS.FIELD_EXTRACTOR);
     this.setColour(20);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');
@@ -40,7 +40,7 @@ Blockly.Blocks['field_extractor'] = {
   }
 };
 
-Blockly.Blocks["delimiter"] = {
+Blockly.Blocks[bbm.Consts.BLOCKS.DELIMITER] = {
   /**
    * Block for creating a list with any number of elements of any type.
    * @this Blockly.Block
@@ -48,7 +48,7 @@ Blockly.Blocks["delimiter"] = {
   init: function() {
     this.itemCount_ = 1;
     this.appendDummyInput()
-      .appendField("delimiter")
+      .appendField(bbm.Consts.BLOCKS.DELIMITER)
       .appendField(new Blockly.FieldTextInput(""), "delim");
     this.setColour(Blockly.Blocks.lists.HUE);
     this.appendValueInput('next_marker_' + this.itemCount_);

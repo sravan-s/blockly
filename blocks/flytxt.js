@@ -1,4 +1,4 @@
-Blockly.Blocks['flytxt'] = {
+Blockly.Blocks[bbm.Consts.BLOCKS.FLYTXT] = {
   init: function() {
     this.appendValueInput("lineName")
         .setAlign(Blockly.ALIGN_RIGHT)

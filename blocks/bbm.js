@@ -15,7 +15,7 @@ Blockly.Blocks.Manager = {
         var _blocks = this.ws.getAllBlocks();
         _blocks.forEach(function(block) {
             // main blocks
-            if (block.type == 'flytxt') {
+            if (block.type == bbm.Consts.BLOCKS.FLYTXT) {
                 this._flytxt = block;
                 this.allBlocks.addNode(block, block.id);
             } else {
@@ -259,7 +259,7 @@ Blockly.Blocks.Manager = {
     createEvents: function(block,event){
         var _mutatedBlock = this.allBlocks.root[event.blockId];
         switch (block.type) {
-            case 'flytxt':
+            case bbm.Consts.BLOCKS.FLYTXT:
             case 'lists_create_with':
             case 'delimiter':
                 this.allBlocks.addNode(block, event.blockId);
@@ -307,7 +307,7 @@ Blockly.Blocks.Manager = {
         var me = this;
         var _mutatedBlock = this.allBlocks.root[event.blockId];
         // Excludes extractor/transform/store
-        if (block.type == 'flytxt') {
+        if (block.type == bbm.Consts.BLOCKS.FLYTXT) {
             return false;
         }
         if (event.newParentId) {//attached
