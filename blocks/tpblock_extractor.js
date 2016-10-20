@@ -20,12 +20,6 @@ Blockly.Blocks['field_extractor'] = {
     if (!this.workspace || e.blockId != this.id) {
       return;
     }
-    // if (e.type == 'move') {
-    //   var opConn = this.outputConnection;
-    //   if (opConn && opConn.targetConnection && opConn.targetConnection.sourceBlock_.type == 'delimiter') {
-    //     opConn.targetConnection.sourceBlock_.appendEmptyInput();
-    //   }
-    // }
   },
   renameVar: function(oldName, newName) {
     if (Blockly.Names.equals(oldName, this.getFieldValue('VAR'))) {

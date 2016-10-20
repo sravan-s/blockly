@@ -292,6 +292,11 @@ Blockly.Blocks.Manager = {
                 this.allBlocks.addNode(block, event.blockId, undefined, block.getFieldValue('VAR'));
                 break;
         }
+        // To set dropdown
+        if (block.getFieldValue('m1')) {
+            var _m1Type = this.getType(block.getFieldValue('m1'));
+            block.setDropdown(_m1Type);
+        }
     },
     deleteEvents: function(block,event){
         this.allBlocks.delNode(event.blockId);
