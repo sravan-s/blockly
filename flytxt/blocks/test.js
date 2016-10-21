@@ -62,13 +62,17 @@ Blockly.Blocks["test"] = {
     validate: function() {
         var m1 = this.getFieldValue('m1');
         var operation = this.getFieldValue('operation');
-        var result = this.getFieldValue('VAR');
-        if (m1 == '' || operation == '' || result == '' || operation == ' ') {
+        var result = this.getFieldValue('m2');
+        if (m1 == '' || operation == '' || result == '' || operation == ' ' || !operation) {
             this.setWarningText('Fill all fields');
             return false;
         }
         this.setWarningText(null);
         return true;
+    },
+
+    onchange: function() {
+        this.validate();
     }
 };
 
@@ -264,6 +268,25 @@ Blockly.Blocks['controls_if'] = {
       this.appendStatementInput('ELSE')
           .appendField(Blockly.Msg.CONTROLS_IF_MSG_ELSE);
     }
-  }
+  },
+    validate: function() {
+        var _errorPresent = false;
+        this.inputList.some(function(input) {
+            if (!input.connection.targetConnection) {
+                this.setWarningText('Provide all inputs');
+                _errorPresent = true;
+                return true;
+            }
+        }.bind(this));
+        if (_errorPresent) {
+            return false
+        }
+        this.setWarningText(null);
+        return true;
+    },
+
+    onchange: function() {
+        this.validate();
+    }
 };
 

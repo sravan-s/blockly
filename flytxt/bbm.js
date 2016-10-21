@@ -133,6 +133,25 @@ Blockly.Blocks.Manager = {
                     cb.call(this, _dataStore[_key], _key);
                 }
             }
+        },
+
+        // iteates until a contion is met
+        traverseSomeNodes: function(condition) {
+            var _nodes = this._listNodes();
+            _nodes.some(function(node) {
+                return condition(this.root[node]);
+            }.bind(this));
+        },
+
+        // returns a list of nodes
+        _listNodes: function() {
+            var _nodes = [];
+            for (var _key in this.root) {
+                if (_key != 'children') {
+                    _nodes.push(_key);
+                }
+            }
+            return _nodes;
         }
     },
     changeListener: function(event) {
