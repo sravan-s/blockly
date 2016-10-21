@@ -130,7 +130,7 @@ Blockly.Blocks["dynamic"] = {
     },
 
     domToMutation: function(xmlElement) {
-        this.checkOperation = bbm.Consts.DYNAMIC_OPERATIONS[xmlElement.getAttribute('operation')];
+        this.checkOperation = bbm.Consts.TEST_OPERATIONS[xmlElement.getAttribute('operation')];
         this.getOperationType(this.checkOperation);
         this.setDropdown();
     },
@@ -461,7 +461,7 @@ Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {
                     y: e.clientY
                 });
             }
-        },
+        }, 
         {
             enabled: true,
             text: "Dynamic Operator",
@@ -491,6 +491,10 @@ Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {
             callback: function() {
                 bbm.renderBlock('controls_if', {
                     x: e.clientX,
+                    y: e.clientY
+                });
+                bbm.renderBlock('test', {
+                    x: e.clientX+10,
                     y: e.clientY
                 });
             }
@@ -580,15 +584,38 @@ Blockly.Blocks['event_field'] = {
         this.appendDummyInput()
             .appendField("Event Data Type")
             .appendField(new Blockly.FieldDropdown([
+                 ["AGG_AND_TIME", "AGG_AND_TIME"],
+                 ["AGG_ONLY", "AGG_ONLY"],
+                 ["TIME_ONLY", "TIME_ONLY"],
+                 ["DEFAULT_STATEFULL", "DEFAULT_STATEFULL"],
+                 ["STATELESS", "STATELESS"]
+            ]), "dataType")
+        this.appendDummyInput()
+            .appendField("Event Field Type")
+            .appendField(new Blockly.FieldDropdown([
                  ["SECONDS", "SECONDS"],
                  ["COUNT", "COUNT"],
                  ["AMOUNT", "AMOUNT"],
                  ["DATE", "DATE"],
                  ["NAME", "NAME"]
-            ]), "operation")
+            ]), "fieldType")
         this.appendDummyInput()
             .appendField("Event Aggragation Type")
             .appendField(new Blockly.FieldCheckbox("TRUE"), "aggragation")
+        this.appendDummyInput()
+            .appendField("Statefull")
+            .appendField(new Blockly.FieldCheckbox("FALSE"), "statefull")
+        this.appendDummyInput()
+            .appendField("Pass through")
+            .appendField(new Blockly.FieldCheckbox("FALSE"), "passthrough")
+
+        this.appendDummyInput()
+            .appendField("Time")
+            .appendField(new Blockly.FieldVariable(_variables[0]), "m5")
+        this.appendDummyInput()
+            .appendField("Event ID")
+            .appendField(new Blockly.FieldTextInput(""), "m6");
+            // .appendField(new Blockly.FieldVariable(_variables[0]), "m6")
         this.appendDummyInput()
             .appendField("Old Value")
             .appendField(new Blockly.FieldVariable(_variables[0]), "m3")
@@ -624,5 +651,7 @@ Blockly.Blocks['event_field'] = {
     return true;
   }
 };
+
+
 
 Blockly.Msg.LISTS_CREATE_WITH_INPUT_WITH = ' ';
