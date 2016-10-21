@@ -493,10 +493,6 @@ Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {
                     x: e.clientX,
                     y: e.clientY
                 });
-                bbm.renderBlock('test', {
-                    x: e.clientX+10,
-                    y: e.clientY
-                });
             }
         }, {
             enabled: true,

@@ -72,9 +72,14 @@ Blockly.JavaScript['lists_create_with_batch'] = function(block) {
 
 Blockly.JavaScript['output_field'] = function(block) {
   var code = block.getFieldValue('VAR') || null;
+  var MARKER_TYPES = ['string', 'number', 'date'];
+  // To append extra syntax for boolean variable
+  if (MARKER_TYPES.indexOf(bbm.getType('code')) == -1) {
+    code += '? TpConstant.booleanTrueMarker : TpConstant.booleanFalseMarker';
+  }
   // TODO: Assemble JavaScript into code variable.
   // TODO: Change ORDER_NONE to the correct strength.
-  return [code, Blockly.JavaScript.ORDER_ATOMIC];
+  return [code, Blockly.JavaScript.ORDER_COMMA];
 };
 
 Blockly.JavaScript['delimiter'] = function(block) {
@@ -265,11 +270,15 @@ function storeBatch(block) {
   var get_Storage = block.getFieldValue('operation');
   var header_check = block.getFieldValue('headers');
   var getItemCount = block.itemCount_;
-  var code ='';
+  var code = '';
+  debugger;
   var childCode = Blockly.JavaScript.valueToCode(block, 'store_batch', Blockly.JavaScript.ORDER_ATOMIC);
-  var mapCode = childCode.split(',');
+  // var mapCode = childCode.split(',');
+  // Fix for no comma between markers
+  var mapCode = childCode.match(/\((.*?)\)/g);
   mapCode = mapCode.map(function(item){
-    return 'm'+item
+    item = item.slice(1, -1);
+    return 'm' + item;
   });
 
   if(header_check==='TRUE'){
