@@ -90,6 +90,6 @@ bbm.Consts.STREAM_EVENT_OPERATIONS= {
   "STATELESS" : "STATELESS"
 }
 bbm.Consts.MARKER_CHECK = {
-    'TRUE': 'TpConstant.booleanTrueMarker',
-    'FALSE': 'TpConstant.booleanFalseMarker'
-} 
+  'TRUE': 'TpConstant.booleanTrueMarker',
+  'FALSE': 'TpConstant.booleanFalseMarker'
+}

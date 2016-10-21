@@ -652,6 +652,4 @@ Blockly.Blocks['event_field'] = {
   }
 };
 
-
-
 Blockly.Msg.LISTS_CREATE_WITH_INPUT_WITH = ' ';
